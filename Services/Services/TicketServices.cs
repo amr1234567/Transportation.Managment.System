@@ -1,5 +1,6 @@
 ﻿using Core.Dto;
 using Core.Models;
+using Infrastructure.Context;
 using Interfaces.IServices;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,12 @@ namespace Services.Services
 {
     public class TicketServices : ITicketServices
     {
+        private readonly ApplicationDbContext _context;
+
+        public TicketServices(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public Task<Ticket> DestroyTicket(TicketDto ticketDto)
         {
             // Implement here bitch

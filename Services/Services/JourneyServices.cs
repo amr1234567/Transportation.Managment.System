@@ -1,5 +1,7 @@
 ﻿using Core.Dto;
+using Core.Identity;
 using Core.Models;
+using Infrastructure.Context;
 using Interfaces.IServices;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,12 @@ namespace Services.Services
 {
     public class JourneyServices : IJourneyServices
     {
+        private readonly ApplicationDbContext _context;
 
+        public JourneyServices(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public Task AddJourney(JourneyDto journeyDto)
         {
             // Implement here bitch

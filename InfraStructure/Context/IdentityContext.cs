@@ -9,7 +9,7 @@ namespace InfraStructure.Context
 {
     public class IdentityContext : IdentityDbContext<ApplicationUser>
     {
-        public IdentityContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
         {
 
         }

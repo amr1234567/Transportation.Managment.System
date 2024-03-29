@@ -31,7 +31,7 @@ namespace API.Helpers.DI
             services.AddIdentityCore<ApplicationAdmin>()
                 .AddEntityFrameworkStores<AdminDBContext>();
 
-            services.AddDbContext<BusStopDBContext>(options =>
+            services.AddDbContext<AdminDBContext>(options =>
             {
                 options.UseSqlServer(_configuration.GetConnectionString("AdminConnString"));
             });

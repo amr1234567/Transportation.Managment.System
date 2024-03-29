@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Infrastructure.Context;
 using Interfaces.IServices;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,13 @@ namespace Services.Services
 {
     public class SeatServices : ISeatServices
     {
+        private readonly ApplicationDbContext _context;
+
+        public SeatServices(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public Task AddSeat(SeatDto seatDto)
         {
             // Implement here bitch
