@@ -1,9 +1,12 @@
-using Transportation_Api.Helpers.DI;
+using API.Helpers.DI;
+using Core.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //DI
 builder.Services.AddApplicationDI(builder.Configuration);
+
+builder.Services.Configure<JwtHelper>(builder.Configuration.GetSection("JWT"));
 
 
 builder.Services.AddControllers();

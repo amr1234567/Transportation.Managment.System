@@ -1,30 +1,37 @@
-﻿using Infrastructure.Context;
+﻿using Core.Identity;
+using Infrastructure.Context;
+using InfraStructure.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Model.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Transportation_Api.Helpers.DI
+namespace API.Helpers.DI
 {
     public static class ContextDI
     {
         public static IServiceCollection AddContextDI(this IServiceCollection services, IConfiguration _configuration)
         {
 
-            services.AddIdentity<AppUser, IdentityRole>()
+            services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(_configuration.GetConnectionString("System"));
+                options.UseSqlServer(_configuration.GetConnectionString("AppConnString"));
             });
 
-            //services.AddIdentity<BusStopManger, IdentityRole>()
-            //    .AddEntityFrameworkStores<IdentityDbContext>();
+            services.AddIdentityCore<BusStopManger>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<BusStopDBContext>();
 
-            //services.AddDbContext<IdentityDbContext>(options =>
-            //{
-            //    options.UseSqlServer(_configuration.GetConnectionString("Identity"));
-            //});
+            services.AddDbContext<BusStopDBContext>(options =>
+            {
+                options.UseSqlServer(_configuration.GetConnectionString("BusStopConnString"));
+            });
+
+            services.AddDbContext<IdentityContext>(options =>
+            {
+                options.UseSqlServer(_configuration.GetConnectionString("IdentityConnString"));
+            });
 
             return services;
         }

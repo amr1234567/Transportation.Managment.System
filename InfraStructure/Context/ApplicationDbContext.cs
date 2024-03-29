@@ -1,27 +1,27 @@
-﻿using Infrastructure.Seeding;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Core.Models;
+using Infrastructure.Seeding;
 using Microsoft.EntityFrameworkCore;
-using Model.Identity;
-using Model.Models;
 
 namespace Infrastructure.Context
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser>
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
-        public DbSet<Bus> buses { get; set; }
-        public DbSet<BusStop> busStops { get; set; }
-        public DbSet<Journey> journeys { get; set; }
-        public DbSet<Seat> seats { get; set; }
-        public DbSet<Ticket> tickets { get; set; }
+
+        public DbSet<Bus> Buses { get; set; }
+        public DbSet<BusStop> BusStops { get; set; }
+        public DbSet<Journey> Journeys { get; set; }
+        public DbSet<Seat> Seats { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.SeedData();
+            builder.SeedAppData();
         }
+
     }
 }

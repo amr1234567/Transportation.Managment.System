@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.Dto
+namespace Core.Dto
 {
     public class SeatDto
     {

@@ -1,10 +1,10 @@
-﻿using IServices.IServices;
+﻿using Interfaces.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Services.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Transportation_Api.Controllers
+namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

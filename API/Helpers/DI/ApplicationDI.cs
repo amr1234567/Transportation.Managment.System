@@ -1,4 +1,4 @@
-﻿namespace Transportation_Api.Helpers.DI
+﻿namespace API.Helpers.DI
 {
     public static class ApplicationDI
     {

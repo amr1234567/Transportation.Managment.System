@@ -1,5 +1,5 @@
-﻿using IServices.IServices;
-using Model.Dto;
+﻿using Core.Dto;
+using Interfaces.IServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;

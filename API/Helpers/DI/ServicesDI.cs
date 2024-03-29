@@ -1,7 +1,7 @@
-﻿using IServices.IServices;
+﻿using Interfaces.IServices;
 using Services.Services;
 
-namespace Transportation_Api.Helpers.DI
+namespace API.Helpers.DI
 {
     public static class ServicesDI
     {
