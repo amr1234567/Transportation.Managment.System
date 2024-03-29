@@ -1,6 +1,5 @@
 ﻿using Core.Models;
 using Microsoft.AspNetCore.Identity;
-using Model.Identity;
 
 namespace Core.Identity
 {

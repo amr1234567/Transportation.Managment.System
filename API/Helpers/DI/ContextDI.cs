@@ -20,12 +20,20 @@ namespace API.Helpers.DI
                 options.UseSqlServer(_configuration.GetConnectionString("AppConnString"));
             });
 
-            services.AddIdentityCore<BusStopManger>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddIdentityCore<BusStopManger>()
                 .AddEntityFrameworkStores<BusStopDBContext>();
 
             services.AddDbContext<BusStopDBContext>(options =>
             {
                 options.UseSqlServer(_configuration.GetConnectionString("BusStopConnString"));
+            });
+
+            services.AddIdentityCore<ApplicationAdmin>()
+                .AddEntityFrameworkStores<AdminDBContext>();
+
+            services.AddDbContext<BusStopDBContext>(options =>
+            {
+                options.UseSqlServer(_configuration.GetConnectionString("AdminConnString"));
             });
 
             services.AddDbContext<IdentityContext>(options =>

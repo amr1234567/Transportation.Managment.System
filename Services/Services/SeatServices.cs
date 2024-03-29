@@ -13,12 +13,14 @@ namespace Services.Services
         public Task AddSeat(SeatDto seatDto)
         {
             // Implement here bitch
+            //create new seat and add it to db
             throw new NotImplementedException();
         }
 
         public Task ReserveSeat(int id, SeatDto seatDto)
         {
             // Implement here bitch
+            //edit on seat field "IsAvailable" to false
             throw new NotImplementedException();
         }
     }

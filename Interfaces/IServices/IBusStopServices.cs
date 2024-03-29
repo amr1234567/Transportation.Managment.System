@@ -9,7 +9,7 @@ namespace Interfaces.IServices
 {
     public interface IBusStopServices
     {
-        Task<List<BusStop>> busStops();
+        Task<List<BusStop>> GetAllBusStops();
         Task<List<Bus>> GetBusesByBusStopId(Guid id);
     }
 }

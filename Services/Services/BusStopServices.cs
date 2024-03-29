@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using Infrastructure.Context;
 using Interfaces.IServices;
 using System;
 using System.Collections.Generic;
@@ -10,15 +11,23 @@ namespace Services.Services
 {
     public class BusStopServices : IBusStopServices
     {
-        public Task<List<BusStop>> busStops()
+        private readonly ApplicationDbContext _context;
+
+        public BusStopServices(ApplicationDbContext context)
         {
-            // Implement here bitch
+            _context = context;
+        }
+        public Task<List<BusStop>> GetAllBusStops()
+        {
+            //get all busStops from Db and return it
+
             throw new NotImplementedException();
         }
 
         public Task<List<Bus>> GetBusesByBusStopId(Guid id)
         {
             // Implement here bitch
+            //Get All Buses in busStop with id "Id" and return it
             throw new NotImplementedException();
         }
     }
