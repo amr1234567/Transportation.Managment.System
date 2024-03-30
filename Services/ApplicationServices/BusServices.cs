@@ -1,14 +1,9 @@
 ﻿using Core.Dto;
 using Core.Models;
 using Infrastructure.Context;
-using Interfaces.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Interfaces.IApplicationServices;
 
-namespace Services.Services
+namespace Services.ApplicationServices
 {
     public class BusServices : IBusServices
     {
@@ -18,10 +13,12 @@ namespace Services.Services
         {
             _context = context;
         }
+
         public Task AddBus(BusDto busDto)
         {
             // Implement here bitch
             //add new bus to database
+
             throw new NotImplementedException();
         }
 
@@ -29,6 +26,7 @@ namespace Services.Services
         {
             // Implement here bitch
             //edit the bus data with Id with busDto Data 
+
             throw new NotImplementedException();
         }
 
@@ -36,6 +34,7 @@ namespace Services.Services
         {
             // Implement here bitch
             //get all the buses in DataBase and return it
+
             throw new NotImplementedException();
         }
 
@@ -43,6 +42,7 @@ namespace Services.Services
         {
             // Implement here bitch
             //Get Bus With the id "Id"
+
             throw new NotImplementedException();
         }
     }

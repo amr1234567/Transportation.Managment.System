@@ -1,14 +1,14 @@
 ﻿using Core.Dto;
 using Core.Models;
 using Infrastructure.Context;
-using Interfaces.IServices;
+using Interfaces.IApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Services
+namespace Services.ApplicationServices
 {
     public class TicketServices : ITicketServices
     {

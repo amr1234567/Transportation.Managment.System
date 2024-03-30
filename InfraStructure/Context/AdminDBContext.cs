@@ -1,4 +1,5 @@
 ﻿using Core.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace InfraStructure.Context
 {
-    public class AdminDBContext : IdentityDbContext<ApplicationAdmin>
+    public class AdminDBContext : IdentityDbContext<ApplicationAdmin, IdentityRole<Guid>, Guid>
     {
         public AdminDBContext(DbContextOptions<AdminDBContext> options) : base(options)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,5 @@ namespace Core.Models
         public Guid Id { get; set; }
         public int NumberOfSeats { get; set; }
         public List<Seat> seats { get; set; }
-        public bool isFull { get; set; }
     }
 }

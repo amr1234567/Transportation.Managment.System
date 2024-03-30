@@ -20,7 +20,7 @@ namespace Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.SeedAppData();
+            //builder.SeedAppData();
         }
 
     }

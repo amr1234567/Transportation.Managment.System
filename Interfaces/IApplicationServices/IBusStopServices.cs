@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Interfaces.IServices
+namespace Interfaces.IApplicationServices
 {
     public interface IBusStopServices
     {

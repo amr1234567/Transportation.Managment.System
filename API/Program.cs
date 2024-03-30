@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationDI(builder.Configuration);
 
 builder.Services.Configure<JwtHelper>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<MailConfigurations>(builder.Configuration.GetSection("EmailConfigration"));
 
 
 builder.Services.AddControllers();

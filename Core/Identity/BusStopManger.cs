@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Identity
 {
-    public class BusStopManger : IdentityUser
+    public class BusStopManger : User
     {
         public BusStop BusStop { get; set; }
     }

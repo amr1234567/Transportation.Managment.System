@@ -12,9 +12,6 @@ namespace API.Helpers.DI
         public static IServiceCollection AddContextDI(this IServiceCollection services, IConfiguration _configuration)
         {
 
-            services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(_configuration.GetConnectionString("AppConnString"));
@@ -35,6 +32,10 @@ namespace API.Helpers.DI
             {
                 options.UseSqlServer(_configuration.GetConnectionString("AdminConnString"));
             });
+
+            services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<IdentityContext>();
+
 
             services.AddDbContext<IdentityContext>(options =>
             {

@@ -1,5 +1,9 @@
-﻿using Interfaces.IServices;
-using Services.Services;
+﻿using Interfaces.IApplicationServices;
+using Interfaces.IIdentityServices;
+using Interfaces.IMailServices;
+using Services.ApplicationServices;
+using Services.IdentityServices;
+using Services.MailServices;
 
 namespace API.Helpers.DI
 {
@@ -12,6 +16,9 @@ namespace API.Helpers.DI
             services.AddScoped<IJourneyServices, JourneyServices>();
             services.AddScoped<ISeatServices, SeatServices>();
             services.AddScoped<ITicketServices, TicketServices>();
+
+            services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IMailServices, MailServices>();
             return services;
         }
     }
