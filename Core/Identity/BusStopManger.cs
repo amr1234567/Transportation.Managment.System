@@ -10,6 +10,6 @@ namespace Core.Identity
 {
     public class BusStopManger : User
     {
-        public BusStop BusStop { get; set; }
+        //public BusStop BusStop { get; set; }
     }
 }
