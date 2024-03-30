@@ -1,4 +1,5 @@
-﻿using Interfaces.IApplicationServices;
+﻿using Core.Dto;
+using Interfaces.IApplicationServices;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -33,8 +34,10 @@ namespace API.Controllers
 
         // POST api/<BusController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> Post([FromBody] BusDto model)
         {
+            await _busService.AddBus(model);
+            return Ok();
         }
 
         // PUT api/<BusController>/5

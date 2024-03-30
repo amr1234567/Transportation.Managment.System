@@ -2,6 +2,7 @@
 using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.ApplicationServices
 {
@@ -14,12 +15,30 @@ namespace Services.ApplicationServices
             _context = context;
         }
 
-        public Task AddBus(BusDto busDto)
+        public async Task AddBus(BusDto busDto)
         {
-            // Implement here bitch
-            //add new bus to database
+            var Busid = Guid.NewGuid();
 
-            throw new NotImplementedException();
+            List<Seat> seats = new List<Seat>();
+            for (int i = 0; i < busDto.NumberOfSeats; i++)
+            {
+                seats.Add(new Seat()
+                {
+                    SeatNum = i,
+                    IsAvailable = true,
+                    SeatId = Guid.NewGuid(),
+                    BusId = Busid
+                });
+            }
+
+            Bus bus = new Bus()
+            {
+                Id = Busid,
+                seats = seats,
+                NumberOfSeats = busDto.NumberOfSeats
+            };
+            await _context.Buses.AddAsync(bus);
+            await _context.SaveChangesAsync();
         }
 
         public Task<Bus> EditBus(Guid Id, BusDto busDto)
@@ -38,12 +57,9 @@ namespace Services.ApplicationServices
             throw new NotImplementedException();
         }
 
-        public Task<Bus> GetBusById(Guid Id)
+        public async Task<Bus> GetBusById(Guid Id)
         {
-            // Implement here bitch
-            //Get Bus With the id "Id"
-
-            throw new NotImplementedException();
+            return await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id));
         }
     }
 }

@@ -4,16 +4,19 @@ using InfraStructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace InfraStructure.Migrations.Identity
+namespace InfraStructure.Migrations.AdminDB
 {
-    [DbContext(typeof(IdentityContext))]
-    partial class IdentityContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AdminDBContext))]
+    [Migration("20240330213438_initAdmin")]
+    partial class initAdmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace InfraStructure.Migrations.Identity
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Core.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("Core.Identity.ApplicationAdmin", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -234,7 +237,7 @@ namespace InfraStructure.Migrations.Identity
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Core.Identity.ApplicationUser", null)
+                    b.HasOne("Core.Identity.ApplicationAdmin", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -243,7 +246,7 @@ namespace InfraStructure.Migrations.Identity
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Core.Identity.ApplicationUser", null)
+                    b.HasOne("Core.Identity.ApplicationAdmin", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -258,7 +261,7 @@ namespace InfraStructure.Migrations.Identity
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Identity.ApplicationUser", null)
+                    b.HasOne("Core.Identity.ApplicationAdmin", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -267,7 +270,7 @@ namespace InfraStructure.Migrations.Identity
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Core.Identity.ApplicationUser", null)
+                    b.HasOne("Core.Identity.ApplicationAdmin", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

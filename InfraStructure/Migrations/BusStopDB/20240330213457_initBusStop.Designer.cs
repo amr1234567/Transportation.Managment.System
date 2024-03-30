@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InfraStructure.Migrations.BusStopDB
 {
     [DbContext(typeof(BusStopDBContext))]
-    [Migration("20240329205839_initAdminDB")]
-    partial class initAdminDB
+    [Migration("20240330213457_initBusStop")]
+    partial class initBusStop
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,14 +27,12 @@ namespace InfraStructure.Migrations.BusStopDB
 
             modelBuilder.Entity("Core.Identity.BusStopManger", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("BusStopId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -52,6 +50,10 @@ namespace InfraStructure.Migrations.BusStopDB
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -82,8 +84,6 @@ namespace InfraStructure.Migrations.BusStopDB
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusStopId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -95,68 +95,11 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Models.Bus", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BusStopId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("NumberOfSeats")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("isFull")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BusStopId");
-
-                    b.ToTable("Bus");
-                });
-
-            modelBuilder.Entity("Core.Models.BusStop", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BusStop");
-                });
-
-            modelBuilder.Entity("Core.Models.Seat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid?>("BusId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BusId");
-
-                    b.ToTable("Seat");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -180,7 +123,7 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -194,9 +137,8 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -205,7 +147,7 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -219,9 +161,8 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -230,7 +171,7 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -241,9 +182,8 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -252,13 +192,13 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -267,10 +207,10 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -286,41 +226,16 @@ namespace InfraStructure.Migrations.BusStopDB
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Identity.BusStopManger", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Core.Models.BusStop", "BusStop")
-                        .WithMany()
-                        .HasForeignKey("BusStopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BusStop");
-                });
-
-            modelBuilder.Entity("Core.Models.Bus", b =>
-                {
-                    b.HasOne("Core.Models.BusStop", null)
-                        .WithMany("buses")
-                        .HasForeignKey("BusStopId");
-                });
-
-            modelBuilder.Entity("Core.Models.Seat", b =>
-                {
-                    b.HasOne("Core.Models.Bus", null)
-                        .WithMany("seats")
-                        .HasForeignKey("BusId");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("Core.Identity.BusStopManger", null)
                         .WithMany()
@@ -329,7 +244,7 @@ namespace InfraStructure.Migrations.BusStopDB
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("Core.Identity.BusStopManger", null)
                         .WithMany()
@@ -338,9 +253,9 @@ namespace InfraStructure.Migrations.BusStopDB
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -353,23 +268,13 @@ namespace InfraStructure.Migrations.BusStopDB
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("Core.Identity.BusStopManger", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Core.Models.Bus", b =>
-                {
-                    b.Navigation("seats");
-                });
-
-            modelBuilder.Entity("Core.Models.BusStop", b =>
-                {
-                    b.Navigation("buses");
                 });
 #pragma warning restore 612, 618
         }

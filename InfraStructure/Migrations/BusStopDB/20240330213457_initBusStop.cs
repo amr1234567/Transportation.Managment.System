@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace InfraStructure.Migrations.BusStopDB
 {
     /// <inheritdoc />
-    public partial class initAdminDB : Migration
+    public partial class initBusStop : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ namespace InfraStructure.Migrations.BusStopDB
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -26,15 +26,29 @@ namespace InfraStructure.Migrations.BusStopDB
                 });
 
             migrationBuilder.CreateTable(
-                name: "BusStop",
+                name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BusStop", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -43,7 +57,7 @@ namespace InfraStructure.Migrations.BusStopDB
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -59,63 +73,12 @@ namespace InfraStructure.Migrations.BusStopDB
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BusStopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_BusStop_BusStopId",
-                        column: x => x.BusStopId,
-                        principalTable: "BusStop",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Bus",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
-                    isFull = table.Column<bool>(type: "bit", nullable: false),
-                    BusStopId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bus", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bus_BusStop_BusStopId",
-                        column: x => x.BusStopId,
-                        principalTable: "BusStop",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -137,7 +100,7 @@ namespace InfraStructure.Migrations.BusStopDB
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -154,8 +117,8 @@ namespace InfraStructure.Migrations.BusStopDB
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -178,7 +141,7 @@ namespace InfraStructure.Migrations.BusStopDB
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -192,25 +155,6 @@ namespace InfraStructure.Migrations.BusStopDB
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Seat",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
-                    BusId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Seat", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Seat_Bus_BusId",
-                        column: x => x.BusId,
-                        principalTable: "Bus",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -246,26 +190,11 @@ namespace InfraStructure.Migrations.BusStopDB
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_BusStopId",
-                table: "AspNetUsers",
-                column: "BusStopId");
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bus_BusStopId",
-                table: "Bus",
-                column: "BusStopId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Seat_BusId",
-                table: "Seat",
-                column: "BusId");
         }
 
         /// <inheritdoc />
@@ -287,19 +216,10 @@ namespace InfraStructure.Migrations.BusStopDB
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Seat");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Bus");
-
-            migrationBuilder.DropTable(
-                name: "BusStop");
         }
     }
 }
