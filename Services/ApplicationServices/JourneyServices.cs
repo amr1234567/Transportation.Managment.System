@@ -3,6 +3,7 @@ using Core.Identity;
 using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,42 +20,52 @@ namespace Services.ApplicationServices
         {
             _context = context;
         }
-        public Task AddJourney(JourneyDto journeyDto)
+
+        public async Task AddJourney(JourneyDto journeyDto) //wait
         {
             // Implement here bitch
             //create new journey and add it to DB
-            throw new NotImplementedException();
+
+            var ticket = new List<Ticket>();
+            var journey = new Journey()
+            {
+                //Id = Guid.NewGuid(),
+                //Tickets = ticket,
+                //DestinationName = journeyDto.Destination,
+                //StartBusStop = journeyDto.StartBusStop,
+
+
+
+            };
+            await _context.Journeys.AddAsync(journey);
+            await _context.SaveChangesAsync();
         }
 
-        public Task ArrivedJourney(Guid id)
-        {
-            // Implement here bitch
-            //Edit on journey in arrived field to set it as arrived
-            throw new NotImplementedException();
-        }
 
-        public Task<List<Journey>> GetAllJourneysByBusStopId(Guid id)
+        public async Task<List<Journey>> GetAllJourneysByBusStopId(Guid id) //done
         {
             //get all journeys in the bus stop with id "id" form Db and return it
-            throw new NotImplementedException();
+            return await _context.Journeys.Where(x => x.StartBusStop.Id == id).ToListAsync();
         }
 
-        public Task<List<Journey>> GetAllJourneys()
+        public async Task<List<Journey>> GetAllJourneys() //done
         {
             // Implement here bitch
             //get all journeys form Db and return it
-            throw new NotImplementedException();
+            return await _context.Journeys.ToListAsync();
+
         }
 
 
-        public Task<Journey> GetJourneyById(Guid id)
+        public async Task<Journey> GetJourneyById(Guid id) //done
         {
             // Implement here bitch
             //get journey with id "id" and return it
-            throw new NotImplementedException();
+            return await _context.Journeys.FindAsync(id);
+
         }
 
-        public Task<Bus> GetNearestBusByDestination(string destinationBusStop, string startBusStop)
+        public Task<Bus> GetNearestBusByDestination(string destinationBusStop, string startBusStop) // wait
         {
             // Implement here bitch
 
@@ -64,35 +75,24 @@ namespace Services.ApplicationServices
             throw new NotImplementedException();
         }
 
-        public Task<bool> IsBusLeft(Guid id)
-        {
-            // Implement here bitch
-            //return true if journey.isleft == true 
-            throw new NotImplementedException();
-        }
 
-        public Task LeftBus(Guid id)
-        {
-            // Implement here bitch
-            //edit on journey with id "id" in field "isleft" to true
-
-            throw new NotImplementedException();
-        }
-
-        public Task SetArrivalTime(DateTime time, Guid id)
+        public async Task SetArrivalTime(DateTime time, Guid id)
         {
             // Implement here bitch
 
             //edit on journey with id "id" in field "ArrivalTime" (set it to "time" value)
-            throw new NotImplementedException();
+            var journey = await _context.Journeys.FindAsync(id);
+            journey.ArrivalTime = time;
+            await _context.SaveChangesAsync();
         }
 
-        public Task SetLeavingTime(DateTime time, Guid id)
+        public async Task SetLeavingTime(DateTime time, Guid id)
         {
             // Implement here bitch
             //edit on journey with id "id" in field "LeavingTime" (set it to "time" value)
-
-            throw new NotImplementedException();
+            var journey = await _context.Journeys.FindAsync(id);
+            journey.LeavingTime = time;
+            await _context.SaveChangesAsync();
         }
     }
 }

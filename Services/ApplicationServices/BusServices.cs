@@ -15,12 +15,19 @@ namespace Services.ApplicationServices
             _context = context;
         }
 
-        public async Task AddBus(BusDto busDto)
+        public async Task AddBus(BusDto busDto) //done
         {
             var Busid = Guid.NewGuid();
-
             List<Seat> seats = new List<Seat>();
-            for (int i = 0; i < busDto.NumberOfSeats; i++)
+
+            Bus bus = new Bus()
+            {
+                Id = Busid,
+                seats = seats,
+                NumberOfSeats = busDto.NumberOfSeats
+            };
+
+            for (int i = 1; i <= busDto.NumberOfSeats; i++)
             {
                 seats.Add(new Seat()
                 {
@@ -30,34 +37,23 @@ namespace Services.ApplicationServices
                     BusId = Busid
                 });
             }
-
-            Bus bus = new Bus()
-            {
-                Id = Busid,
-                seats = seats,
-                NumberOfSeats = busDto.NumberOfSeats
-            };
             await _context.Buses.AddAsync(bus);
             await _context.SaveChangesAsync();
         }
-
-        public Task<Bus> EditBus(Guid Id, BusDto busDto)
+        public async Task<Bus> EditBus(Guid Id, BusDto busDto) //done
         {
             // Implement here bitch
             //edit the bus data with Id with busDto Data 
-
-            throw new NotImplementedException();
+            var bus = await _context.Buses.FindAsync(Id);
+            bus.NumberOfSeats = busDto.NumberOfSeats;
+            await _context.SaveChangesAsync();
+            return bus;
         }
 
-        public Task<List<Bus>> GetAllBuses()
-        {
-            // Implement here bitch
-            //get all the buses in DataBase and return it
+        public async Task<List<Bus>> GetAllBuses() =>  //done
+            await _context.Buses.Include(b => b.seats).ToListAsync();
 
-            throw new NotImplementedException();
-        }
-
-        public async Task<Bus> GetBusById(Guid Id)
+        public async Task<Bus> GetBusById(Guid Id) //done
         {
             return await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id));
         }

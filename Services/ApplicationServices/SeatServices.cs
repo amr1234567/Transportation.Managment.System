@@ -1,11 +1,6 @@
 ﻿using Core.Dto;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.ApplicationServices
 {
@@ -18,18 +13,13 @@ namespace Services.ApplicationServices
             _context = context;
         }
 
-        public Task AddSeat(SeatDto seatDto)
-        {
-            // Implement here bitch
-            //create new seat and add it to db
-            throw new NotImplementedException();
-        }
-
-        public Task ReserveSeat(int id, SeatDto seatDto)
+        public async Task ReserveSeat(int id)
         {
             // Implement here bitch
             //edit on seat field "IsAvailable" to false
-            throw new NotImplementedException();
+            var record = await _context.Seats.FindAsync(id);
+            record.IsAvailable = false;
+            await _context.SaveChangesAsync();
         }
     }
 }

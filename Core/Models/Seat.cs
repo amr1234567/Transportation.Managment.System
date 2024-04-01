@@ -13,8 +13,9 @@ namespace Core.Models
     {
         [Key]
         public Guid SeatId { get; set; }
+
         public int SeatNum { get; set; }
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable { get; set; } = true;
 
         [ForeignKey(nameof(Bus))]
         public Guid BusId { get; set; }

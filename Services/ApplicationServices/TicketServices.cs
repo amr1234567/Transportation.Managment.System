@@ -2,6 +2,7 @@
 using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +19,6 @@ namespace Services.ApplicationServices
         {
             _context = context;
         }
-        public Task<Ticket> DestroyTicket(TicketDto ticketDto)
-        {
-            // Implement here bitch
-            //edit on ticket field "IsFinshed" to true
-            throw new NotImplementedException();
-        }
 
         public Task GenerateTicket(TicketDto ticketDto)
         {
@@ -32,11 +27,11 @@ namespace Services.ApplicationServices
             throw new NotImplementedException();
         }
 
-        public Task<List<Ticket>> GetAllTicket()
+        public async Task<List<Ticket>> GetAllTicket() //done
         {
             // Implement here bitch
             //get all tickets from DB and return it
-            throw new NotImplementedException();
+            return await _context.Tickets.ToListAsync();
         }
 
         public Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id)
@@ -55,18 +50,18 @@ namespace Services.ApplicationServices
             throw new NotImplementedException();
         }
 
-        public Task<Ticket> GetTicketById(Guid id)
+        public async Task<Ticket> GetTicketById(Guid id) //done
         {
             // Implement here bitch
             // get ticket with id "id" and return it
-            throw new NotImplementedException();
+            return await _context.Tickets.FindAsync(id);
         }
 
-        public Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime)
+        public async Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime)
         {
             // Implement here bitch
             //get all tickets from "dateTime" to the present time
-            throw new NotImplementedException();
+            return await _context.Tickets.Where(x => x.CreatedTime == dateTime).ToListAsync();
         }
     }
 }

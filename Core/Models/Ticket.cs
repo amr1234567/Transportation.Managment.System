@@ -1,17 +1,13 @@
-﻿using Core.Identity;
-using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Models
 {
     public class Ticket
     {
+        [Key]
         public Guid Id { get; set; }
-        public double Price { get; set; }
+        public Guid SeatId { get; set; }
         public Seat Seat { get; set; }
 
         [ForeignKey(nameof(Bus))]
@@ -22,9 +18,11 @@ namespace Core.Models
         public Guid JourneyId { get; set; }
         public Journey Journey { get; set; }
 
-        public bool IsFinished => Journey.IsEnded;
         public DateTime CreatedTime { get; set; }
 
         public Guid UserId { get; set; }
+
+        public double Price => Journey.TicketPrice;
+        public bool IsFinished => Journey.IsEnded;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Core.Models;
 using Interfaces.IApplicationServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,9 +21,9 @@ namespace API.Controllers
 
         // GET: api/<BusController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<List<Bus>>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _busService.GetAllBuses();
         }
 
         // GET api/<BusController>/5

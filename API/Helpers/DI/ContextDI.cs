@@ -1,6 +1,5 @@
 ﻿using Core.Identity;
 using Infrastructure.Context;
-using InfraStructure.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,30 +16,18 @@ namespace API.Helpers.DI
                 options.UseSqlServer(_configuration.GetConnectionString("AppConnString"));
             });
 
+            services.AddIdentityCore<User>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddIdentityCore<BusStopManger>()
-                .AddEntityFrameworkStores<BusStopDBContext>();
-
-            services.AddDbContext<BusStopDBContext>(options =>
-            {
-                options.UseSqlServer(_configuration.GetConnectionString("BusStopConnString"));
-            });
-
+                .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddIdentityCore<ApplicationAdmin>()
-                .AddEntityFrameworkStores<AdminDBContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentityCore<ApplicationUser>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddDbContext<AdminDBContext>(options =>
-            {
-                options.UseSqlServer(_configuration.GetConnectionString("AdminConnString"));
-            });
-
-            services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<IdentityContext>();
-
-
-            services.AddDbContext<IdentityContext>(options =>
-            {
-                options.UseSqlServer(_configuration.GetConnectionString("IdentityConnString"));
-            });
 
             return services;
         }

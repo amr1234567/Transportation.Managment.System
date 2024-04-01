@@ -16,6 +16,5 @@ namespace Interfaces.IApplicationServices
         Task<Ticket> GetTicketById(Guid id);
         Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime);
         Task GenerateTicket(TicketDto ticketDto);
-        Task<Ticket> DestroyTicket(TicketDto ticketDto);
     }
 }

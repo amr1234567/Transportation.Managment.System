@@ -16,9 +16,6 @@ namespace Interfaces.IApplicationServices
         Task<List<Journey>> GetAllJourneys();
         Task<List<Journey>> GetAllJourneysByBusStopId(Guid id);
         Task<Bus> GetNearestBusByDestination(string distenationBusStop, string startBusStop);
-        Task<bool> IsBusLeft(Guid id);
         Task<Journey> GetJourneyById(Guid id);
-        Task ArrivedJourney(Guid id);
-        Task LeftBus(Guid id);
     }
 }

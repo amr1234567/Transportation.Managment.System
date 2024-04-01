@@ -9,7 +9,6 @@ namespace Interfaces.IApplicationServices
 {
     public interface ISeatServices
     {
-        Task AddSeat(SeatDto seatDto);
-        Task ReserveSeat(int id, SeatDto seatDto);
+        Task ReserveSeat(int id);
     }
 }
