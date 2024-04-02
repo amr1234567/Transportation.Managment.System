@@ -128,8 +128,7 @@ namespace Services.IdentityServices
                 Email = NewUser.Email,
                 Name = NewUser.Name,
                 UserName = new MailAddress(NewUser.Email).User,
-                PhoneNumber = NewUser.PhoneNumber,
-                PhoneNumberConfirmed = false,
+                PhoneNumber = NewUser.PhoneNumber
             };
             var response = await _userManager.CreateAsync(appUser, NewUser.Password);
             if (!response.Succeeded)
@@ -137,23 +136,22 @@ namespace Services.IdentityServices
 
 
             #region Add Role
-            //---------------------------------------------------------------------
+
             var User = await _userManager.FindByEmailAsync(appUser.Email);
             if (User == null)
                 return string.Empty;
-            var res = await _userManager.AddToRoleAsync(User, "User");
+            var res = await _userManager.AddToRoleAsync(User, Roles.User);
             if (!res.Succeeded)
                 return string.Empty;
-
-            //---------------------------------------------------------------------
 
             #endregion
 
             #region Custom Code
-            //var code = _smsSevices.GenerateCode();
-            //var message = _smsSevices.Send($"Verification Code : {code}", appUser.PhoneNumber);
+            var code = _smsSevices.GenerateCode();
+            var _ = _smsSevices.Send($"Verification Code : {code}", appUser.PhoneNumber);
 
-            //return code; 
+            return code;
+
             #endregion
 
             #region Phone Verification First Try
@@ -181,7 +179,7 @@ namespace Services.IdentityServices
             //    );
             //_mailServices.SendEmail(message); 
             #endregion
-            return "Done";
+            //return code;
         }
     }
 }

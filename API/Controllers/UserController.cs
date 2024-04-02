@@ -27,10 +27,13 @@ namespace API.Controllers
                 return BadRequest();
             Response.Headers.Add("Vf-Code", response);
             return Ok();
+
+            #region Confirm With Email
             //var url = Url.Action(nameof(ConfirmEmail), "Authentication");
             //var res = await _userServices.SignUp(model, url);
 
-            //return res ? Ok("All is good") : BadRequest("Something went Wrong");
+            //return res ? Ok("All is good") : BadRequest("Something went Wrong"); 
+            #endregion
         }
 
         // PUT api/<UserController>/5
@@ -56,12 +59,16 @@ namespace API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var response = await _userServices.SignIn(model);
+
             if (response.StatusCode == 200)
                 return Ok(response);
+
             if (response.StatusCode == 400)
                 return BadRequest(response);
+
             if (response.StatusCode == 404)
                 return NotFound(response);
+
             return Unauthorized(response.Message);
         }
     }

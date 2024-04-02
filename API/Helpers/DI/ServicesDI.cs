@@ -22,6 +22,8 @@ namespace API.Helpers.DI
             services.AddScoped<ITicketServices, TicketServices>();
 
             services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IManagerServices, ManagerServices>();
+            services.AddScoped<IAdminServices, AdminServices>();
             services.AddScoped<IMailServices, MailServices>();
             services.AddScoped<ISmsSevices, SmsServices>();
             services.AddScoped<ITokenService, TokenService>();

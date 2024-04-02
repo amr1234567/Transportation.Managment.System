@@ -11,7 +11,6 @@ namespace Infrastructure.Context
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-
         }
 
         public DbSet<ApplicationAdmin> Admins { get; set; }
@@ -30,6 +29,5 @@ namespace Infrastructure.Context
             builder.SeedAppData();
             builder.EditTables();
         }
-
     }
 }
