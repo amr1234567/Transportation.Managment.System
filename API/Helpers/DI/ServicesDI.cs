@@ -1,7 +1,11 @@
-﻿using Interfaces.IApplicationServices;
+﻿using ECommerce.Core.Interfaces.IServices;
+using ECommerce.InfaStructure.Services;
+using Interfaces.IApplicationServices;
+using Interfaces.IHelpersServices;
 using Interfaces.IIdentityServices;
 using Interfaces.IMailServices;
 using Services.ApplicationServices;
+using Services.HelperServices;
 using Services.IdentityServices;
 using Services.MailServices;
 
@@ -19,6 +23,8 @@ namespace API.Helpers.DI
 
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IMailServices, MailServices>();
+            services.AddScoped<ISmsSevices, SmsServices>();
+            services.AddScoped<ITokenService, TokenService>();
             return services;
         }
     }

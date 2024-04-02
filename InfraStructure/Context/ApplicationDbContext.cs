@@ -27,7 +27,7 @@ namespace Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            //builder.SeedAppData();
+            builder.SeedAppData();
             builder.Entity<ApplicationAdmin>().ToTable(nameof(ApplicationAdmin));
             builder.Entity<ApplicationUser>().ToTable(nameof(ApplicationUser));
             builder.Entity<BusStopManger>().ToTable(nameof(BusStopManger));

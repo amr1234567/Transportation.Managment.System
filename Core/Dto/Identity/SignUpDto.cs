@@ -19,6 +19,11 @@ namespace Core.Dto.Identity
         [StringLength(30, MinimumLength = 3)]
         public string Name { get; set; }
 
+        [Display(Name = "Phone Number")]
+        [Required(ErrorMessage = "{0} must contain a value")]
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; }
+
         [Display(Name = "Password")]
         [Required(ErrorMessage = "{0} must contain a value")]
         [DataType(DataType.Password)]

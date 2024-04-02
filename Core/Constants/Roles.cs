@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace Core.Constants
 {
-    public enum Roles
+    public class Roles
     {
-        [Description("User")]
-        User,
-        [Description("Admin")]
-        Admin,
-        [Description("BusStopManager")]
-        BusStopManager
+        public const string Admin = "Admin";
+        public const string User = "User";
+        public const string BusStopManager = "Manager";
     }
 }

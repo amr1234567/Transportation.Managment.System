@@ -16,16 +16,19 @@ namespace API.Helpers.DI
                 options.UseSqlServer(_configuration.GetConnectionString("AppConnString"));
             });
 
-            services.AddIdentityCore<User>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = true;
-            })
+            services.AddIdentityCore<User>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddIdentityCore<BusStopManger>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddIdentityCore<ApplicationAdmin>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddIdentityCore<ApplicationUser>()
+
+            services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedPhoneNumber = true;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 

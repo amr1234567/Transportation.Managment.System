@@ -10,7 +10,7 @@ namespace API.Helpers
 {
     public static class AuthConfiguration
     {
-        public static IServiceCollection ConfigAuth(this IServiceCollection services, IConfiguration Configuration)
+        public static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddAuthentication(options =>
             {
@@ -26,8 +26,6 @@ namespace API.Helpers
                     {
                         ValidateIssuer = true,
                         ValidIssuer = Configuration["JWT:issuer"],
-                        ValidateAudience = true,
-                        ValidAudience = Configuration["JWT:audience"],
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))

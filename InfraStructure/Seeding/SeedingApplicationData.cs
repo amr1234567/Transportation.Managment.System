@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using InfraStructure.Seeding;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Infrastructure.Seeding
     {
         public static void SeedAppData(this ModelBuilder model)
         {
-
+            model.SeedRoles();
         }
     }
 }
