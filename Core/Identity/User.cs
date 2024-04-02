@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace Core.Identity
 {
-    public class User : IdentityUser<Guid>
+    public class User : IdentityUser
     {
         [Required(ErrorMessage = "{0} must contain a value")]
+        [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "User Name")]
         public string Name { get; set; }
     }
 }

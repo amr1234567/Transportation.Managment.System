@@ -12,14 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InfraStructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240401201712_firstEdit")]
-    partial class firstEdit
+    [Migration("20240402194358_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("Security")
                 .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -27,9 +28,8 @@ namespace InfraStructure.Migrations
 
             modelBuilder.Entity("Core.Identity.User", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -53,7 +53,8 @@ namespace InfraStructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -92,7 +93,7 @@ namespace InfraStructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AspNetUsers", "Security");
 
                     b.UseTptMappingStrategy();
                 });
@@ -113,7 +114,7 @@ namespace InfraStructure.Migrations
 
                     b.HasIndex("BusStopId");
 
-                    b.ToTable("Buses");
+                    b.ToTable("Buses", "App");
                 });
 
             modelBuilder.Entity("Core.Models.BusStop", b =>
@@ -124,11 +125,12 @@ namespace InfraStructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("BusStops");
+                    b.ToTable("BusStops", "App");
                 });
 
             modelBuilder.Entity("Core.Models.Journey", b =>
@@ -137,8 +139,8 @@ namespace InfraStructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ArrivalTime")
                         .HasColumnType("datetime2");
@@ -168,7 +170,7 @@ namespace InfraStructure.Migrations
 
                     b.HasIndex("StartBusStopId");
 
-                    b.ToTable("Journeys");
+                    b.ToTable("Journeys", "App");
                 });
 
             modelBuilder.Entity("Core.Models.Seat", b =>
@@ -190,16 +192,13 @@ namespace InfraStructure.Migrations
 
                     b.HasIndex("BusId");
 
-                    b.ToTable("Seats");
+                    b.ToTable("Seats", "App");
                 });
 
             modelBuilder.Entity("Core.Models.Ticket", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BusId")
@@ -214,12 +213,10 @@ namespace InfraStructure.Migrations
                     b.Property<Guid>("SeatId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("BusId");
 
@@ -227,14 +224,15 @@ namespace InfraStructure.Migrations
 
                     b.HasIndex("SeatId");
 
-                    b.ToTable("Tickets");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Tickets", "App");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -255,10 +253,33 @@ namespace InfraStructure.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", "Security");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "35561bfe-d346-4b70-8380-b15d23edbe2e",
+                            ConcurrencyStamp = "1",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "a7d62d27-150f-4165-961e-e5095e09ddb1",
+                            ConcurrencyStamp = "2",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "47470826-cdc6-4eb0-9ebe-75f10c89c1da",
+                            ConcurrencyStamp = "3",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -272,17 +293,18 @@ namespace InfraStructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims", "Security");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -296,17 +318,18 @@ namespace InfraStructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims", "Security");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -317,35 +340,36 @@ namespace InfraStructure.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins", "Security");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles", "Security");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -358,21 +382,21 @@ namespace InfraStructure.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens", "Security");
                 });
 
             modelBuilder.Entity("Core.Identity.ApplicationAdmin", b =>
                 {
                     b.HasBaseType("Core.Identity.User");
 
-                    b.ToTable("ApplicationAdmin", (string)null);
+                    b.ToTable("Admins", "Security");
                 });
 
             modelBuilder.Entity("Core.Identity.ApplicationUser", b =>
                 {
                     b.HasBaseType("Core.Identity.User");
 
-                    b.ToTable("ApplicationUser", (string)null);
+                    b.ToTable("Users", "Security");
                 });
 
             modelBuilder.Entity("Core.Identity.BusStopManger", b =>
@@ -384,7 +408,7 @@ namespace InfraStructure.Migrations
 
                     b.HasIndex("BusStopId");
 
-                    b.ToTable("BusStopManger", (string)null);
+                    b.ToTable("Managers", "Security");
                 });
 
             modelBuilder.Entity("Core.Models.Bus", b =>
@@ -438,10 +462,6 @@ namespace InfraStructure.Migrations
 
             modelBuilder.Entity("Core.Models.Ticket", b =>
                 {
-                    b.HasOne("Core.Identity.ApplicationUser", null)
-                        .WithMany("Tickets")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Core.Models.Bus", "Bus")
                         .WithMany()
                         .HasForeignKey("BusId")
@@ -460,23 +480,29 @@ namespace InfraStructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Core.Identity.ApplicationUser", "User")
+                        .WithMany("Tickets")
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Bus");
 
                     b.Navigation("Journey");
 
                     b.Navigation("Seat");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("Core.Identity.User", null)
                         .WithMany()
@@ -485,7 +511,7 @@ namespace InfraStructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.HasOne("Core.Identity.User", null)
                         .WithMany()
@@ -494,9 +520,9 @@ namespace InfraStructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -509,7 +535,7 @@ namespace InfraStructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("Core.Identity.User", null)
                         .WithMany()

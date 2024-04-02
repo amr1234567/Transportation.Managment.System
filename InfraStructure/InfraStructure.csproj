@@ -22,9 +22,4 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Seeding\Application\" />
-	  <Folder Include="Seeding\Identity\" />
-	</ItemGroup>
 </Project>

@@ -1,13 +1,13 @@
 ﻿using Core.Identity;
 using Core.Models;
-using Infrastructure.Seeding;
+using InfraStructure.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Context
 {
-    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -28,9 +28,7 @@ namespace Infrastructure.Context
         {
             base.OnModelCreating(builder);
             builder.SeedAppData();
-            builder.Entity<ApplicationAdmin>().ToTable(nameof(ApplicationAdmin));
-            builder.Entity<ApplicationUser>().ToTable(nameof(ApplicationUser));
-            builder.Entity<BusStopManger>().ToTable(nameof(BusStopManger));
+            builder.EditTables();
         }
 
     }

@@ -14,6 +14,8 @@ namespace Core.Models
         [Key]
         public Guid SeatId { get; set; }
 
+        [Required]
+        [Range(1, 40)]
         public int SeatNum { get; set; }
         public bool IsAvailable { get; set; } = true;
 

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InfraStructure.Seeding
+namespace InfraStructure.Helpers.Seeding
 {
-    public static class SeedingBusStopManagerData
+    public static class SeedingIdentityData
     {
-        public static void SeedBusStopManagerData(this ModelBuilder model)
+        public static void SeedAdmins(this ModelBuilder model)
         {
 
         }
