@@ -25,6 +25,7 @@ namespace API.Helpers
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
+                        ValidateAudience = false,
                         ValidIssuer = Configuration["JWT:issuer"],
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero,

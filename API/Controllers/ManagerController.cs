@@ -3,12 +3,9 @@ using Core.Dto.Identity;
 using Core.Dto;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Services.IdentityServices;
 using Interfaces.IApplicationServices;
 using Core.Models;
-using Services.ApplicationServices;
 using Core.Helpers.Functions;
 
 namespace API.Controllers

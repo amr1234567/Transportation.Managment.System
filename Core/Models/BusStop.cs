@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Core.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,5 +19,9 @@ namespace Core.Models
         public string Name { get; set; }
 
         public List<Bus>? buses { get; set; } = new List<Bus>();
+        [Required]
+        [ForeignKey(nameof(manger))]
+        public string? managerId { get; set; }
+        public BusStopManger? manger { get; set; }
     }
 }

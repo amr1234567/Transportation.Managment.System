@@ -13,7 +13,6 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = Roles.User)]
     public class UserController(IUserServices userServices, ITicketServices ticketServices) : ControllerBase
     {
         private readonly IUserServices _userServices = userServices;
@@ -103,10 +102,11 @@ namespace API.Controllers
             });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpGet("AllByUser")]
         public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByUserId()
         {
-            var tikets = await _ticketServices.GetAllTicketsByUserId(Guid.Parse(GetUserIdFromClaims());
+            var tikets = await _ticketServices.GetAllTicketsByUserId(Guid.Parse(GetUserIdFromClaims()));
             return Ok(new ResponseModel<List<ReturnedTicketDto>>
             {
                 StatusCode = 200,
@@ -115,6 +115,7 @@ namespace API.Controllers
             });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> BookTicket(TicketDto model)
         {

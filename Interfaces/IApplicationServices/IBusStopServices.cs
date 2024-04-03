@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Dto;
+using Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace Interfaces.IApplicationServices
     {
         Task<List<BusStop>> GetAllBusStops();
         Task<List<Bus>> GetBusesByBusStopId(Guid id);
+        Task<BusStop> AddBusStop(BusStopDto model, string ManagerId);
     }
 }

@@ -59,6 +59,7 @@ namespace API.Controllers
             });
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("CreateManager")]
         public async Task<ActionResult<ResponseModel<string>>> CreateManager(SignUpDto model)
         {

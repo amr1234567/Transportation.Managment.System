@@ -1,5 +1,7 @@
-﻿using Core.Models;
+﻿using Core.Constants;
+using Core.Models;
 using Interfaces.IApplicationServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +9,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = $"{Roles.BusStopManager},{Roles.User},{Roles.Admin}")]
     public class BusStopsController : ControllerBase
     {
         private readonly IBusStopServices _busStopServices;

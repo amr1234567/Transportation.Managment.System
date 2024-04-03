@@ -35,7 +35,7 @@ namespace Services.ApplicationServices
 
 
         public async Task<List<Journey>> GetAllJourneys() =>
-            await _context.Journeys.ToListAsync();
+            await _context.Journeys.Include(j => j.Bus).Include(j => j.Destination).Include(j => j.StartBusStop).ToListAsync();
 
 
 

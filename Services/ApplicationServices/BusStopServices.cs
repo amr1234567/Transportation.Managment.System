@@ -3,11 +3,6 @@ using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.ApplicationServices
 {
@@ -16,19 +11,20 @@ namespace Services.ApplicationServices
         private readonly ApplicationDbContext _context = context;
 
         public async Task<List<BusStop>> GetAllBusStops() =>
-            await _context.BusStops.ToListAsync();
+            await _context.BusStops.Include(bs=>bs.manger).Include(bs => bs.buses).ToListAsync();
 
 
         public async Task<BusStop> GetBusStopById(Guid id) =>
             await _context.BusStops.FindAsync(id);
 
 
-        public async Task<BusStop> AddBusStop(BusStopDto busStopDto)
+        public async Task<BusStop> AddBusStop(BusStopDto busStopDto, string ManagerId)
         {
             var busStop = new BusStop()
             {
                 Id = Guid.NewGuid(),
-                Name = busStopDto.Name
+                Name = busStopDto.Name,
+                managerId = ManagerId
             };
 
             await _context.BusStops.AddAsync(busStop);

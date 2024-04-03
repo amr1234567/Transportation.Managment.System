@@ -1,7 +1,9 @@
 ﻿using Core.Constants;
+using Core.Dto;
 using Core.Dto.Identity;
 using Core.Identity;
 using ECommerce.Core.Interfaces.IServices;
+using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Identity;
 using System.Net.Mail;
@@ -12,11 +14,13 @@ namespace Services.IdentityServices
     {
         private readonly UserManager<BusStopManger> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly IBusStopServices _busStopServices;
 
-        public ManagerServices(UserManager<BusStopManger> userManager, ITokenService tokenService)
+        public ManagerServices(UserManager<BusStopManger> userManager, ITokenService tokenService, IBusStopServices busStopServices)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _busStopServices = busStopServices;
         }
 
         public async Task<LogInResponse> SignIn(LogInDto User)
@@ -60,30 +64,37 @@ namespace Services.IdentityServices
             if (user != null)
                 return false;
 
-            var appUser = new BusStopManger
+            var NewManager = new BusStopManger
             {
                 Email = NewUser.Email,
                 Name = NewUser.Name,
                 UserName = new MailAddress(NewUser.Email).User,
-                PhoneNumber = NewUser.PhoneNumber,
-                PhoneNumberConfirmed = false,
+                PhoneNumber = NewUser.PhoneNumber
             };
-            var response = await _userManager.CreateAsync(appUser, NewUser.Password);
+
+            var response = await _userManager.CreateAsync(NewManager, NewUser.Password);
             if (!response.Succeeded)
                 return false;
 
 
-            var User = await _userManager.FindByEmailAsync(appUser.Email);
-            if (User == null)
+            var Manager = await _userManager.FindByEmailAsync(NewManager.Email);
+            if (Manager == null)
                 return false;
 
+            var busStop = await _busStopServices.AddBusStop(new BusStopDto
+            {
+                Name = NewManager.Name
+            }, Manager.Id);
 
-            var res = await _userManager.SetPhoneNumberAsync(User, NewUser.PhoneNumber);
+            Manager.BusStop = busStop;
+            await _userManager.UpdateAsync(Manager);
+
+            var res = await _userManager.SetPhoneNumberAsync(Manager, NewUser.PhoneNumber);
 
             if (!res.Succeeded)
                 return false;
 
-            var res2 = await _userManager.AddToRoleAsync(User, Roles.BusStopManager);
+            var res2 = await _userManager.AddToRoleAsync(Manager, Roles.BusStopManager);
             if (!res2.Succeeded)
                 return false;
             return true;

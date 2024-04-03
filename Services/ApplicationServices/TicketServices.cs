@@ -29,7 +29,7 @@ namespace Services.ApplicationServices
             await _seatServices.ReserveSeat(ticketDto.SeatId);
             await _context.Tickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
-            return ticket;
+            return await GetTicketById(ticket.Id);
         }
         public async Task<Ticket> CutTicket(TicketDto ticketDto) =>
             await GenerateTicket(ticketDto);
@@ -38,7 +38,7 @@ namespace Services.ApplicationServices
             await GenerateTicket(ticketDto, UserId);
 
         public async Task<List<Ticket>> GetAllTicket() =>
-             await _context.Tickets.Include(t => t.Seat).ToListAsync();
+             await _context.Tickets.Include(t => t.Seat).Include(t => t.Journey).Include(t => t.User).ToListAsync();
 
         public async Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id)
         {
@@ -61,11 +61,11 @@ namespace Services.ApplicationServices
         }
 
         public async Task<Ticket> GetTicketById(Guid id) =>
-            await _context.Tickets.Include(t => t.Seat).FirstOrDefaultAsync(t => t.Id.Equals(id));
+            await _context.Tickets.Include(t => t.Seat).Include(t=>t.User).Include(t=>t.Journey).FirstOrDefaultAsync(t => t.Id.Equals(id));
 
 
         public async Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime) =>
-            await _context.Tickets.Where(x => x.CreatedTime >= dateTime).ToListAsync();
+            await _context.Tickets.Include(t=>t.Seat).Where(x => x.CreatedTime >= dateTime).ToListAsync();
 
     }
 }
