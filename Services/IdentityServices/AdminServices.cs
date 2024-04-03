@@ -76,8 +76,13 @@ namespace Services.IdentityServices
             var User = await _userManager.FindByEmailAsync(appUser.Email);
             if (User == null)
                 return false;
-            var res = await _userManager.AddToRoleAsync(User, Roles.Admin);
+            var res = await _userManager.SetPhoneNumberAsync(User, NewUser.PhoneNumber);
+
             if (!res.Succeeded)
+                return false;
+
+            var res2 = await _userManager.AddToRoleAsync(User, Roles.Admin);
+            if (!res2.Succeeded)
                 return false;
             return true;
         }

@@ -134,14 +134,19 @@ namespace Services.IdentityServices
             if (!response.Succeeded)
                 return string.Empty;
 
+            var User = await _userManager.FindByEmailAsync(appUser.Email);
+
+            var res = await _userManager.SetPhoneNumberAsync(User, NewUser.PhoneNumber);
+
+            if (!res.Succeeded)
+                return string.Empty;
 
             #region Add Role
 
-            var User = await _userManager.FindByEmailAsync(appUser.Email);
             if (User == null)
                 return string.Empty;
-            var res = await _userManager.AddToRoleAsync(User, Roles.User);
-            if (!res.Succeeded)
+            var res2 = await _userManager.AddToRoleAsync(User, Roles.User);
+            if (!res2.Succeeded)
                 return string.Empty;
 
             #endregion
