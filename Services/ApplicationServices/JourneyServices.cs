@@ -10,14 +10,14 @@ namespace Services.ApplicationServices
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task AddJourney(JourneyDto journeyDto, Guid DestinationId, Guid StartNusStopId, Guid BusId) //wait
+        public async Task AddJourney(JourneyDto journeyDto) //wait
         {
             var journey = new Journey()
             {
                 Id = Guid.NewGuid(),
-                DestinationId = DestinationId,
-                StartBusStopId = StartNusStopId,
-                BusId = BusId,
+                DestinationId = journeyDto.DestinationId,
+                StartBusStopId = journeyDto.StartNusStopId,
+                BusId = journeyDto.BusId,
                 ArrivalTime = journeyDto.ArrivalTime,
                 LeavingTime = journeyDto.LeavingTime
             };

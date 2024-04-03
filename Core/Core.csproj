@@ -15,4 +15,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
 		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Helpers\Classes\" />
+	</ItemGroup>
 </Project>

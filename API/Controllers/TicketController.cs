@@ -1,5 +1,8 @@
-﻿using Interfaces.IApplicationServices;
+﻿using Core.Dto;
+using Core.Helpers.Functions;
+using Interfaces.IApplicationServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -7,44 +10,56 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketController : ControllerBase
+    public class TicketController(ITicketServices ticketServices) : ControllerBase
     {
-        private readonly ISeatServices _seatServices;
+        private readonly ITicketServices _ticketServices = ticketServices;
 
-        public TicketController(ISeatServices seatServices)
+        [HttpGet("All")]
+        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTickets()
         {
-            _seatServices = seatServices;
-        }
-        // GET: api/<TicketController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<TicketController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
+            var tikets = await _ticketServices.GetAllTicket();
+            return Ok(new ResponseModel<List<ReturnedTicketDto>>
+            {
+                StatusCode = 200,
+                Body = tikets.Convert(),
+                Message = "Done"
+            });
         }
 
-        // POST api/<TicketController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("AllByJourney/{id}")]
+        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByJourneyId(Guid id)
         {
+            var tikets = await _ticketServices.GetAllTicketsByJourneyId(id);
+            return Ok(new ResponseModel<List<ReturnedTicketDto>>
+            {
+                StatusCode = 200,
+                Body = tikets.Convert(),
+                Message = "Done"
+            });
         }
 
-        // PUT api/<TicketController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpGet("AllByReservedTime")]
+        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByReservedTime([FromBody] DateTime time)
         {
+            var tikets = await _ticketServices.GetTicketsByReservedTime(time);
+            return Ok(new ResponseModel<List<ReturnedTicketDto>>
+            {
+                StatusCode = 200,
+                Body = tikets.Convert(),
+                Message = "Done"
+            });
         }
 
-        // DELETE api/<TicketController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpGet("ticket/{id}")]
+        public async Task<ActionResult<ResponseModel<ReturnedTicketDto>>> GetTicket(Guid id)
         {
+            var ticket = await _ticketServices.GetTicketById(id);
+            return Ok(new ResponseModel<ReturnedTicketDto>
+            {
+                StatusCode = 200,
+                Message = "Done",
+                Body = ticket.ConvertToDto()
+            });
         }
     }
 }

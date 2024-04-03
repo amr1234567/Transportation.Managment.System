@@ -1,6 +1,10 @@
-﻿using Core.Dto;
+﻿using Core.Constants;
+using Core.Dto;
 using Core.Dto.Identity;
+using Core.Helpers.Functions;
+using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,15 +13,12 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    [Authorize(Roles = Roles.User)]
+    public class UserController(IUserServices userServices, ITicketServices ticketServices) : ControllerBase
     {
-        private readonly IUserServices _userServices;
+        private readonly IUserServices _userServices = userServices;
+        private readonly ITicketServices _ticketServices = ticketServices;
 
-        public UserController(IUserServices userServices)
-        {
-            _userServices = userServices;
-        }
-        // POST api/<UserController>
         [HttpPost("SignUp")]
         public async Task<ActionResult<ResponseModel<string>>> SignUp([FromBody] SignUpDto model)
         {
@@ -47,7 +48,6 @@ namespace API.Controllers
             #endregion
         }
 
-        // PUT api/<UserController>/5
         [HttpPost("ConfirmEmail")]
         public async Task<ActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
@@ -103,6 +103,40 @@ namespace API.Controllers
             });
         }
 
+        [HttpGet("AllByUser")]
+        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByUserId()
+        {
+            var tikets = await _ticketServices.GetAllTicketsByUserId(Guid.Parse(GetUserIdFromClaims());
+            return Ok(new ResponseModel<List<ReturnedTicketDto>>
+            {
+                StatusCode = 200,
+                Body = tikets.Convert(),
+                Message = "Done"
+            });
+        }
 
+        [HttpPost]
+        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> BookTicket(TicketDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                {
+                    StatusCode = 400,
+                    Message = "Input is invalid"
+                });
+            var ticket = await _ticketServices.BookTicket(model, GetUserIdFromClaims());
+            return Ok(new ResponseModel<ReturnedTicketDto>
+            {
+                Message = "Done Booking",
+                StatusCode = 200,
+                Body = ticket.ConvertToDto()
+            });
+        }
+
+        private string GetUserIdFromClaims()
+        {
+            var id = User.Claims.FirstOrDefault(c => c.ValueType.Equals("Id"));
+            return id.Value;
+        }
     }
 }

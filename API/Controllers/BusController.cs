@@ -50,7 +50,6 @@ namespace API.Controllers
             };
         }
 
-        // PUT api/<BusController>/5
         [HttpPut("{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto busDto)
         {

@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services.ApplicationServices
 {
-    public class TicketServices(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : ITicketServices
+    public class TicketServices(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ISeatServices seatServices) : ITicketServices
     {
         private readonly ApplicationDbContext _context = context;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly ISeatServices _seatServices = seatServices;
 
         private async Task<Ticket> GenerateTicket(TicketDto ticketDto, string UserId = null)
         {
@@ -25,6 +26,7 @@ namespace Services.ApplicationServices
                 UserId = UserId
             };
 
+            await _seatServices.ReserveSeat(ticketDto.SeatId);
             await _context.Tickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
             return ticket;
@@ -36,7 +38,7 @@ namespace Services.ApplicationServices
             await GenerateTicket(ticketDto, UserId);
 
         public async Task<List<Ticket>> GetAllTicket() =>
-             await _context.Tickets.ToListAsync();
+             await _context.Tickets.Include(t => t.Seat).ToListAsync();
 
         public async Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id)
         {
@@ -59,7 +61,7 @@ namespace Services.ApplicationServices
         }
 
         public async Task<Ticket> GetTicketById(Guid id) =>
-            await _context.Tickets.FirstOrDefaultAsync(t => t.Id.Equals(id));
+            await _context.Tickets.Include(t => t.Seat).FirstOrDefaultAsync(t => t.Id.Equals(id));
 
 
         public async Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime) =>

@@ -1,6 +1,7 @@
 ﻿using Core.Constants;
 using Core.Dto;
 using Core.Dto.Identity;
+using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,16 +12,10 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : ControllerBase
+    public class AdminController(IAdminServices adminServices, IManagerServices managerServices) : ControllerBase
     {
-        private readonly IAdminServices _adminServices;
-        private readonly IManagerServices _managerServices;
-
-        public AdminController(IAdminServices adminServices, IManagerServices managerServices)
-        {
-            _adminServices = adminServices;
-            _managerServices = managerServices;
-        }
+        private readonly IAdminServices _adminServices = adminServices;
+        private readonly IManagerServices _managerServices = managerServices;
 
         //[NonAction]
         [Authorize(Roles = Roles.Admin)]

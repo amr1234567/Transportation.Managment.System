@@ -8,22 +8,21 @@ using Microsoft.AspNetCore.Mvc;
 using Services.IdentityServices;
 using Interfaces.IApplicationServices;
 using Core.Models;
+using Services.ApplicationServices;
+using Core.Helpers.Functions;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = Roles.BusStopManager)]
     [ApiController]
-    public class ManagerController : ControllerBase
+    public class ManagerController(IBusServices busServices, ITicketServices ticketServices, IManagerServices managerServices, IJourneyServices journeyServices) : ControllerBase
     {
-        private readonly IBusServices _busServices;
-        private readonly IManagerServices _managerServices;
+        private readonly IBusServices _busServices = busServices;
+        private readonly ITicketServices _ticketServices = ticketServices;
+        private readonly IManagerServices _managerServices = managerServices;
+        private readonly IJourneyServices _journeyServices = journeyServices;
 
-        public ManagerController(IBusServices busServices, IManagerServices managerServices)
-        {
-            _busServices = busServices;
-            _managerServices = managerServices;
-        }
         [AllowAnonymous]
         [HttpPost("SignIn")]
         public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn(LogInDto model)
@@ -45,7 +44,8 @@ namespace API.Controllers
                 Body = response.TokenModel
             });
         }
-        [HttpPost]
+
+        [HttpPost("AddBus")]
         public async Task<ActionResult<ResponseModel<bool>>> AddBus([FromBody] BusDto model)
         {
             if (!ModelState.IsValid)
@@ -61,5 +61,75 @@ namespace API.Controllers
                 Message = "Bus Added"
             });
         }
+
+        [HttpPost("AddJourney")]
+        public async Task<ActionResult<ResponseModel<bool>>> AddJourney([FromBody] JourneyDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResponseModel<bool>
+                {
+                    StatusCode = 400,
+                    Message = "Error"
+                });
+            await _journeyServices.AddJourney(model);
+            return Ok(new ResponseModel<bool>
+            {
+                StatusCode = 200,
+                Message = "Journey Added"
+            });
+        }
+
+        [HttpPost("SetArrivalTime/{id}")]
+        public async Task<ActionResult<ResponseModel<bool>>> SetArrivalTime([FromBody] DateTime time, [FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResponseModel<bool>
+                {
+                    StatusCode = 400,
+                    Message = "Error"
+                });
+            await _journeyServices.SetArrivalTime(time, id);
+            return Ok(new ResponseModel<bool>
+            {
+                StatusCode = 200,
+                Message = "Journey Edited"
+            });
+        }
+
+        [HttpPost("SetLeavingTime/{id}")]
+        public async Task<ActionResult<ResponseModel<bool>>> SetLeavingTime([FromBody] DateTime time, [FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResponseModel<bool>
+                {
+                    StatusCode = 400,
+                    Message = "Error"
+                });
+            await _journeyServices.SetLeavingTime(time, id);
+            return Ok(new ResponseModel<bool>
+            {
+                StatusCode = 200,
+                Message = "Journey Edited"
+            });
+        }
+
+        [HttpPost("CutTicket")]
+        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> CutTicket(TicketDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                {
+                    StatusCode = 400,
+                    Message = "Input is invalid"
+                });
+            var ticket = await _ticketServices.CutTicket(model);
+            return Ok(new ResponseModel<ReturnedTicketDto>
+            {
+                Message = "Done Booking",
+                StatusCode = 200,
+                Body = ticket.ConvertToDto()
+            });
+        }
+
     }
 }
