@@ -13,6 +13,6 @@ namespace Interfaces.IApplicationServices
         Task AddBus(BusDto busDto);
         Task<List<Bus>> GetAllBuses();
         Task<Bus> GetBusById(Guid Id);
-        Task<Bus> EditBus(Guid Id, BusDto busDto);
+        Task<ResponseModel<Bus>> EditBus(Guid Id, BusDto busDto);
     }
 }

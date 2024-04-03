@@ -1,6 +1,8 @@
-﻿using Core.Dto;
+﻿using Core.Constants;
+using Core.Dto;
 using Core.Models;
 using Interfaces.IApplicationServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,6 +11,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = $"{Roles.BusStopManager},{Roles.Admin}")]
     public class BusController : ControllerBase
     {
         private readonly IBusServices _busService;
@@ -18,39 +21,43 @@ namespace API.Controllers
             _busService = busService;
         }
 
-
-        // GET: api/<BusController>
         [HttpGet]
-        public async Task<ActionResult<List<Bus>>> Get()
+        public async Task<ActionResult<ResponseModel<List<Bus>>>> GetAllBuses()
         {
-            return await _busService.GetAllBuses();
+            return new ResponseModel<List<Bus>>
+            {
+                StatusCode = 200,
+                Message = "Done",
+                Body = await _busService.GetAllBuses()
+            };
         }
 
-        // GET api/<BusController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{BusId}")]
+        public async Task<ActionResult<ResponseModel<Bus>>> GetBus([FromRoute] Guid BusId)
         {
-            return "value";
-        }
-
-        // POST api/<BusController>
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] BusDto model)
-        {
-            await _busService.AddBus(model);
-            return Ok();
+            var bus = await _busService.GetBusById(BusId);
+            if (bus == null)
+                return new ResponseModel<Bus>
+                {
+                    StatusCode = 400,
+                    Message = "No bus with this id"
+                };
+            return new ResponseModel<Bus>
+            {
+                StatusCode = 200,
+                Message = "Done",
+                Body = bus
+            };
         }
 
         // PUT api/<BusController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{BusId}")]
+        public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto busDto)
         {
-        }
-
-        // DELETE api/<BusController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var res = await _busService.EditBus(BusId, busDto);
+            if (res.StatusCode == 200)
+                return Ok(res);
+            return BadRequest(res);
         }
     }
 }

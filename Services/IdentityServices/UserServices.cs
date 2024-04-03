@@ -1,4 +1,5 @@
 ﻿using Core.Constants;
+using Core.Dto;
 using Core.Dto.Email;
 using Core.Dto.Identity;
 using Core.Helpers;
@@ -10,6 +11,7 @@ using Interfaces.IMailServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Services.HelperServices;
 using System.Net.Mail;
 using System.Runtime;
 using Twilio.Rest.Verify.V2.Service;
@@ -17,7 +19,7 @@ using Twilio.Types;
 
 namespace Services.IdentityServices
 {
-    public class UserServices : Interfaces.IIdentityServices.IUserServices
+    public class UserServices : IUserServices
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMailServices _mailServices;
@@ -185,6 +187,33 @@ namespace Services.IdentityServices
             //_mailServices.SendEmail(message); 
             #endregion
             //return code;
+        }
+        public async Task<string> ResetPassword(string PnoneNumber)
+        {
+            var user = _userManager.Users.FirstOrDefault(x => x.PhoneNumber == PnoneNumber);
+            if (user == null) return string.Empty;
+            var code = _smsSevices.GenerateCode();
+            var _ = _smsSevices.Send($"Verification Code : {code}", PnoneNumber);
+            return code;
+        }
+
+
+        public async Task<ResponseModel<string>> ResetPasswordConfirmation(string code, string password, string email, string Realcode)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                throw new Exception();
+            if (Realcode != code)
+                throw new Exception();
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, password);
+            return new ResponseModel<string>
+            {
+                Message = "Code sent to phoneNumber",
+                StatusCode = 200
+            };
+
         }
     }
 }

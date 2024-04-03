@@ -6,14 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services.ApplicationServices
 {
-    public class JourneyServices : IJourneyServices
+    public class JourneyServices(ApplicationDbContext context) : IJourneyServices
     {
-        private readonly ApplicationDbContext _context;
-
-        public JourneyServices(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task AddJourney(JourneyDto journeyDto, Guid DestinationId, Guid StartNusStopId, Guid BusId) //wait
         {
@@ -32,8 +27,11 @@ namespace Services.ApplicationServices
         }
 
 
-        public async Task<List<Journey>> GetAllJourneysByBusStopId(Guid id) =>
-             await _context.Journeys.Where(x => x.StartBusStop.Id.Equals(id)).ToListAsync();
+        public async Task<List<Journey>> GetAllJourneysByStartBusStopId(Guid id) =>
+             await _context.Journeys.Where(x => x.StartBusStopId.Equals(id)).ToListAsync();
+
+        public async Task<List<Journey>> GetAllJourneysByDestinationBusStopId(Guid id) =>
+             await _context.Journeys.Where(x => x.DestinationId.Equals(id)).ToListAsync();
 
 
         public async Task<List<Journey>> GetAllJourneys() =>
@@ -46,10 +44,14 @@ namespace Services.ApplicationServices
 
         public async Task<Journey> GetNearestJourneyByDestination(Guid destinationId, Guid startBusStopId) // wait
         {
-            var buses = _context.Journeys.Where(j => j.StartBusStopId.Equals(startBusStopId) && j.DestinationId.Equals(destinationId));
+            var buses = _context.Journeys
+                .Where(j => j.StartBusStopId.Equals(startBusStopId) && j.DestinationId.Equals(destinationId));
+
             if (buses is null || !buses.Any())
                 throw new Exception("No Buses");
+
             var busesCounted = buses.OrderBy(b => b.LeavingTime);
+
             return await busesCounted.FirstAsync();
         }
 
@@ -59,6 +61,7 @@ namespace Services.ApplicationServices
             var journey = await GetJourneyById(id);
             if (journey is null)
                 throw new NullReferenceException(nameof(journey));
+
             journey.ArrivalTime = time;
             await _context.SaveChangesAsync();
         }
@@ -68,6 +71,7 @@ namespace Services.ApplicationServices
             var journey = await GetJourneyById(id);
             if (journey is null)
                 throw new NullReferenceException(nameof(journey));
+
             journey.LeavingTime = time;
             await _context.SaveChangesAsync();
         }

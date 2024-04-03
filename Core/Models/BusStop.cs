@@ -16,6 +16,6 @@ namespace Core.Models
         [StringLength(50, MinimumLength = 10)]
         public string Name { get; set; }
 
-        public List<Bus>? buses { get; set; }
+        public List<Bus>? buses { get; set; } = new List<Bus>();
     }
 }

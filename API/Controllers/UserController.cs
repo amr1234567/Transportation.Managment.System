@@ -1,4 +1,5 @@
-﻿using Core.Dto.Identity;
+﻿using Core.Dto;
+using Core.Dto.Identity;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,15 +19,25 @@ namespace API.Controllers
         }
         // POST api/<UserController>
         [HttpPost("SignUp")]
-        public async Task<ActionResult> SignUp([FromBody] SignUpDto model)
+        public async Task<ActionResult<ResponseModel<string>>> SignUp([FromBody] SignUpDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var response = await _userServices.SignUp(model);
             if (string.IsNullOrEmpty(response))
-                return BadRequest();
+                return BadRequest(new ResponseModel<string>
+                {
+                    StatusCode = 400,
+                    Body = response,
+                    Message = "Bad Email or password"
+                });
             Response.Headers.Add("Vf-Code", response);
-            return Ok();
+            return Ok(new ResponseModel<string>
+            {
+                StatusCode = 200,
+                Body = response,
+                Message = "Signed Up"
+            });
 
             #region Confirm With Email
             //var url = Url.Action(nameof(ConfirmEmail), "Authentication");
@@ -54,22 +65,44 @@ namespace API.Controllers
         }
 
         [HttpPost("SignIn")]
-        public async Task<ActionResult> SignIn([FromBody] LogInDto model)
+        public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn([FromBody] LogInDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var response = await _userServices.SignIn(model);
 
             if (response.StatusCode == 200)
-                return Ok(response);
+                return Ok(new ResponseModel<TokenModel>
+                {
+                    StatusCode = response.StatusCode,
+                    Message = response.Message,
+                    Body = response.TokenModel
+                });
 
             if (response.StatusCode == 400)
-                return BadRequest(response);
+                return BadRequest(new ResponseModel<TokenModel>
+                {
+                    StatusCode = response.StatusCode,
+                    Message = response.Message,
+                    Body = response.TokenModel
+                });
 
             if (response.StatusCode == 404)
-                return NotFound(response);
+                return NotFound(new ResponseModel<TokenModel>
+                {
+                    StatusCode = response.StatusCode,
+                    Message = response.Message,
+                    Body = response.TokenModel
+                });
 
-            return Unauthorized(response.Message);
+            return Unauthorized(new ResponseModel<TokenModel>
+            {
+                StatusCode = 401,
+                Message = response.Message,
+                Body = response.TokenModel
+            });
         }
+
+
     }
 }

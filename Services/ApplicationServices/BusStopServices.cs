@@ -11,14 +11,9 @@ using System.Threading.Tasks;
 
 namespace Services.ApplicationServices
 {
-    public class BusStopServices : IBusStopServices
+    public class BusStopServices(ApplicationDbContext context) : IBusStopServices
     {
-        private readonly ApplicationDbContext _context;
-
-        public BusStopServices(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<List<BusStop>> GetAllBusStops() =>
             await _context.BusStops.ToListAsync();
@@ -30,15 +25,15 @@ namespace Services.ApplicationServices
 
         public async Task<BusStop> AddBusStop(BusStopDto busStopDto)
         {
-            var buses = new List<Bus>();
             var busStop = new BusStop()
             {
-                buses = buses,
                 Id = Guid.NewGuid(),
                 Name = busStopDto.Name
             };
+
             await _context.BusStops.AddAsync(busStop);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
             return busStop;
         }
 
@@ -46,6 +41,7 @@ namespace Services.ApplicationServices
         {
             var busStop = await _context.BusStops.Include(bs => bs.buses)
                 .FirstOrDefaultAsync(bs => bs.Id.Equals(id));
+
             if (busStop == null)
                 throw new ArgumentNullException(nameof(busStop));
             if (busStop.buses is null)

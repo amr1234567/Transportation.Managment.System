@@ -29,9 +29,10 @@ namespace Core.Models
 
         [Required]
         [ForeignKey(nameof(User))]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }
 
+        public string UserName => User.Name;
         public double Price => Journey.TicketPrice;
         public bool IsFinished => Journey.IsEnded;
     }

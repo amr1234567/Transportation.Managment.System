@@ -14,8 +14,9 @@ namespace Interfaces.IApplicationServices
         Task SetArrivalTime(DateTime time, Guid id);
         Task SetLeavingTime(DateTime time, Guid id);
         Task<List<Journey>> GetAllJourneys();
-        Task<List<Journey>> GetAllJourneysByBusStopId(Guid id);
         Task<Journey> GetNearestJourneyByDestination(Guid destinationId, Guid startBusStopId);
         Task<Journey> GetJourneyById(Guid id);
+        Task<List<Journey>> GetAllJourneysByDestinationBusStopId(Guid id);
+        Task<List<Journey>> GetAllJourneysByStartBusStopId(Guid id);
     }
 }

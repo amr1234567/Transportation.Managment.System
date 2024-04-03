@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services.ApplicationServices
 {
-    public class SeatServices : ISeatServices
+    public class SeatServices(ApplicationDbContext context) : ISeatServices
     {
-        private readonly ApplicationDbContext _context;
-
-        public SeatServices(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         public async Task ReserveSeat(Guid id)
         {
