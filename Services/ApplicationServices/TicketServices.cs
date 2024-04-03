@@ -1,67 +1,67 @@
 ﻿using Core.Dto;
+using Core.Identity;
 using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.ApplicationServices
 {
     public class TicketServices : ITicketServices
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TicketServices(ApplicationDbContext context)
+        public TicketServices(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        public Task GenerateTicket(TicketDto ticketDto)
+        public async Task GenerateTicket(TicketDto ticketDto)
         {
-            // Implement here bitch
-            //create new ticket and add it to DB
-            throw new NotImplementedException();
+            var ticket = new Ticket()
+            {
+                Id = Guid.NewGuid(),
+                CreatedTime = ticketDto.CreatedTime,
+                //SeatId =,
+                //BusId =,
+                //JourneyId =,
+                //UserId =
+            };
+
+            await _context.Tickets.AddAsync(ticket);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Ticket>> GetAllTicket() //done
+        public async Task<List<Ticket>> GetAllTicket() =>
+             await _context.Tickets.ToListAsync();
+
+        public async Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id)
         {
-            // Implement here bitch
-            //get all tickets from DB and return it
-            return await _context.Tickets.ToListAsync();
+            var journey = await _context.Journeys.Include(j => j.Tickets).FirstOrDefaultAsync(j => j.Id.Equals(id));
+            if (journey is null)
+                throw new NullReferenceException(nameof(journey));
+            if (journey.Tickets is null)
+                throw new NullReferenceException(nameof(journey));
+            return journey.Tickets;
         }
 
-        public Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id)
+        public async Task<List<Ticket>> GetAllTicketsByUserId(Guid id)
         {
-            // Implement here bitch
-            //get all tickets that cutted in journey with id "id" from DB and return it
-
-            throw new NotImplementedException();
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user is null)
+                throw new NullReferenceException($"{nameof(user)} is null");
+            return user.Tickets;
         }
 
-        public Task<List<Ticket>> GetAllTicketsByUserId(Guid id)
-        {
-            // Implement here bitch
-            //get all tickets that cutted with user who has id "id" from DB and return it
+        public async Task<Ticket> GetTicketById(Guid id) =>
+            await _context.Tickets.FirstOrDefaultAsync(t => t.Id.Equals(id));
 
-            throw new NotImplementedException();
-        }
 
-        public async Task<Ticket> GetTicketById(Guid id) //done
-        {
-            // Implement here bitch
-            // get ticket with id "id" and return it
-            return await _context.Tickets.FindAsync(id);
-        }
+        public async Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime) =>
+            await _context.Tickets.Where(x => x.CreatedTime >= dateTime).ToListAsync();
 
-        public async Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime)
-        {
-            // Implement here bitch
-            //get all tickets from "dateTime" to the present time
-            return await _context.Tickets.Where(x => x.CreatedTime == dateTime).ToListAsync();
-        }
     }
 }

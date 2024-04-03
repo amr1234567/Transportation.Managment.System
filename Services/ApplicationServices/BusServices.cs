@@ -17,6 +17,8 @@ namespace Services.ApplicationServices
 
         public async Task AddBus(BusDto busDto) //done
         {
+            if (busDto is null)
+                throw new ArgumentNullException(nameof(busDto));
             var Busid = Guid.NewGuid();
             List<Seat> seats = new List<Seat>();
 
@@ -37,6 +39,7 @@ namespace Services.ApplicationServices
                     BusId = Busid
                 });
             }
+
             await _context.Buses.AddAsync(bus);
             await _context.SaveChangesAsync();
         }
@@ -44,18 +47,25 @@ namespace Services.ApplicationServices
         {
             // Implement here bitch
             //edit the bus data with Id with busDto Data 
-            var bus = await _context.Buses.FindAsync(Id);
+            if (busDto is null)
+                throw new ArgumentNullException(nameof(busDto));
+
+            var bus = await GetBusById(Id);
+
+            if (bus is null)
+                throw new ArgumentNullException(nameof(bus));
             bus.NumberOfSeats = busDto.NumberOfSeats;
+
             await _context.SaveChangesAsync();
+
             return bus;
         }
 
         public async Task<List<Bus>> GetAllBuses() =>  //done
             await _context.Buses.Include(b => b.seats).ToListAsync();
 
-        public async Task<Bus> GetBusById(Guid Id) //done
-        {
-            return await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id));
-        }
+        public async Task<Bus> GetBusById(Guid Id) =>
+            await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id));
+
     }
 }

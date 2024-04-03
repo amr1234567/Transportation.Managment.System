@@ -19,18 +19,14 @@ namespace Services.ApplicationServices
         {
             _context = context;
         }
-        public async Task<List<BusStop>> GetAllBusStops() //done
-        {
-            //get all busStops from Db and return it
-            return await _context.BusStops.ToListAsync();
-        }
 
-        public async Task<BusStop> GetBusStopById(Guid id) //done
-        {
-            // Implement here bitch
-            //Get All Buses in busStop with id "Id" and return it
-            return await _context.BusStops.FindAsync(id);
-        }
+        public async Task<List<BusStop>> GetAllBusStops() =>
+            await _context.BusStops.ToListAsync();
+
+
+        public async Task<BusStop> GetBusStopById(Guid id) =>
+            await _context.BusStops.FindAsync(id);
+
 
         public async Task<BusStop> AddBusStop(BusStopDto busStopDto)
         {
@@ -46,9 +42,17 @@ namespace Services.ApplicationServices
             return busStop;
         }
 
-        public Task<List<Bus>> GetBusesByBusStopId(Guid id)
+        public async Task<List<Bus>> GetBusesByBusStopId(Guid id)
         {
-            throw new NotImplementedException();
+            var busStop = await _context.BusStops.Include(bs => bs.buses)
+                .FirstOrDefaultAsync(bs => bs.Id.Equals(id));
+            if (busStop == null)
+                throw new ArgumentNullException(nameof(busStop));
+            if (busStop.buses is null)
+                throw new NullReferenceException(nameof(busStop.buses));
+
+            return busStop.buses.ToList();
         }
+
     }
 }

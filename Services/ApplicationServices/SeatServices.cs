@@ -1,6 +1,6 @@
-﻿using Core.Dto;
-using Infrastructure.Context;
+﻿using Infrastructure.Context;
 using Interfaces.IApplicationServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.ApplicationServices
 {
@@ -13,12 +13,12 @@ namespace Services.ApplicationServices
             _context = context;
         }
 
-        public async Task ReserveSeat(int id)
+        public async Task ReserveSeat(Guid id)
         {
-            // Implement here bitch
-            //edit on seat field "IsAvailable" to false
-            var record = await _context.Seats.FindAsync(id);
-            record.IsAvailable = false;
+            var seat = await _context.Seats.FirstOrDefaultAsync(s => s.SeatId.Equals(id));
+            if (seat is null)
+                throw new NullReferenceException(nameof(seat));
+            seat.IsAvailable = false;
             await _context.SaveChangesAsync();
         }
     }

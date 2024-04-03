@@ -27,9 +27,9 @@ namespace Core.Models
         [Required]
         public DateTime CreatedTime { get; set; }
 
-        //[Required]
-        //[ForeignKey(nameof(User))]
-        //public Guid UserId { get; set; }
+        [Required]
+        [ForeignKey(nameof(User))]
+        public string UserId { get; set; }
         public ApplicationUser? User { get; set; }
 
         public double Price => Journey.TicketPrice;
