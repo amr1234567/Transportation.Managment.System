@@ -21,7 +21,7 @@ namespace Core.Dto
 
         public DateTime CreatedTime { get; set; }
 
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
         public double Price { get; set; }
         public bool IsFinished { get; set; }
     }

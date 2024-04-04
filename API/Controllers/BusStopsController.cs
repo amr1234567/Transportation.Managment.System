@@ -25,7 +25,7 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("AllBuses/{id}")]
         public async Task<ActionResult<List<Bus>>> GetAllBusesInBusStop(Guid id)
         {
             var buses = await _busStopServices.GetBusesByBusStopId(id);

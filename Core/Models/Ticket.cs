@@ -15,11 +15,6 @@ namespace Core.Models
         public Seat? Seat { get; set; }
 
         [Required]
-        [ForeignKey(nameof(Bus))]
-        public Guid BusId { get; set; }
-        public Bus? Bus { get; set; }
-
-        [Required]
         [ForeignKey(nameof(Journey))]
         public Guid JourneyId { get; set; }
         public Journey? Journey { get; set; }

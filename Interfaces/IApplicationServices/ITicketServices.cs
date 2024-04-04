@@ -10,12 +10,12 @@ namespace Interfaces.IApplicationServices
 {
     public interface ITicketServices
     {
-        Task<List<Ticket>> GetAllTicket();
+        Task<List<Ticket>> GetAllTickets();
         Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id);
         Task<List<Ticket>> GetAllTicketsByUserId(Guid id);
         Task<Ticket> GetTicketById(Guid id);
         Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime);
-        Task<Ticket> BookTicket(TicketDto ticketDto, string UserId);
-        Task<Ticket> CutTicket(TicketDto ticketDto);
+        Task<ResponseModel<bool>> BookTicket(TicketDto ticketDto, string UserId);
+        Task<ResponseModel<bool>> CutTicket(TicketDto ticketDto);
     }
 }

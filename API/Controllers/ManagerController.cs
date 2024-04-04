@@ -111,20 +111,21 @@ namespace API.Controllers
         }
 
         [HttpPost("CutTicket")]
-        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> CutTicket(TicketDto model)
+        public async Task<ActionResult<ResponseModel<bool>>> CutTicket(TicketDto model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                return BadRequest(new ResponseModel<bool>
                 {
                     StatusCode = 400,
-                    Message = "Input is invalid"
+                    Message = "Input is invalid",
+                    Body = false
                 });
             var ticket = await _ticketServices.CutTicket(model);
-            return Ok(new ResponseModel<ReturnedTicketDto>
+            return Ok(new ResponseModel<bool>
             {
                 Message = "Done Booking",
                 StatusCode = 200,
-                Body = ticket.ConvertToDto()
+                Body = true
             });
         }
 

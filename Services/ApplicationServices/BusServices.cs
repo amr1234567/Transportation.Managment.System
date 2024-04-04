@@ -3,6 +3,7 @@ using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Services.ApplicationServices
 {
@@ -21,7 +22,8 @@ namespace Services.ApplicationServices
             {
                 Id = Busid,
                 seats = seats,
-                NumberOfSeats = busDto.NumberOfSeats
+                NumberOfSeats = busDto.NumberOfSeats,
+                
             };
 
             for (int i = 1; i <= busDto.NumberOfSeats; i++)
@@ -38,10 +40,9 @@ namespace Services.ApplicationServices
             await _context.Buses.AddAsync(bus);
             await _context.SaveChangesAsync();
         }
+
         public async Task<ResponseModel<Bus>> EditBus(Guid Id, BusDto busDto) //done
         {
-            // Implement here bitch
-            //edit the bus data with Id with busDto Data 
             if (busDto is null)
                 return new ResponseModel<Bus>
                 {
@@ -49,7 +50,8 @@ namespace Services.ApplicationServices
                     Message = "Input is invalid"
                 };
 
-            var bus = await GetBusById(Id);
+            var bus = await _context.Buses.Include(b => b.seats)
+                                            .FirstOrDefaultAsync(b => b.Id.Equals(Id));
 
             if (bus is null)
                 return new ResponseModel<Bus>
@@ -57,6 +59,33 @@ namespace Services.ApplicationServices
                     StatusCode = 400,
                     Message = "id is invalid"
                 };
+
+            if (bus.NumberOfSeats < busDto.NumberOfSeats)
+            {
+                List<Seat> seats = new List<Seat>();
+
+                for (int i = bus.NumberOfSeats + 1; i <= busDto.NumberOfSeats; i++)
+                {
+                    seats.Add(new Seat()
+                    {
+                        SeatNum = i,
+                        IsAvailable = true,
+                        SeatId = Guid.NewGuid(),
+                        BusId = Id
+                    });
+                }
+                bus.seats = [.. bus.seats, .. seats];
+                _context.Seats.AddRange(seats);
+            }
+            else if (bus.NumberOfSeats > busDto.NumberOfSeats)
+            {
+                var removedSeats = bus.seats.OrderBy(s => s.SeatNum)
+                                            .TakeLast(bus.NumberOfSeats - busDto.NumberOfSeats)
+                                            .ToList();
+
+                foreach (var seat in removedSeats)
+                    bus.seats.Remove(seat);
+            }
 
             bus.NumberOfSeats = busDto.NumberOfSeats;
 
@@ -70,11 +99,14 @@ namespace Services.ApplicationServices
             };
         }
 
-        public async Task<List<Bus>> GetAllBuses() =>  //done
+        public async Task<List<Bus>> GetAllBuses() =>
             await _context.Buses.Include(b => b.seats).ToListAsync();
 
-        public async Task<Bus> GetBusById(Guid Id) =>
-            await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id));
+        public async Task<Bus> GetBusById(Guid Id)
+        {
+            var buses = await GetAllBuses();
+            return buses.FirstOrDefault(x => x.Id.Equals(Id));
+        }
 
     }
 }

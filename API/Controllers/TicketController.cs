@@ -19,7 +19,7 @@ namespace API.Controllers
         [HttpGet("All")]
         public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTickets()
         {
-            var tikets = await _ticketServices.GetAllTicket();
+            var tikets = await _ticketServices.GetAllTickets();
             return Ok(new ResponseModel<List<ReturnedTicketDto>>
             {
                 StatusCode = 200,

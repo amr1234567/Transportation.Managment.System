@@ -11,12 +11,16 @@ namespace Services.ApplicationServices
         private readonly ApplicationDbContext _context = context;
 
         public async Task<List<BusStop>> GetAllBusStops() =>
-            await _context.BusStops.Include(bs=>bs.manger).Include(bs => bs.buses).ToListAsync();
+            await _context.BusStops.Include(bs => bs.manger)
+                                    .Include(bs => bs.buses)
+                                    .ToListAsync();
 
 
-        public async Task<BusStop> GetBusStopById(Guid id) =>
-            await _context.BusStops.FindAsync(id);
-
+        public async Task<BusStop> GetBusStopById(Guid id)
+        {
+            var busStops = await GetAllBusStops();
+            return busStops.FirstOrDefault(bs => bs.Id.Equals(id));
+        }
 
         public async Task<BusStop> AddBusStop(BusStopDto busStopDto, string ManagerId)
         {
@@ -35,13 +39,14 @@ namespace Services.ApplicationServices
 
         public async Task<List<Bus>> GetBusesByBusStopId(Guid id)
         {
-            var busStop = await _context.BusStops.Include(bs => bs.buses)
-                .FirstOrDefaultAsync(bs => bs.Id.Equals(id));
+            var busStops = await GetAllBusStops();
+            var busStop = busStops.FirstOrDefault(bs => bs.Id.Equals(id));
 
             if (busStop == null)
-                throw new ArgumentNullException(nameof(busStop));
+                throw new ArgumentNullException($"busStop with {id} doesn't exist");
+
             if (busStop.buses is null)
-                throw new NullReferenceException(nameof(busStop.buses));
+                throw new NullReferenceException($"there are no buses in this busStop");
 
             return busStop.buses.ToList();
         }

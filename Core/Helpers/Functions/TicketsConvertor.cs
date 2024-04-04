@@ -17,11 +17,11 @@ namespace Core.Helpers.Functions
             {
                 returningTickets.Add(new ReturnedTicketDto
                 {
-                    BusId = ticket.BusId,
                     CreatedTime = ticket.CreatedTime,
                     IsFinished = ticket.IsFinished,
                     JourneyId = ticket.JourneyId,
                     Price = ticket.Price,
+                    BusId = ticket.Journey.BusId,
                     SeatId = ticket.SeatId,
                     UserName = ticket.UserName,
                     SeatNumber = ticket.Seat.SeatNum

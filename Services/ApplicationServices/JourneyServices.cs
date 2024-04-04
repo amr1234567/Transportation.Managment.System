@@ -27,32 +27,46 @@ namespace Services.ApplicationServices
         }
 
 
-        public async Task<List<Journey>> GetAllJourneysByStartBusStopId(Guid id) =>
-             await _context.Journeys.Where(x => x.StartBusStopId.Equals(id)).ToListAsync();
+        public async Task<List<Journey>> GetAllJourneysByStartBusStopId(Guid id)
+        {
+            var journeys = await GetAllJourneys();
+            return journeys.Where(x => x.StartBusStopId.Equals(id)).ToList();
+        }
 
-        public async Task<List<Journey>> GetAllJourneysByDestinationBusStopId(Guid id) =>
-             await _context.Journeys.Where(x => x.DestinationId.Equals(id)).ToListAsync();
+        public async Task<List<Journey>> GetAllJourneysByDestinationBusStopId(Guid id)
+        {
+            var journeys = await GetAllJourneys();
+            return journeys.Where(x => x.DestinationId.Equals(id)).ToList();
+        }
 
 
         public async Task<List<Journey>> GetAllJourneys() =>
-            await _context.Journeys.Include(j => j.Bus).Include(j => j.Destination).Include(j => j.StartBusStop).ToListAsync();
+            await _context.Journeys.Include(j => j.Bus)
+                                    .Include(j => j.Destination)
+                                    .Include(j => j.StartBusStop)
+                                    .ToListAsync();
 
 
 
-        public async Task<Journey> GetJourneyById(Guid id) =>
-             await _context.Journeys.FirstOrDefaultAsync(j => j.Id.Equals(id));
+        public async Task<Journey> GetJourneyById(Guid id)
+        {
+            var journeys = await GetAllJourneys();
+            return journeys.FirstOrDefault(j => j.Id.CompareTo(id) == 0);
+        }
+
 
         public async Task<Journey> GetNearestJourneyByDestination(Guid destinationId, Guid startBusStopId) // wait
         {
-            var buses = _context.Journeys
-                .Where(j => j.StartBusStopId.Equals(startBusStopId) && j.DestinationId.Equals(destinationId));
+            var journeys = await GetAllJourneys();
+            var buses = journeys.Where(j => j.StartBusStopId.Equals(startBusStopId)
+                                        && j.DestinationId.Equals(destinationId));
 
             if (buses is null || !buses.Any())
                 throw new Exception("No Buses");
 
             var busesCounted = buses.OrderBy(b => b.LeavingTime);
 
-            return await busesCounted.FirstAsync();
+            return busesCounted.First();
         }
 
 

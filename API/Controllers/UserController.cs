@@ -6,6 +6,7 @@ using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -103,7 +104,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpGet("AllByUser")]
+        [HttpGet("AllTicketsForUser")]
         public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByUserId()
         {
             var tikets = await _ticketServices.GetAllTicketsByUserId(Guid.Parse(GetUserIdFromClaims()));
@@ -116,28 +117,28 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpPost]
-        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> BookTicket(TicketDto model)
+        [HttpPost("BookTicket")]
+        public async Task<ActionResult<ResponseModel<bool>>> BookTicket(TicketDto model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                return BadRequest(new ResponseModel<bool>
                 {
                     StatusCode = 400,
-                    Message = "Input is invalid"
+                    Message = "Input is invalid",
+                    Body = false
                 });
             var ticket = await _ticketServices.BookTicket(model, GetUserIdFromClaims());
-            return Ok(new ResponseModel<ReturnedTicketDto>
+            return Ok(new ResponseModel<bool>
             {
                 Message = "Done Booking",
                 StatusCode = 200,
-                Body = ticket.ConvertToDto()
+                Body = true
             });
         }
 
         private string GetUserIdFromClaims()
         {
-            var id = User.Claims.FirstOrDefault(c => c.ValueType.Equals("Id"));
-            return id.Value;
+            return User.FindFirstValue("Id");
         }
     }
 }

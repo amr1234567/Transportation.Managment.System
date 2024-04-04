@@ -1,12 +1,14 @@
-﻿namespace Core.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Core.Dto
 {
     public class TicketDto
     {
-        public bool IsFinished { get; set; }
+        [Required]
         public DateTime CreatedTime { get; set; }
-
+        [Required]
         public Guid SeatId { get; set; }
+        [Required]
         public Guid JourneyId { get; set; }
-        public Guid BusId { get; set; }
     }
 }
