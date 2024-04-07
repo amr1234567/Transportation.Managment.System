@@ -1,8 +1,7 @@
 using API.Helpers;
 using API.Helpers.DI;
-using Core.Helpers;
+using Hangfire;
 using System.Text.Json.Serialization;
-using Twilio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationDI(builder.Configuration);
 
 builder.Services.AddModelHelpersServices(builder.Configuration);
+
+builder.Services.AddHangfire(options =>
+{
+    options.UseSqlServerStorage(builder.Configuration.GetConnectionString("AppConnString"));
+});
+builder.Services.AddHangfireServer();
 
 builder.Services.AddControllers()
     .AddJsonOptions(x =>
@@ -36,6 +41,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard("/dashboard");
 app.MapControllers();
 
 app.Run();

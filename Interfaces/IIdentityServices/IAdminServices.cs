@@ -1,4 +1,5 @@
 ﻿using Core.Dto.Identity;
+using Core.Dto.UserInput;
 
 namespace Interfaces.IIdentityServices
 {

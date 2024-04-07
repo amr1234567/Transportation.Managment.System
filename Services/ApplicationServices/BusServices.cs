@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Core.Dto.UserOutput;
 using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
@@ -23,6 +24,7 @@ namespace Services.ApplicationServices
                 Id = Busid,
                 seats = seats,
                 NumberOfSeats = busDto.NumberOfSeats,
+                IsAvailable=true
                 
             };
 

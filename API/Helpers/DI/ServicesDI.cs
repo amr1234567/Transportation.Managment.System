@@ -16,10 +16,10 @@ namespace API.Helpers.DI
         public static IServiceCollection AddServicesDI(this IServiceCollection services)
         {
             services.AddScoped<IBusServices, BusServices>();
-            services.AddScoped<IBusStopServices, BusStopServices>();
-            services.AddScoped<IJourneyServices, JourneyServices>();
+            services.AddScoped<IJourneysHistoryServices, JourneysHistoryServices>();
             services.AddScoped<ISeatServices, SeatServices>();
             services.AddScoped<ITicketServices, TicketServices>();
+            services.AddScoped<IUpcomingJourneysServices, UpcomingJourneysServices>();
 
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IManagerServices, ManagerServices>();

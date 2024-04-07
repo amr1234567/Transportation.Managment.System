@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Dto.Identity
+namespace Core.Dto.UserInput
 {
     public class SignUpDto
     {

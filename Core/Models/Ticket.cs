@@ -10,25 +10,23 @@ namespace Core.Models
         public Guid Id { get; set; }
 
         [Required]
-        [ForeignKey(nameof(Seat))]
-        public Guid SeatId { get; set; }
-        public Seat? Seat { get; set; }
+        public int SeaNum { get; set; }
+
+        public Guid? JourneyId { get; set; }
 
         [Required]
-        [ForeignKey(nameof(Journey))]
-        public Guid JourneyId { get; set; }
-        public Journey? Journey { get; set; }
+        public Guid? TimeTableId { get; set; }
 
         [Required]
         public DateTime CreatedTime { get; set; }
 
         [Required]
-        [ForeignKey(nameof(User))]
-        public string? UserId { get; set; }
-        public ApplicationUser? User { get; set; }
+        public string? ConsumerId { get; set; }
 
-        public string UserName => User.Name;
-        public double Price => Journey.TicketPrice;
-        public bool IsFinished => Journey.IsEnded;
+        public bool ReservedOnline { get; set; }
+
+        [Required]
+        public double Price { get; set; }
+
     }
 }

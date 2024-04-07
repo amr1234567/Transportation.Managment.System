@@ -1,4 +1,4 @@
-﻿using Core.Helpers;
+﻿using Core.Helpers.Classes;
 using Interfaces.IHelpersServices;
 using Microsoft.Extensions.Options;
 using System;

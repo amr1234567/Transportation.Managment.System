@@ -1,5 +1,5 @@
 ﻿using Core.Constants;
-using Core.Dto;
+using Core.Dto.UserOutput;
 using Core.Helpers.Functions;
 using Interfaces.IApplicationServices;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +41,7 @@ namespace API.Controllers
         }
 
         [HttpGet("AllByReservedTime")]
-        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByReservedTime([FromBody] DateTime time)
+        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByReservedTime([FromRoute] DateTime time)
         {
             var tikets = await _ticketServices.GetTicketsByReservedTime(time);
             return Ok(new ResponseModel<List<ReturnedTicketDto>>

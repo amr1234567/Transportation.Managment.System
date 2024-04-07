@@ -1,5 +1,6 @@
-﻿using Core.Dto;
-using Core.Dto.Identity;
+﻿using Core.Dto.Identity;
+using Core.Dto.UserInput;
+using Core.Dto.UserOutput;
 using System;
 using System.Collections.Generic;
 using System.Linq;

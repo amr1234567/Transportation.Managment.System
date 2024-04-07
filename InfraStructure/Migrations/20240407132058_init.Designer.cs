@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InfraStructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240407132058_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,21 +25,6 @@ namespace InfraStructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BusStopsRelations", b =>
-                {
-                    b.Property<string>("StartBusStopId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DestinationStopId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("StartBusStopId", "DestinationStopId");
-
-                    b.HasIndex("DestinationStopId");
-
-                    b.ToTable("BusStopsRelations", "App");
-                });
 
             modelBuilder.Entity("Core.Identity.User", b =>
                 {
@@ -132,7 +120,7 @@ namespace InfraStructure.Migrations
                     b.ToTable("Buses", "App");
                 });
 
-            modelBuilder.Entity("Core.Models.JourneyHistory", b =>
+            modelBuilder.Entity("Core.Models.Journey", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -209,14 +197,11 @@ namespace InfraStructure.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("JourneyHistoryId")
+                    b.Property<Guid>("JourneyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("JourneyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<bool>("ReservedOnline")
                         .HasColumnType("bit");
@@ -225,24 +210,20 @@ namespace InfraStructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid?>("TimeTableId")
-                        .IsRequired()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpcomingJourneyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("JourneyHistoryId");
+                    b.HasIndex("JourneyId");
 
-                    b.HasIndex("UpcomingJourneyId");
+                    b.HasIndex("TimeTableId");
 
                     b.ToTable("Tickets", "App");
                 });
 
-            modelBuilder.Entity("Core.Models.UpcomingJourney", b =>
+            modelBuilder.Entity("Core.Models.TimeTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -282,7 +263,7 @@ namespace InfraStructure.Migrations
 
                     b.HasIndex("StartBusStopId");
 
-                    b.ToTable("UpcomingJourneys", "App");
+                    b.ToTable("TimeTables", "Security");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -459,24 +440,13 @@ namespace InfraStructure.Migrations
                 {
                     b.HasBaseType("Core.Identity.User");
 
+                    b.Property<string>("BusStopId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasIndex("BusStopId");
+
                     b.ToTable("Managers", "App");
-                });
-
-            modelBuilder.Entity("BusStopsRelations", b =>
-                {
-                    b.HasOne("Core.Identity.BusStopManger", null)
-                        .WithMany()
-                        .HasForeignKey("DestinationStopId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_BusStopsRelations_DestinationStop");
-
-                    b.HasOne("Core.Identity.BusStopManger", null)
-                        .WithMany()
-                        .HasForeignKey("StartBusStopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_BusStopsRelations_StartBusStop");
                 });
 
             modelBuilder.Entity("Core.Models.Bus", b =>
@@ -486,7 +456,7 @@ namespace InfraStructure.Migrations
                         .HasForeignKey("BusStopMangerId");
                 });
 
-            modelBuilder.Entity("Core.Models.JourneyHistory", b =>
+            modelBuilder.Entity("Core.Models.Journey", b =>
                 {
                     b.HasOne("Core.Identity.ApplicationUser", null)
                         .WithMany("Journeys")
@@ -534,16 +504,18 @@ namespace InfraStructure.Migrations
                         .WithMany("Tickets")
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("Core.Models.JourneyHistory", null)
+                    b.HasOne("Core.Models.Journey", null)
                         .WithMany("Tickets")
-                        .HasForeignKey("JourneyHistoryId");
+                        .HasForeignKey("JourneyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Core.Models.UpcomingJourney", null)
+                    b.HasOne("Core.Models.TimeTable", null)
                         .WithMany("Ticket")
-                        .HasForeignKey("UpcomingJourneyId");
+                        .HasForeignKey("TimeTableId");
                 });
 
-            modelBuilder.Entity("Core.Models.UpcomingJourney", b =>
+            modelBuilder.Entity("Core.Models.TimeTable", b =>
                 {
                     b.HasOne("Core.Models.Bus", "Bus")
                         .WithMany()
@@ -641,11 +613,19 @@ namespace InfraStructure.Migrations
 
             modelBuilder.Entity("Core.Identity.BusStopManger", b =>
                 {
+                    b.HasOne("Core.Identity.BusStopManger", "BusStop")
+                        .WithMany("BusStops")
+                        .HasForeignKey("BusStopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Core.Identity.User", null)
                         .WithOne()
                         .HasForeignKey("Core.Identity.BusStopManger", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BusStop");
                 });
 
             modelBuilder.Entity("Core.Models.Bus", b =>
@@ -653,12 +633,12 @@ namespace InfraStructure.Migrations
                     b.Navigation("seats");
                 });
 
-            modelBuilder.Entity("Core.Models.JourneyHistory", b =>
+            modelBuilder.Entity("Core.Models.Journey", b =>
                 {
                     b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("Core.Models.UpcomingJourney", b =>
+            modelBuilder.Entity("Core.Models.TimeTable", b =>
                 {
                     b.Navigation("Ticket");
                 });
@@ -672,6 +652,8 @@ namespace InfraStructure.Migrations
 
             modelBuilder.Entity("Core.Identity.BusStopManger", b =>
                 {
+                    b.Navigation("BusStops");
+
                     b.Navigation("Buses");
                 });
 #pragma warning restore 612, 618

@@ -1,11 +1,14 @@
 ﻿using Core.Constants;
-using Core.Dto;
 using Core.Dto.Identity;
+using Core.Dto.UserInput;
+using Core.Dto.UserOutput;
 using Core.Identity;
 using ECommerce.Core.Interfaces.IServices;
+using Infrastructure.Context;
 using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 
 namespace Services.IdentityServices
@@ -14,13 +17,13 @@ namespace Services.IdentityServices
     {
         private readonly UserManager<BusStopManger> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly IBusStopServices _busStopServices;
+        private readonly ApplicationDbContext _context;
 
-        public ManagerServices(UserManager<BusStopManger> userManager, ITokenService tokenService, IBusStopServices busStopServices)
+        public ManagerServices(UserManager<BusStopManger> userManager, ITokenService tokenService, ApplicationDbContext context)
         {
             _userManager = userManager;
             _tokenService = tokenService;
-            _busStopServices = busStopServices;
+            _context = context;
         }
 
         public async Task<LogInResponse> SignIn(LogInDto User)
@@ -81,12 +84,8 @@ namespace Services.IdentityServices
             if (Manager == null)
                 return false;
 
-            var busStop = await _busStopServices.AddBusStop(new BusStopDto
-            {
-                Name = NewManager.Name
-            }, Manager.Id);
 
-            Manager.BusStop = busStop;
+
             await _userManager.UpdateAsync(Manager);
 
             var res = await _userManager.SetPhoneNumberAsync(Manager, NewUser.PhoneNumber);
@@ -98,6 +97,33 @@ namespace Services.IdentityServices
             if (!res2.Succeeded)
                 return false;
             return true;
+        }
+        public async Task enrollBusStop(string Id, string busStopId)
+        {
+            var record = await _context.BusStopMangers.Include(bs => bs.BusStops)
+                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(Id));
+
+            var record2 = await _context.BusStopMangers.Include(bs => bs.BusStops)
+                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(busStopId));
+
+            record.BusStops.Add(record2);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<BusStopDto>> GetAllBusStops()
+        {
+            return _context.BusStopMangers.Select(x => new BusStopDto { Name = x.Name }).ToList();
+        }
+
+        public async Task<BusStopDto> GetBusStop(string Id)
+        {
+            var record = await _context.BusStopMangers.Include(bsm => bsm.BusStops).FirstOrDefaultAsync(bsm => bsm.Id == Id);
+            return new BusStopDto
+            {
+                Name = record.Name,
+                BusStops = record.BusStops.Select(x => new BusStopDto { Name = x.Name }).ToList()
+            };
         }
     }
 }

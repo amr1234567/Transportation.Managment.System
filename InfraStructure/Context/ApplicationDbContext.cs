@@ -18,8 +18,8 @@ namespace Infrastructure.Context
         public DbSet<BusStopManger> BusStopMangers { get; set; }
 
         public DbSet<Bus> Buses { get; set; }
-        public DbSet<BusStop> BusStops { get; set; }
-        public DbSet<Journey> Journeys { get; set; }
+        public DbSet<UpcomingJourney> UpcomingJourneys { get; set; }
+        public DbSet<JourneyHistory> Journeys { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
 

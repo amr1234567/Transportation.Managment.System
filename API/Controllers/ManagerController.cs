@@ -6,19 +6,23 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Interfaces.IApplicationServices;
 using Core.Models;
-using Core.Helpers.Functions;
+using System.Security.Claims;
+using Hangfire;
+using Core.Dto.UserInput;
+using Core.Dto.UserOutput;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = Roles.BusStopManager)]
     [ApiController]
-    public class ManagerController(IBusServices busServices, ITicketServices ticketServices, IManagerServices managerServices, IJourneyServices journeyServices) : ControllerBase
+    public class ManagerController(IBusServices busServices, ITicketServices ticketServices, IManagerServices managerServices, IJourneysHistoryServices journeyServices, IUpcomingJourneysServices timeTableService) : ControllerBase
     {
         private readonly IBusServices _busServices = busServices;
         private readonly ITicketServices _ticketServices = ticketServices;
         private readonly IManagerServices _managerServices = managerServices;
-        private readonly IJourneyServices _journeyServices = journeyServices;
+        private readonly IJourneysHistoryServices _journeyServices = journeyServices;
+        private readonly IUpcomingJourneysServices _timeTableService = timeTableService;
 
         [AllowAnonymous]
         [HttpPost("SignIn")]
@@ -42,6 +46,18 @@ namespace API.Controllers
             });
         }
 
+        [HttpGet("AllJourneys")]
+        public async Task<ActionResult<ResponseModel<List<JourneyHistory>>>> GetAllJourneys()
+        {
+            var journeys = await _journeyServices.GetAllJourneys();
+            return Ok(new ResponseModel<List<JourneyHistory>>
+            {
+                Body = journeys,
+                Message = "ALl Journeys",
+                StatusCode = 200
+            });
+        }
+
         [HttpPost("AddBus")]
         public async Task<ActionResult<ResponseModel<bool>>> AddBus([FromBody] BusDto model)
         {
@@ -59,60 +75,50 @@ namespace API.Controllers
             });
         }
 
-        [HttpPost("AddJourney")]
-        public async Task<ActionResult<ResponseModel<bool>>> AddJourney([FromBody] JourneyDto model)
+
+        [HttpPost("Add-Journey")]
+        public async Task<ActionResult<ResponseModel<bool>>> AddJourney([FromBody] TimeTableDto model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new ResponseModel<bool>
+                return BadRequest(new ResponseModel<Bus>
                 {
                     StatusCode = 400,
                     Message = "Error"
                 });
-            await _journeyServices.AddJourney(model);
+            var bus = await _busServices.GetBusById(model.BusId);
+            if (bus.IsAvailable == false)
+            {
+                return Ok(new ResponseModel<bool>
+                {
+                    Body = false,
+                    Message = "bus on another journey added",
+                    StatusCode = 400
+                });
+            }
+            await _timeTableService.SetUpcomingJourneys(model);
+
+            TimeSpan duration = model.ArrivalTime - DateTime.UtcNow;
+            BackgroundJob.Schedule(() => _timeTableService.RemoveUpcomingJourneys(), duration);
+
             return Ok(new ResponseModel<bool>
             {
-                StatusCode = 200,
-                Message = "Journey Added"
+                Body = true,
+                Message = "Journey added",
+                StatusCode = 200
             });
         }
 
-        [HttpPost("SetArrivalTime/{id}")]
-        public async Task<ActionResult<ResponseModel<bool>>> SetArrivalTime([FromBody] DateTime time, [FromRoute] Guid id)
+        [HttpDelete("remove-Time-Table")]
+        public ActionResult Remove()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ResponseModel<bool>
-                {
-                    StatusCode = 400,
-                    Message = "Error"
-                });
-            await _journeyServices.SetArrivalTime(time, id);
-            return Ok(new ResponseModel<bool>
-            {
-                StatusCode = 200,
-                Message = "Journey Edited"
-            });
-        }
-
-        [HttpPost("SetLeavingTime/{id}")]
-        public async Task<ActionResult<ResponseModel<bool>>> SetLeavingTime([FromBody] DateTime time, [FromRoute] Guid id)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(new ResponseModel<bool>
-                {
-                    StatusCode = 400,
-                    Message = "Error"
-                });
-            await _journeyServices.SetLeavingTime(time, id);
-            return Ok(new ResponseModel<bool>
-            {
-                StatusCode = 200,
-                Message = "Journey Edited"
-            });
+            _timeTableService.RemoveUpcomingJourneys();
+            return Ok();
         }
 
         [HttpPost("CutTicket")]
         public async Task<ActionResult<ResponseModel<bool>>> CutTicket(TicketDto model)
         {
+
             if (!ModelState.IsValid)
                 return BadRequest(new ResponseModel<bool>
                 {
@@ -120,13 +126,17 @@ namespace API.Controllers
                     Message = "Input is invalid",
                     Body = false
                 });
-            var ticket = await _ticketServices.CutTicket(model);
+            var ticket = await _ticketServices.CutTicket(model, GetUserIdFromClaims());
             return Ok(new ResponseModel<bool>
             {
                 Message = "Done Booking",
                 StatusCode = 200,
                 Body = true
             });
+        }
+        private string GetUserIdFromClaims()
+        {
+            return User.FindFirstValue("Id");
         }
 
     }

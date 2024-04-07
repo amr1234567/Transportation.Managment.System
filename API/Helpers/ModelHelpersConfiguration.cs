@@ -1,4 +1,4 @@
-﻿using Core.Helpers;
+﻿using Core.Helpers.Classes;
 
 namespace API.Helpers
 {

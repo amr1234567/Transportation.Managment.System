@@ -1,5 +1,5 @@
 ﻿using Core.Dto.Email;
-using Core.Helpers;
+using Core.Helpers.Classes;
 using Interfaces.IMailServices;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;

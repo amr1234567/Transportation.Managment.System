@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Core.Dto.UserOutput;
 using Core.Models;
 using System;
 using System.Collections.Generic;

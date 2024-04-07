@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InfraStructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240403203653_EditBusStopDB")]
-    partial class EditBusStopDB
+    [Migration("20240407132928_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,21 @@ namespace InfraStructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BusStopsRelations", b =>
+                {
+                    b.Property<string>("StartBusStopId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DestinationStopId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("StartBusStopId", "DestinationStopId");
+
+                    b.HasIndex("DestinationStopId");
+
+                    b.ToTable("NodeHierarchy", "App");
+                });
 
             modelBuilder.Entity("Core.Identity.User", b =>
                 {
@@ -104,40 +119,20 @@ namespace InfraStructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("BusStopId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("BusStopMangerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
 
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusStopId");
+                    b.HasIndex("BusStopMangerId");
 
                     b.ToTable("Buses", "App");
-                });
-
-            modelBuilder.Entity("Core.Models.BusStop", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("managerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("managerId")
-                        .IsUnique();
-
-                    b.ToTable("BusStops", "App");
                 });
 
             modelBuilder.Entity("Core.Models.Journey", b =>
@@ -155,17 +150,16 @@ namespace InfraStructure.Migrations
                     b.Property<Guid>("BusId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DestinationId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("DestinationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LeavingTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("StartBusStopId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("TicketPrice")
-                        .HasColumnType("float");
+                    b.Property<string>("StartBusStopId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -208,8 +202,12 @@ namespace InfraStructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BusId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConsumerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
@@ -217,24 +215,70 @@ namespace InfraStructure.Migrations
                     b.Property<Guid>("JourneyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SeatId")
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ReservedOnline")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SeaNum")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TimeTableId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UserId")
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("JourneyId");
+
+                    b.HasIndex("TimeTableId");
+
+                    b.ToTable("Tickets", "App");
+                });
+
+            modelBuilder.Entity("Core.Models.TimeTable", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("BusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DestinationId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("JourneyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LeavingTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NumberOfAvailableTickets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StartBusStopId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("TicketPrice")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BusId");
 
-                    b.HasIndex("JourneyId");
+                    b.HasIndex("DestinationId");
 
-                    b.HasIndex("SeatId");
+                    b.HasIndex("StartBusStopId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Tickets", "App");
+                    b.ToTable("TimeTables", "Security");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -411,30 +455,31 @@ namespace InfraStructure.Migrations
                 {
                     b.HasBaseType("Core.Identity.User");
 
-                    b.Property<Guid?>("BusStopId")
-                        .HasColumnType("uniqueidentifier");
+                    b.ToTable("Managers", "App");
+                });
 
-                    b.HasIndex("BusStopId");
+            modelBuilder.Entity("BusStopsRelations", b =>
+                {
+                    b.HasOne("Core.Identity.BusStopManger", null)
+                        .WithMany()
+                        .HasForeignKey("DestinationStopId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_BusStopsRelations_DestinationStop");
 
-                    b.ToTable("Managers", "Security");
+                    b.HasOne("Core.Identity.BusStopManger", null)
+                        .WithMany()
+                        .HasForeignKey("StartBusStopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_BusStopsRelations_StartBusStop");
                 });
 
             modelBuilder.Entity("Core.Models.Bus", b =>
                 {
-                    b.HasOne("Core.Models.BusStop", null)
-                        .WithMany("buses")
-                        .HasForeignKey("BusStopId");
-                });
-
-            modelBuilder.Entity("Core.Models.BusStop", b =>
-                {
-                    b.HasOne("Core.Identity.BusStopManger", "manger")
-                        .WithOne()
-                        .HasForeignKey("Core.Models.BusStop", "managerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("manger");
+                    b.HasOne("Core.Identity.BusStopManger", null)
+                        .WithMany("Buses")
+                        .HasForeignKey("BusStopMangerId");
                 });
 
             modelBuilder.Entity("Core.Models.Journey", b =>
@@ -449,13 +494,13 @@ namespace InfraStructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Models.BusStop", "Destination")
+                    b.HasOne("Core.Identity.BusStopManger", "Destination")
                         .WithMany()
                         .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Models.BusStop", "StartBusStop")
+                    b.HasOne("Core.Identity.BusStopManger", "StartBusStop")
                         .WithMany()
                         .HasForeignKey("StartBusStopId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -481,37 +526,46 @@ namespace InfraStructure.Migrations
 
             modelBuilder.Entity("Core.Models.Ticket", b =>
                 {
+                    b.HasOne("Core.Identity.ApplicationUser", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Core.Models.Journey", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("JourneyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Models.TimeTable", null)
+                        .WithMany("Ticket")
+                        .HasForeignKey("TimeTableId");
+                });
+
+            modelBuilder.Entity("Core.Models.TimeTable", b =>
+                {
                     b.HasOne("Core.Models.Bus", "Bus")
                         .WithMany()
                         .HasForeignKey("BusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Models.Journey", "Journey")
-                        .WithMany("Tickets")
-                        .HasForeignKey("JourneyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Core.Models.Seat", "Seat")
+                    b.HasOne("Core.Identity.BusStopManger", "Destination")
                         .WithMany()
-                        .HasForeignKey("SeatId")
+                        .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Identity.ApplicationUser", "User")
-                        .WithMany("Tickets")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Core.Identity.BusStopManger", "StartBusStop")
+                        .WithMany()
+                        .HasForeignKey("StartBusStopId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Bus");
 
-                    b.Navigation("Journey");
+                    b.Navigation("Destination");
 
-                    b.Navigation("Seat");
-
-                    b.Navigation("User");
+                    b.Navigation("StartBusStop");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -585,17 +639,11 @@ namespace InfraStructure.Migrations
 
             modelBuilder.Entity("Core.Identity.BusStopManger", b =>
                 {
-                    b.HasOne("Core.Models.BusStop", "BusStop")
-                        .WithMany()
-                        .HasForeignKey("BusStopId");
-
                     b.HasOne("Core.Identity.User", null)
                         .WithOne()
                         .HasForeignKey("Core.Identity.BusStopManger", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("BusStop");
                 });
 
             modelBuilder.Entity("Core.Models.Bus", b =>
@@ -603,14 +651,14 @@ namespace InfraStructure.Migrations
                     b.Navigation("seats");
                 });
 
-            modelBuilder.Entity("Core.Models.BusStop", b =>
-                {
-                    b.Navigation("buses");
-                });
-
             modelBuilder.Entity("Core.Models.Journey", b =>
                 {
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Core.Models.TimeTable", b =>
+                {
+                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("Core.Identity.ApplicationUser", b =>
@@ -618,6 +666,11 @@ namespace InfraStructure.Migrations
                     b.Navigation("Journeys");
 
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Core.Identity.BusStopManger", b =>
+                {
+                    b.Navigation("Buses");
                 });
 #pragma warning restore 612, 618
         }

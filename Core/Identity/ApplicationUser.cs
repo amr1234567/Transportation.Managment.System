@@ -12,6 +12,6 @@ namespace Core.Identity
         public string PhoneNumber { get; set; }
 
         public List<Ticket>? Tickets { get; set; }
-        public List<Journey>? Journeys { get; set; }
+        public List<JourneyHistory>? Journeys { get; set; }
     }
 }

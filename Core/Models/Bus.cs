@@ -19,5 +19,7 @@ namespace Core.Models
 
         [Required]
         public List<Seat> seats { get; set; }
+        [Required]
+        public bool IsAvailable { get; set; }
     }
 }

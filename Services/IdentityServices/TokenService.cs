@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Core.Dto.Identity;
 using Core.Identity;
-using Core.Helpers;
+using Core.Helpers.Classes;
 
 namespace ECommerce.InfaStructure.Services
 {

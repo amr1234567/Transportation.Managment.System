@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace InfraStructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,19 +44,6 @@ namespace InfraStructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BusStops",
-                schema: "App",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BusStops", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,6 +148,33 @@ namespace InfraStructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Managers",
+                schema: "App",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BusStopId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Managers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Managers_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalSchema: "Security",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Managers_Managers_BusStopId",
+                        column: x => x.BusStopId,
+                        principalSchema: "App",
+                        principalTable: "Managers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 schema: "Security",
                 columns: table => new
@@ -175,53 +189,6 @@ namespace InfraStructure.Migrations
                         column: x => x.Id,
                         principalSchema: "Security",
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Buses",
-                schema: "App",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
-                    BusStopId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Buses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Buses_BusStops_BusStopId",
-                        column: x => x.BusStopId,
-                        principalSchema: "App",
-                        principalTable: "BusStops",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Managers",
-                schema: "Security",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BusStopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Managers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Managers_AspNetUsers_Id",
-                        column: x => x.Id,
-                        principalSchema: "Security",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Managers_BusStops_BusStopId",
-                        column: x => x.BusStopId,
-                        principalSchema: "App",
-                        principalTable: "BusStops",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -266,14 +233,35 @@ namespace InfraStructure.Migrations
                         principalSchema: "Security",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_Roles_RoleId",
                         column: x => x.RoleId,
                         principalSchema: "Security",
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Buses",
+                schema: "App",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    BusStopMangerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Buses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Buses_Managers_BusStopMangerId",
+                        column: x => x.BusStopMangerId,
+                        principalSchema: "App",
+                        principalTable: "Managers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -282,9 +270,8 @@ namespace InfraStructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TicketPrice = table.Column<double>(type: "float", nullable: false),
-                    DestinationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StartBusStopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DestinationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StartBusStopId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LeavingTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -294,24 +281,24 @@ namespace InfraStructure.Migrations
                 {
                     table.PrimaryKey("PK_Journeys", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Journeys_BusStops_DestinationId",
-                        column: x => x.DestinationId,
-                        principalSchema: "App",
-                        principalTable: "BusStops",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Journeys_BusStops_StartBusStopId",
-                        column: x => x.StartBusStopId,
-                        principalSchema: "App",
-                        principalTable: "BusStops",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Journeys_Buses_BusId",
                         column: x => x.BusId,
                         principalSchema: "App",
                         principalTable: "Buses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Journeys_Managers_DestinationId",
+                        column: x => x.DestinationId,
+                        principalSchema: "App",
+                        principalTable: "Managers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Journeys_Managers_StartBusStopId",
+                        column: x => x.StartBusStopId,
+                        principalSchema: "App",
+                        principalTable: "Managers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -341,6 +328,47 @@ namespace InfraStructure.Migrations
                         principalSchema: "App",
                         principalTable: "Buses",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TimeTables",
+                schema: "Security",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TicketPrice = table.Column<double>(type: "float", nullable: false),
+                    DestinationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StartBusStopId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LeavingTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JourneyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NumberOfAvailableTickets = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimeTables", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TimeTables_Buses_BusId",
+                        column: x => x.BusId,
+                        principalSchema: "App",
+                        principalTable: "Buses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TimeTables_Managers_DestinationId",
+                        column: x => x.DestinationId,
+                        principalSchema: "App",
+                        principalTable: "Managers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TimeTables_Managers_StartBusStopId",
+                        column: x => x.StartBusStopId,
+                        principalSchema: "App",
+                        principalTable: "Managers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -350,39 +378,34 @@ namespace InfraStructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SeatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SeaNum = table.Column<int>(type: "int", nullable: false),
                     JourneyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    ConsumerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReservedOnline = table.Column<bool>(type: "bit", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    TimeTableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tickets", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tickets_Buses_BusId",
-                        column: x => x.BusId,
-                        principalSchema: "App",
-                        principalTable: "Buses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Tickets_Journeys_JourneyId",
                         column: x => x.JourneyId,
                         principalSchema: "App",
                         principalTable: "Journeys",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tickets_Seats_SeatId",
-                        column: x => x.SeatId,
-                        principalSchema: "App",
-                        principalTable: "Seats",
-                        principalColumn: "SeatId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_Tickets_TimeTables_TimeTableId",
+                        column: x => x.TimeTableId,
+                        principalSchema: "Security",
+                        principalTable: "TimeTables",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Tickets_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Tickets_Users_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalSchema: "Security",
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -438,10 +461,10 @@ namespace InfraStructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Buses_BusStopId",
+                name: "IX_Buses_BusStopMangerId",
                 schema: "App",
                 table: "Buses",
-                column: "BusStopId");
+                column: "BusStopMangerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Journeys_ApplicationUserId",
@@ -469,7 +492,7 @@ namespace InfraStructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Managers_BusStopId",
-                schema: "Security",
+                schema: "App",
                 table: "Managers",
                 column: "BusStopId");
 
@@ -488,10 +511,10 @@ namespace InfraStructure.Migrations
                 column: "BusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_BusId",
+                name: "IX_Tickets_ApplicationUserId",
                 schema: "App",
                 table: "Tickets",
-                column: "BusId");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_JourneyId",
@@ -500,16 +523,28 @@ namespace InfraStructure.Migrations
                 column: "JourneyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_SeatId",
+                name: "IX_Tickets_TimeTableId",
                 schema: "App",
                 table: "Tickets",
-                column: "SeatId");
+                column: "TimeTableId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_UserId",
-                schema: "App",
-                table: "Tickets",
-                column: "UserId");
+                name: "IX_TimeTables_BusId",
+                schema: "Security",
+                table: "TimeTables",
+                column: "BusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeTables_DestinationId",
+                schema: "Security",
+                table: "TimeTables",
+                column: "DestinationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeTables_StartBusStopId",
+                schema: "Security",
+                table: "TimeTables",
+                column: "StartBusStopId");
         }
 
         /// <inheritdoc />
@@ -540,8 +575,8 @@ namespace InfraStructure.Migrations
                 schema: "Security");
 
             migrationBuilder.DropTable(
-                name: "Managers",
-                schema: "Security");
+                name: "Seats",
+                schema: "App");
 
             migrationBuilder.DropTable(
                 name: "Tickets",
@@ -556,8 +591,8 @@ namespace InfraStructure.Migrations
                 schema: "App");
 
             migrationBuilder.DropTable(
-                name: "Seats",
-                schema: "App");
+                name: "TimeTables",
+                schema: "Security");
 
             migrationBuilder.DropTable(
                 name: "Users",
@@ -568,12 +603,12 @@ namespace InfraStructure.Migrations
                 schema: "App");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers",
-                schema: "Security");
+                name: "Managers",
+                schema: "App");
 
             migrationBuilder.DropTable(
-                name: "BusStops",
-                schema: "App");
+                name: "AspNetUsers",
+                schema: "Security");
         }
     }
 }

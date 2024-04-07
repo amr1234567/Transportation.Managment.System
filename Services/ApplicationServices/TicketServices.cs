@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Core.Dto.UserOutput;
 using Core.Identity;
 using Core.Models;
 using Infrastructure.Context;
@@ -14,25 +15,32 @@ namespace Services.ApplicationServices
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly ISeatServices _seatServices = seatServices;
 
-        private async Task GenerateTicket(TicketDto ticketDto, string UserId = null)
+        private async Task GenerateTicket(TicketDto ticketDto, string ConsumerId, bool Online)
         {
+            var seatNum = _context.Seats.Find(ticketDto.SeatId).SeatNum;
+            var TicketPrice = _context.UpcomingJourneys.Find(ticketDto.JourneyId).TicketPrice;
+
             var ticket = new Ticket()
             {
                 Id = Guid.NewGuid(),
                 CreatedTime = ticketDto.CreatedTime,
-                SeatId = ticketDto.SeatId,
+                SeaNum = seatNum,
+                TimeTableId = ticketDto.JourneyId,
+                ConsumerId = ConsumerId,
+                ReservedOnline = Online,
+                Price = TicketPrice,
                 JourneyId = ticketDto.JourneyId,
-                UserId = UserId
             };
 
             await _seatServices.ReserveSeat(ticketDto.SeatId);
             await _context.Tickets.AddAsync(ticket);
+
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ResponseModel<bool>> CutTicket(TicketDto ticketDto)
+        public async Task<ResponseModel<bool>> CutTicket(TicketDto ticketDto, string ConsumerId)
         {
-            await GenerateTicket(ticketDto);
+            await GenerateTicket(ticketDto, ConsumerId, false);
             return new ResponseModel<bool>
             {
                 StatusCode = 200,
@@ -40,10 +48,9 @@ namespace Services.ApplicationServices
             };
         }
 
-
         public async Task<ResponseModel<bool>> BookTicket(TicketDto ticketDto, string UserId)
         {
-            await GenerateTicket(ticketDto, UserId);
+            await GenerateTicket(ticketDto, UserId, true);
             return new ResponseModel<bool>
             {
                 StatusCode = 200,
@@ -51,72 +58,52 @@ namespace Services.ApplicationServices
             };
         }
 
-
         public async Task<List<Ticket>> GetAllTickets()
         {
-            var ticketsWithUser = await _context.Tickets
-                        .Include(t => t.Journey)
-                            .ThenInclude(j => j.Bus)
-                        .Include(t => t.Seat)
-                        .Include(t => t.User)
-                        .ToListAsync();
-
-            var ticketsWithoutUser = await _context.Tickets
-                        .Include(t => t.Journey)
-                            .ThenInclude(j => j.Bus)
-                        .Include(t => t.Seat)
-                        .ToListAsync();
-
-            return ticketsWithoutUser.UnionBy(ticketsWithUser, t => t.User).ToList();
+            var tickets = await _context.Tickets.ToListAsync();
+            return tickets;
         }
 
 
         public async Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id)
         {
-            var journeys = await _context.Journeys
-                .Include(j => j.Tickets)
-                    .ThenInclude(t => t.Journey)
-                        .ThenInclude(j => j.Bus)
-                .Include(j => j.Tickets)
-                    .ThenInclude(t => t.Seat).ToListAsync();
-            var journey = journeys.FirstOrDefault(j => j.Id.Equals(id));
+            var tickets = await _context.Tickets.Where(t => t.JourneyId.Equals(id)).ToListAsync();
 
-            if (journey is null)
+            if (tickets is null)
                 throw new NullReferenceException($"{id} doesn't exist");
 
-            return journey.Tickets;
+            return tickets;
         }
 
-        public async Task<List<Ticket>> GetAllTicketsByUserId(Guid id)
+        public async Task<List<Ticket>> GetAllTicketsByUserId(string id)
         {
-            var users = await _userManager.Users
-                            .Include(u => u.Tickets)
-                                .ThenInclude(t => t.Journey)
-                                    .ThenInclude(j => j.Bus)
-                            .Include(u => u.Tickets)
-                                .ThenInclude(t => t.Seat)
-                            .ToListAsync();
+            var Tickets = await _context.Tickets.Where(x => x.ConsumerId == id).ToListAsync();
+            return Tickets;
+        }
 
-            var user = users.Find(u => u.Id.CompareTo(id.ToString()) == 0);
+        public async Task<List<Ticket>> GetAllBookedTickets()
+        {
+            var Tickets = await _context.Tickets.Where(x => x.ReservedOnline).ToListAsync();
+            return Tickets;
+        }
 
-            if (user is null)
-                throw new NullReferenceException($"{nameof(user)} is null");
-
-            return user.Tickets;
+        public async Task<List<Ticket>> GetAllCutTickets()
+        {
+            var Tickets = await _context.Tickets.Where(x => !x.ReservedOnline).ToListAsync();
+            return Tickets;
         }
 
         public async Task<Ticket> GetTicketById(Guid id)
         {
-            var tickets = await GetAllTickets();
-            return tickets.FirstOrDefault(t => t.Id.Equals(id));
+            return await _context.Tickets.FirstOrDefaultAsync(t => t.Id.Equals(id));
         }
 
 
         public async Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime)
         {
-            var tickets = await GetAllTickets();
-            return tickets.Where(x => x.CreatedTime >= dateTime).ToList();
+            return await _context.Tickets.Where(x => x.CreatedTime >= dateTime).ToListAsync();
         }
+
 
     }
 }

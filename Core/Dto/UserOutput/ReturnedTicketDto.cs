@@ -8,21 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Dto
+namespace Core.Dto.UserOutput
 {
     public class ReturnedTicketDto
     {
-        public Guid SeatId { get; set; }
+        public string ConsumerId { get; set; }
         public int SeatNumber { get; set; }
 
-        public Guid BusId { get; set; }
-
-        public Guid JourneyId { get; set; }
+        public Guid? JourneyId { get; set; }
 
         public DateTime CreatedTime { get; set; }
 
-        public string? UserName { get; set; }
         public double Price { get; set; }
-        public bool IsFinished { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Core.Constants;
 using Core.Dto;
 using Core.Dto.Identity;
+using Core.Dto.UserInput;
+using Core.Dto.UserOutput;
 using Core.Helpers.Functions;
 using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
@@ -107,7 +109,7 @@ namespace API.Controllers
         [HttpGet("AllTicketsForUser")]
         public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByUserId()
         {
-            var tikets = await _ticketServices.GetAllTicketsByUserId(Guid.Parse(GetUserIdFromClaims()));
+            var tikets = await _ticketServices.GetAllTicketsByUserId(GetUserIdFromClaims());
             return Ok(new ResponseModel<List<ReturnedTicketDto>>
             {
                 StatusCode = 200,

@@ -12,8 +12,9 @@ namespace Core.Identity
     public class BusStopManger : User
     {
 
-        [ForeignKey(nameof(BusStop))]
-        public Guid? BusStopId { get; set; }
-        public BusStop? BusStop { get; set; }
+        public List<BusStopManger>? BusStopsRelations { get; set; }
+        public List<BusStopManger>? BusStops { get; set; }
+
+        public List<Bus> Buses { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Core.Constants;
 using Core.Dto;
+using Core.Dto.UserOutput;
 using Core.Models;
 using Interfaces.IApplicationServices;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +22,7 @@ namespace API.Controllers
             _busService = busService;
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public async Task<ActionResult<ResponseModel<List<Bus>>>> GetAllBuses()
         {
             return new ResponseModel<List<Bus>>

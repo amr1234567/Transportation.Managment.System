@@ -16,6 +16,6 @@
 		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Helpers\Classes\" />
+	  <Folder Include="Dto\ServiceOutput\" />
 	</ItemGroup>
 </Project>

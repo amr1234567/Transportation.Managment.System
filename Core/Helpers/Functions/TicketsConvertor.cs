@@ -1,4 +1,4 @@
-﻿using Core.Dto;
+﻿using Core.Dto.UserOutput;
 using Core.Models;
 using System;
 using System.Collections.Generic;
@@ -18,13 +18,10 @@ namespace Core.Helpers.Functions
                 returningTickets.Add(new ReturnedTicketDto
                 {
                     CreatedTime = ticket.CreatedTime,
-                    IsFinished = ticket.IsFinished,
                     JourneyId = ticket.JourneyId,
                     Price = ticket.Price,
-                    BusId = ticket.Journey.BusId,
-                    SeatId = ticket.SeatId,
-                    UserName = ticket.UserName,
-                    SeatNumber = ticket.Seat.SeatNum
+                    SeatNumber = ticket.SeaNum,
+                    ConsumerId = ticket.ConsumerId
                 });
             }
             return returningTickets;

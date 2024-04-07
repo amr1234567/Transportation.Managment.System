@@ -1,7 +1,8 @@
 ﻿using Core.Constants;
-using Core.Dto;
 using Core.Dto.Email;
 using Core.Dto.Identity;
+using Core.Dto.UserInput;
+using Core.Dto.UserOutput;
 using Core.Helpers;
 using Core.Identity;
 using ECommerce.Core.Interfaces.IServices;
