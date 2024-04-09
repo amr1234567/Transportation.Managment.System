@@ -4,6 +4,7 @@ using InfraStructure.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure.Context
 {
@@ -29,5 +30,7 @@ namespace Infrastructure.Context
             builder.SeedAppData();
             builder.EditTables();
         }
+
+
     }
 }

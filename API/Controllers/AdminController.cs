@@ -25,7 +25,7 @@ namespace API.Controllers
         [NonAction]
         //[AllowAnonymous]
         [HttpPost("SignUp")]
-        public async Task<ActionResult<ResponseModel<string>>> SignUp(SignUpDto model)
+        public async Task<ActionResult<ResponseModel<string>>> SignUp(SignUpAsAdminDto model)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace API.Controllers
         }
 
         [HttpPost("CreateManager")]
-        public async Task<ActionResult<ResponseModel<string>>> CreateManager(SignUpDto model)
+        public async Task<ActionResult<ResponseModel<string>>> CreateManager(SignUpAsManagerDto model)
         {
             try
             {

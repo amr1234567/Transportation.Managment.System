@@ -49,7 +49,7 @@ namespace Services.IdentityServices
             };
         }
 
-        public async Task<bool> SignUp(SignUpDto NewUser)
+        public async Task<bool> SignUp(SignUpAsManagerDto NewUser)
         {
             if (NewUser == null)
                 throw new ArgumentNullException("Model Can't Be null");
@@ -63,8 +63,7 @@ namespace Services.IdentityServices
             {
                 Email = NewUser.Email,
                 Name = NewUser.Name,
-                UserName = new MailAddress(NewUser.Email).User,
-                PhoneNumber = NewUser.PhoneNumber
+                UserName = new MailAddress(NewUser.Email).User
             };
 
             var response = await _userManager.CreateAsync(NewManager, NewUser.Password);
@@ -76,10 +75,6 @@ namespace Services.IdentityServices
             if (User == null)
                 throw new Exception("Something went wrong");
 
-            var res = await _userManager.SetPhoneNumberAsync(User, NewUser.PhoneNumber);
-
-            if (!res.Succeeded)
-                throw new Exception("Can't Save Phone Number");
 
             var res2 = await _userManager.AddToRoleAsync(User, Roles.BusStopManager);
             if (!res2.Succeeded)
@@ -120,7 +115,8 @@ namespace Services.IdentityServices
 
         public async Task<ReturnedBusStopDto> GetBusStop(string Id)
         {
-            var record = await _context.BusStopMangers.Include(bsm => bsm.BusStops).FirstOrDefaultAsync(bsm => bsm.Id == Id);
+            var record = await _context.BusStopMangers.Include(bsm => bsm.BusStops)
+                .FirstOrDefaultAsync(bsm => bsm.Id == Id);
 
             if (record == null)
                 throw new NullReferenceException($"Bus stop with Id {Id} Doesn't Exist");
