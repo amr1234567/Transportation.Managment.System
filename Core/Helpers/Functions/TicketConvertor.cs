@@ -13,11 +13,13 @@ namespace Core.Helpers.Functions
         public static ReturnedTicketDto ConvertToDto(this Ticket ticket) =>
             new ReturnedTicketDto
             {
-                CreatedTime = ticket.CreatedTime,
                 JourneyId = ticket.JourneyId,
                 Price = ticket.Price,
-                SeatNumber = ticket.SeaNum,
-                ConsumerId = ticket.ConsumerId
+                SeatNumber = ticket.SeatNum,
+                StartBusStopName = ticket.StartBusStopName,
+                ArrivalTime = ticket.ArrivalTime,
+                DestinationBusStopName = ticket.DestinationName,
+                LeavingTime = ticket.LeavingTime
             };
     }
 }

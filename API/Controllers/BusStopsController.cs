@@ -6,6 +6,8 @@ using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using Twilio.TwiML.Voice;
 
 namespace API.Controllers
 {
@@ -20,27 +22,52 @@ namespace API.Controllers
         {
             _managerServices = managerServices;
         }
+
         [HttpGet]
-
-        public async Task<ActionResult<ResponseModel<List<BusStopDto>>>> GetAllBusStops()
+        public async Task<ActionResult<ResponseModel<List<ReturnedBusStopDto>>>> GetAllBusStops()
         {
-           var records= await _managerServices.GetAllBusStops();
-            return Ok(new ResponseModel<List<BusStopDto>>()
+            try
             {
-                Body = records,
-                Message = "Done",
-                StatusCode = 200
-            });
-        }
+                var records = await _managerServices.GetAllBusStops();
+                Log.Information("Get All BusStops succeeded");
+                return Ok(new ResponseModel<List<ReturnedBusStopDto>>()
+                {
+                    Body = records,
+                    Message = "Done",
+                    StatusCode = 200
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get All BusStops Failed :{ex.Message}");
+                return Ok(new ResponseModel<List<BusStopDto>>()
+                {
+                    Body = new List<BusStopDto>(),
+                    Message = $"Get All BusStops Failed :{ex.Message}",
+                    StatusCode = 400
+                });
+            }
 
+        }
 
         [HttpGet("AllBuses/{id}")]
         public async Task<ActionResult<List<Bus>>> GetBusStopById(string id)
         {
-            var BusStop = await _managerServices.GetBusStop(id);
-            if (BusStop == null)
-                return BadRequest("Wrong Id");
-            return Ok(BusStop);
+            try
+            {
+                var BusStop = await _managerServices.GetBusStop(id);
+
+                Log.Information("Get  BusStop By Id succeeded");
+                if (BusStop == null)
+                    return BadRequest("Wrong Id");
+                Log.Error($"Get  BusStop By Id Failed");
+                return Ok(BusStop);
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get  BusStop By Id Failed :{ex.Message}");
+                return BadRequest($"Get  BusStop By Id Failed :{ex.Message}");
+            }
         }
     }
 }

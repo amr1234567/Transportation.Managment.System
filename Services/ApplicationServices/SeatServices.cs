@@ -8,8 +8,11 @@ namespace Services.ApplicationServices
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task ReserveSeat(Guid id)
+        public async Task ReserveSeat(Guid id)//done
         {
+            if (id == null)
+                throw new ArgumentNullException($"Seat with id doesn't exist");
+
             var seat = await _context.Seats.FirstOrDefaultAsync(s => s.SeatId.Equals(id));
 
             if (seat is null)

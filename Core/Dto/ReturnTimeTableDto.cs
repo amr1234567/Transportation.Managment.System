@@ -17,6 +17,6 @@ namespace Core.Dto
         public DateTime LeavingTime { get; set; }
         public DateTime ArrivalTime { get; set; }
         public int NumberOfAvailableTickets { get; set; }
-
+        public Guid BusId { get; set; }
     }
 }

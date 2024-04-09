@@ -8,120 +8,190 @@ using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Services.IdentityServices;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = Roles.Admin)]
     [ApiController]
-    public class AdminController(IAdminServices adminServices, IManagerServices managerServices, IUpcomingJourneysServices upcomingJourneysServices, IJourneysHistoryServices journeysHistoryServices) : ControllerBase
+    public class AdminController(IAdminServices adminServices, IManagerServices managerServices, IJourneysHistoryServices journeysHistoryServices) : ControllerBase
     {
         private readonly IAdminServices _adminServices = adminServices;
         private readonly IManagerServices _managerServices = managerServices;
-        private readonly IUpcomingJourneysServices _upcomingJourneysServices = upcomingJourneysServices;
         private readonly IJourneysHistoryServices _journeysHistoryServices = journeysHistoryServices;
 
-        //[NonAction]
-        //[Authorize(Roles = Roles.Admin)]
+        [NonAction]
+        //[AllowAnonymous]
         [HttpPost("SignUp")]
         public async Task<ActionResult<ResponseModel<string>>> SignUp(SignUpDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var response = await _adminServices.SignUp(model);
-            if (response)
-                return Ok(new ResponseModel<string>
-                {
-                    StatusCode = 200,
-                    Message = "Every thing is good"
-                });
-            return BadRequest(new ResponseModel<string>
+            try
             {
-                StatusCode = 400,
-                Message = "Wrong Email Or Password"
-            });
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                var response = await _adminServices.SignUp(model);
+                if (response)
+                {
+                    Log.Information($"Sign up Succeeded");
+                    return Ok(new ResponseModel<string>
+                    {
+                        StatusCode = 200,
+                        Message = "Every thing is good"
+                    });
+                }
+                Log.Error($"Sign up Failed");
+                return BadRequest(new ResponseModel<string>
+                {
+                    StatusCode = 400,
+                    Message = "Wrong Email Or Password"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Sign up Failed");
+                return BadRequest(new ResponseModel<string>
+                {
+                    StatusCode = 400,
+                    Message = ex.Message
+                });
+            }
         }
 
+        [AllowAnonymous]
         [HttpPost("SignIn")]
         public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn(LogInDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var response = await _adminServices.SignIn(model);
-            if (response.StatusCode == 200)
-                return Ok(new ResponseModel<TokenModel>
-                {
-                    StatusCode = 200,
-                    Message = "Every thing is good",
-                    Body = response.TokenModel
-                });
-            return BadRequest(new ResponseModel<TokenModel>
+            try
             {
-                StatusCode = response.StatusCode,
-                Message = "Wrong Email Or Password",
-                Body = response.TokenModel
-            });
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                var response = await _adminServices.SignIn(model);
+                if (response.StatusCode == 200)
+                {
+                    Log.Information($"Sign in Succeeded");
+                    return Ok(new ResponseModel<TokenModel>
+                    {
+                        StatusCode = 200,
+                        Message = "Every thing is good",
+                        Body = response.TokenModel
+                    });
+                }
+                Log.Error($"Sign in Failed");
+                return BadRequest(new ResponseModel<string>
+                {
+                    StatusCode = 400,
+                    Message = "Bad"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Sign in Failed ({ex.Message})");
+                return BadRequest(new ResponseModel<TokenModel>
+                {
+                    StatusCode = 400,
+                    Message = ex.Message
+                });
+            }
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpPost("CreateManager")]
         public async Task<ActionResult<ResponseModel<string>>> CreateManager(SignUpDto model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var response = await _managerServices.SignUp(model);
-            if (response)
-                return Ok(new ResponseModel<string>
-                {
-                    StatusCode = 200,
-                    Message = "Every thing is good"
-                });
-            return BadRequest(new ResponseModel<string>
+            try
             {
-                StatusCode = 400,
-                Message = "Wrong Email Or Password"
-            });
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                var response = await _managerServices.SignUp(model);
+                if (response)
+                {
+                    Log.Information($"Manager Created");
+                    return Ok(new ResponseModel<string>
+                    {
+                        StatusCode = 200,
+                        Message = "Every thing is good"
+                    });
+                }
+                Log.Error($"Manager Creation Failed");
+                return BadRequest(new ResponseModel<string>
+                {
+                    StatusCode = 400,
+                    Message = "Bad"
+                });
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Manager Creation Failed ({ex.Message})");
+                return BadRequest(new ResponseModel<string>
+                {
+                    StatusCode = 400,
+                    Message = ex.Message
+                });
+            }
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpPost("Add-BusStop-To-Another")]
         public async Task<ActionResult<ResponseModel<bool>>> AddBusStopToAnother(string Id, string BusStopId)
         {
-            await _managerServices.enrollBusStop(Id, BusStopId);
-            return Ok(new ResponseModel<bool>
+            try
             {
-                StatusCode = 200,
-                Body = true,
-                Message = "BusStop Added Successfully"
+                await _managerServices.enrollBusStop(Id, BusStopId);
+                Log.Information($"Enrolled Process Succeeded");
+                return Ok(new ResponseModel<bool>
+                {
+                    StatusCode = 200,
+                    Body = true,
+                    Message = "BusStop Added Successfully"
 
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Enrolled Process Failed ({ex.Message})");
+                return BadRequest(new ResponseModel<bool>
+                {
+                    StatusCode = 400,
+                    Body = false,
+                    Message = ex.Message
+                });
+            }
         }
 
         [HttpGet("AllJourneys")]
         public async Task<ActionResult<ResponseModel<List<ReturnTimeTableDto>>>> GetAllJourneysInDb()
         {
-            var UpcomingJourneys = await _upcomingJourneysServices.GetAllUpcomingJourneys();
-            var HistoryJourneys = await _journeysHistoryServices.GetAllJourneys();
-            return Ok(new ResponseModel<List<ReturnTimeTableDto>>
+            try
             {
-                StatusCode = 200,
-                Body = UpcomingJourneys.Select(uj => new ReturnTimeTableDto
+                var HistoryJourneys = await _journeysHistoryServices.GetAllJourneys();
+                Log.Information($"Get All Journeys Succeeded");
+                return Ok(new ResponseModel<List<ReturnTimeTableDto>>
                 {
-                    ArrivalTime = uj.ArrivalTime,
-                    DestinationName = uj.DestinationName,
-                    LeavingTime = uj.LeavingTime,
-                    NumberOfAvailableTickets = uj.NumberOfAvailableTickets,
-                    StartBusStopName = uj.StartBusStopName,
-                    TicketPrice = uj.TicketPrice
-                })
-                .Union(HistoryJourneys.Select(uj => new ReturnTimeTableDto
+                    StatusCode = 200,
+                    Body = HistoryJourneys.Select(hj => new ReturnTimeTableDto
+                    {
+                        ArrivalTime = hj.ArrivalTime,
+                        BusId = hj.BusId,
+                        LeavingTime = hj.LeavingTime,
+                        NumberOfAvailableTickets = hj.Tickets.Count,
+                        DestinationName = hj.Destination.Name,
+                        StartBusStopName = hj.StartBusStop.Name,
+                        TicketPrice = hj.TicketPrice
+                    }).ToList(),
+                    Message = "All Journeys"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get All Journeys Failed ({ex.Message})");
+                return BadRequest(new ResponseModel<List<ReturnTimeTableDto>>
                 {
-                    ArrivalTime = uj.ArrivalTime,
-                    LeavingTime = uj.LeavingTime
-                }))
-                .ToList(),
-                Message = "All Journeys"
-            });
+                    StatusCode = 400,
+                    Message = ex.Message
+                });
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Core.Models
         public Guid Id { get; set; }
 
         [Required]
-        public int SeaNum { get; set; }
+        public int SeatNum { get; set; }
 
         public Guid? JourneyId { get; set; }
 
@@ -21,12 +21,25 @@ namespace Core.Models
         public DateTime CreatedTime { get; set; }
 
         [Required]
+        public DateTime ArrivalTime { get; set; }
+
+        [Required]
+        public DateTime LeavingTime { get; set; }
+
+        [Required]
         public string? ConsumerId { get; set; }
 
         public bool ReservedOnline { get; set; }
 
         [Required]
-        public double Price { get; set; }
+        public string DestinationId { get; set; }
+        public string? DestinationName { get; set; }
 
+        [Required]
+        public string StartBusStopId { get; set; }
+        public string? StartBusStopName { get; set; }
+
+        [Required]
+        public double Price { get; set; }
     }
 }

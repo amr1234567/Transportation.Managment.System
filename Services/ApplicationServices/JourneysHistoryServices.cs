@@ -12,6 +12,8 @@ namespace Services.ApplicationServices
 
         public void AddJourney(JourneyDto journeyDto) //wait
         {
+            if (journeyDto == null)
+                throw new ArgumentNullException("Journey Details Can't be null");
             var journey = new JourneyHistory()
             {
                 Id = journeyDto.Id,
@@ -27,18 +29,27 @@ namespace Services.ApplicationServices
             _context.SaveChanges();
         }
 
-        public async Task<List<JourneyHistory>> GetAllJourneys() =>
-            await _context.Journeys.Include(j => j.Bus)
+        public async Task<List<JourneyHistory>> GetAllJourneys()
+        {
+            var Journeys = await _context.Journeys
                                     .Include(j => j.Destination)
                                     .Include(j => j.StartBusStop)
+                                    .Include(j => j.Tickets)
                                     .ToListAsync();
+            if (Journeys == null)
+                throw new ArgumentNullException("No Journeys Right Now Check out Later");
+            return Journeys;
+        }
 
 
 
         public async Task<JourneyHistory> GetJourneyById(Guid id)
         {
-            var journeys = await GetAllJourneys();
-            return journeys.FirstOrDefault(j => j.Id.CompareTo(id) == 0);
+
+            var journey = _context.Journeys.FirstOrDefault(j => j.Id.CompareTo(id) == 0);
+            if (journey == null)
+                throw new ArgumentNullException("Journey Doesn't Exist");
+            return journey;
         }
 
 

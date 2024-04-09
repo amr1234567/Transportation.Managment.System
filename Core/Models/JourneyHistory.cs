@@ -30,8 +30,7 @@ namespace Core.Models
         public Guid BusId { get; set; }
         public Bus? Bus { get; set; }
 
-
-
+        public double TicketPrice { get; set; }
 
     }
 }

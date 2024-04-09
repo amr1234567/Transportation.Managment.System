@@ -15,7 +15,7 @@ namespace Services.ApplicationServices
         public async Task AddBus(BusDto busDto) //done
         {
             if (busDto is null)
-                throw new ArgumentNullException(nameof(busDto));
+                throw new ArgumentNullException("Number of seats can't be null");
             var Busid = Guid.NewGuid();
             List<Seat> seats = new List<Seat>();
 
@@ -24,8 +24,8 @@ namespace Services.ApplicationServices
                 Id = Busid,
                 seats = seats,
                 NumberOfSeats = busDto.NumberOfSeats,
-                IsAvailable=true
-                
+                IsAvailable = true
+
             };
 
             for (int i = 1; i <= busDto.NumberOfSeats; i++)
@@ -46,21 +46,14 @@ namespace Services.ApplicationServices
         public async Task<ResponseModel<Bus>> EditBus(Guid Id, BusDto busDto) //done
         {
             if (busDto is null)
-                return new ResponseModel<Bus>
-                {
-                    StatusCode = 400,
-                    Message = "Input is invalid"
-                };
+                throw new ArgumentNullException("Model Can't be null");
 
             var bus = await _context.Buses.Include(b => b.seats)
                                             .FirstOrDefaultAsync(b => b.Id.Equals(Id));
 
             if (bus is null)
-                return new ResponseModel<Bus>
-                {
-                    StatusCode = 400,
-                    Message = "id is invalid"
-                };
+                throw new ArgumentNullException("Id Invalid");
+
 
             if (bus.NumberOfSeats < busDto.NumberOfSeats)
             {
@@ -101,13 +94,23 @@ namespace Services.ApplicationServices
             };
         }
 
-        public async Task<List<Bus>> GetAllBuses() =>
-            await _context.Buses.Include(b => b.seats).ToListAsync();
-
-        public async Task<Bus> GetBusById(Guid Id)
+        public async Task<List<Bus>> GetAllBuses()//done
         {
-            var buses = await GetAllBuses();
-            return buses.FirstOrDefault(x => x.Id.Equals(Id));
+            var buses = await _context.Buses.Include(b => b.seats).ToListAsync();
+            if (buses == null)
+                throw new ArgumentNullException("No Bus Exist");
+            return buses;
+        }
+
+        public async Task<Bus> GetBusById(Guid Id)//done
+        {
+            if (Id == null)
+                throw new ArgumentNullException($"Id Can't Be Empty");
+
+            var bus = await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id));
+            if (bus == null)
+                throw new ArgumentNullException($"there is no bus exist with id:{Id}");
+            return bus;
         }
 
     }

@@ -11,14 +11,14 @@ namespace Interfaces.IApplicationServices
 {
     public interface ITicketServices
     {
-        Task<List<Ticket>> GetAllTickets();
-        Task<List<Ticket>> GetAllTicketsByJourneyId(Guid id);
-        Task<List<Ticket>> GetAllTicketsByUserId(string id);
-        Task<Ticket> GetTicketById(Guid id);
-        Task<List<Ticket>> GetTicketsByReservedTime(DateTime dateTime);
+        Task<List<ReturnedTicketDto>> GetAllTickets();
+        Task<List<ReturnedTicketDto>> GetAllTicketsByJourneyId(Guid id);
+        Task<List<ReturnedTicketDto>> GetAllTicketsByUserId(string id);
+        Task<ReturnedTicketDto> GetTicketById(Guid id);
+        Task<List<ReturnedTicketDto>> GetTicketsByReservedTime(DateTime dateTime);
         Task<ResponseModel<bool>> CutTicket(TicketDto ticketDto, string ConsumerId);
         Task<ResponseModel<bool>> BookTicket(TicketDto ticketDto, string ConsumerId);
-        Task<List<Ticket>> GetAllCutTickets();
-        Task<List<Ticket>> GetAllBookedTickets();
+        Task<List<ReturnedTicketDto>> GetAllCutTickets();
+        Task<List<ReturnedTicketDto>> GetAllBookedTickets();
     }
 }

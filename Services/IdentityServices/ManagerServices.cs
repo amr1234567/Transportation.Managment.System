@@ -29,25 +29,15 @@ namespace Services.IdentityServices
         public async Task<LogInResponse> SignIn(LogInDto User)
         {
             if (User == null)
-                return new LogInResponse()
-                {
-                    StatusCode = 400,
-                    Message = "Model is Empty"
-                };
+                throw new ArgumentNullException("Model Can't Be null");
+
             var user = await _userManager.FindByEmailAsync(User.Email);
             if (user == null)
-                return new LogInResponse()
-                {
-                    StatusCode = 404,
-                    Message = "Wrong Email Or Password"
-                };
+                throw new NullReferenceException("Email or Password Wrong");
+
             var check = await _userManager.CheckPasswordAsync(user, User.Password);
             if (!check)
-                return new LogInResponse()
-                {
-                    StatusCode = 404,
-                    Message = "Wrong Email Or Password"
-                };
+                throw new NullReferenceException("Email or Password Wrong");
 
             var userRoles = await _userManager.GetRolesAsync(user);
             var token = await _tokenService.CreateToken(user, userRoles.ToList());
@@ -62,10 +52,12 @@ namespace Services.IdentityServices
         public async Task<bool> SignUp(SignUpDto NewUser)
         {
             if (NewUser == null)
-                return false;
+                throw new ArgumentNullException("Model Can't Be null");
+
             var user = await _userManager.FindByEmailAsync(NewUser.Email);
+
             if (user != null)
-                return false;
+                throw new Exception("Email Exist for another account");
 
             var NewManager = new BusStopManger
             {
@@ -77,52 +69,67 @@ namespace Services.IdentityServices
 
             var response = await _userManager.CreateAsync(NewManager, NewUser.Password);
             if (!response.Succeeded)
-                return false;
+                throw new Exception("Something went wrong");
 
 
-            var Manager = await _userManager.FindByEmailAsync(NewManager.Email);
-            if (Manager == null)
-                return false;
+            var User = await _userManager.FindByEmailAsync(NewManager.Email);
+            if (User == null)
+                throw new Exception("Something went wrong");
 
-
-
-            await _userManager.UpdateAsync(Manager);
-
-            var res = await _userManager.SetPhoneNumberAsync(Manager, NewUser.PhoneNumber);
+            var res = await _userManager.SetPhoneNumberAsync(User, NewUser.PhoneNumber);
 
             if (!res.Succeeded)
-                return false;
+                throw new Exception("Can't Save Phone Number");
 
-            var res2 = await _userManager.AddToRoleAsync(Manager, Roles.BusStopManager);
+            var res2 = await _userManager.AddToRoleAsync(User, Roles.BusStopManager);
             if (!res2.Succeeded)
-                return false;
+                throw new Exception($"Can't add the user for role {Roles.BusStopManager}");
+
             return true;
+
         }
         public async Task enrollBusStop(string Id, string busStopId)
         {
             var record = await _context.BusStopMangers.Include(bs => bs.BusStops)
                                         .FirstOrDefaultAsync(bs => bs.Id.Equals(Id));
 
+            if (record == null)
+                throw new NullReferenceException($"Bus stop with Id {Id} Doesn't Exist");
+
             var record2 = await _context.BusStopMangers.Include(bs => bs.BusStops)
                                         .FirstOrDefaultAsync(bs => bs.Id.Equals(busStopId));
+
+            if (record2 == null)
+                throw new NullReferenceException($"Bus stop with Id {busStopId} Doesn't Exist");
 
             record.BusStops.Add(record2);
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<BusStopDto>> GetAllBusStops()
+        public async Task<List<ReturnedBusStopDto>> GetAllBusStops()
         {
-            return _context.BusStopMangers.Select(x => new BusStopDto { Name = x.Name }).ToList();
+            return _context.BusStopMangers.Include(bs => bs.BusStops)
+                .Select(x => new ReturnedBusStopDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    busStops = x.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name }).ToList(),
+                }).ToList();
         }
 
-        public async Task<BusStopDto> GetBusStop(string Id)
+        public async Task<ReturnedBusStopDto> GetBusStop(string Id)
         {
             var record = await _context.BusStopMangers.Include(bsm => bsm.BusStops).FirstOrDefaultAsync(bsm => bsm.Id == Id);
-            return new BusStopDto
+
+            if (record == null)
+                throw new NullReferenceException($"Bus stop with Id {Id} Doesn't Exist");
+
+            return new ReturnedBusStopDto
             {
+                Id = record.Id,
                 Name = record.Name,
-                BusStops = record.BusStops.Select(x => new BusStopDto { Name = x.Name }).ToList()
+                busStops = record.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name }).ToList()
             };
         }
     }

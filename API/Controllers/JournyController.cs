@@ -5,6 +5,7 @@ using Core.Models;
 using Interfaces.IApplicationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,70 +14,138 @@ namespace API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = $"{Roles.BusStopManager},{Roles.User},{Roles.Admin}")]
-    public class JourneyController(IJourneysHistoryServices journeyService, IUpcomingJourneysServices UpcomingJourneysServices) : ControllerBase
+    public class JourneyController(IUpcomingJourneysServices UpcomingJourneysServices) : ControllerBase
     {
-        private readonly IJourneysHistoryServices _journeysHistoryService = journeyService;
         private readonly IUpcomingJourneysServices _UpcomingJourneysServices = UpcomingJourneysServices;
 
         [AllowAnonymous]
         [HttpGet("All")]
-        public async Task<ActionResult<ResponseModel<List<ReturnTimeTableDto>>>> GetAll()
+        public async Task<ActionResult<ResponseModel<List<ReturnedUpcomingJourneyDto>>>> GetAll()
         {
-            var journeys = await _UpcomingJourneysServices.GetAllUpcomingJourneys();
-            return Ok(new ResponseModel<List<ReturnedUpcomingJourneyDto>>
+            try
             {
-                StatusCode = 200,
-                Body = journeys.Select(j => new ReturnedUpcomingJourneyDto
+                var journeys = await _UpcomingJourneysServices.GetAllUpcomingJourneys();
+                Log.Information($"Get All Journeys Succeeded");
+                return Ok(new ResponseModel<List<ReturnedUpcomingJourneyDto>>
                 {
-                    ArrivalTime = j.ArrivalTime,
-                    BusId =
-                }),
-                Message = "Done"
-            });
+                    StatusCode = 200,
+                    Body = journeys,
+                    Message = "Done"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get All Journeys failed {ex.Message}");
+                return new ResponseModel<List<ReturnedUpcomingJourneyDto>>
+                {
+                    Message = ex.Message,
+                    StatusCode = 400
+                };
+            }
+
         }
 
         [HttpGet("All/{id}")]
-        public async Task<ActionResult<ResponseModel<JourneyHistory>>> GetJourneyById(Guid id)
+        public async Task<ActionResult<ResponseModel<ReturnedUpcomingJourneyDto>>> GetJourneyById(Guid id)
         {
-            return Ok(new ResponseModel<JourneyHistory>
+            try
             {
-                StatusCode = 200,
-                Body = await _journeysHistoryService.GetJourneyById(id),
-                Message = "Done"
-            });
+                var journey = await _UpcomingJourneysServices.GetJourneyById(id);
+                Log.Information($"Get Journey By Id Succeeded");
+                return Ok(new ResponseModel<ReturnedUpcomingJourneyDto>
+                {
+                    StatusCode = 200,
+                    Body = journey,
+                    Message = "Done"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get Journey By Id failed {ex.Message}");
+                return BadRequest(new ResponseModel<ReturnedUpcomingJourneyDto>
+                {
+                    StatusCode = 400,
+                    Message = $"Get Journey Failed {ex.Message}"
+                });
+            }
+
         }
 
         [HttpGet("Nearest/{destinationId}/{startBusStopId}")]
-        public async Task<ActionResult<ResponseModel<JourneyHistory>>> GetNearestJourneyByDestination(string destinationId, string startBusStopId)
+        public async Task<ActionResult<ResponseModel<ReturnedUpcomingJourneyDto>>> GetNearestJourneyByDestination(string destinationId, string startBusStopId)
         {
-            return Ok(new ResponseModel<UpcomingJourney>
+            try
             {
-                StatusCode = 200,
-                Body = await _UpcomingJourneysServices.GetNearestJourneyByDestination(destinationId, startBusStopId),
-                Message = "Done"
-            });
+                var journey = await _UpcomingJourneysServices.GetNearestJourneyByDestination(destinationId, startBusStopId);
+                Log.Information($"Get Nearest Journey By Destination Succeeded");
+                return Ok(new ResponseModel<ReturnedUpcomingJourneyDto>
+                {
+                    StatusCode = 200,
+                    Body = journey,
+                    Message = "Done"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get Nearest Journey By Destination failed {ex.Message}");
+                return BadRequest(new ResponseModel<ReturnedUpcomingJourneyDto>
+                {
+                    StatusCode = 400,
+                    Message = $"Get Nearest Journey By Destination failed  {ex.Message}"
+                });
+            }
+
         }
 
         [HttpGet("AllByDestination/{destinationId}")]
-        public async Task<ActionResult<ResponseModel<List<JourneyHistory>>>> GetAllJourneysByDestinationBusStopId(string destinationId)
+        public async Task<ActionResult<ResponseModel<List<ReturnedUpcomingJourneyDto>>>> GetAllJourneysByDestinationBusStopId(string destinationId)
         {
-            return Ok(new ResponseModel<List<UpcomingJourney>>
+            try
             {
-                StatusCode = 200,
-                Body = await _UpcomingJourneysServices.GetAllJourneysByDestinationBusStopId(destinationId),
-                Message = "Done"
-            });
+                var journeys = await _UpcomingJourneysServices.GetAllJourneysByDestinationBusStopId(destinationId);
+                Log.Information($"Get All Journeys By Destination Bus Stop Id Succeeded");
+                return Ok(new ResponseModel<List<ReturnedUpcomingJourneyDto>>
+                {
+                    StatusCode = 200,
+                    Body = journeys,
+                    Message = "Done"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get All Journeys By Destination Bus Stop Id failed {ex.Message}");
+                return BadRequest(new ResponseModel<List<ReturnedUpcomingJourneyDto>>
+                {
+                    StatusCode = 400,
+                    Message = $"Get All Journeys By Destination Bus Stop Id failed {ex.Message}"
+                });
+            }
+
         }
 
         [HttpGet("AllByStart/{startBusStopId}")]
-        public async Task<ActionResult<ResponseModel<List<JourneyHistory>>>> GetAllJourneysByStartBusStopId(string startBusStopId)
+        public async Task<ActionResult<ResponseModel<List<ReturnedUpcomingJourneyDto>>>> GetAllJourneysByStartBusStopId(string startBusStopId)
         {
-            return Ok(new ResponseModel<List<UpcomingJourney>>
+            try
             {
-                StatusCode = 200,
-                Body = await _UpcomingJourneysServices.GetAllJourneysByStartBusStopId(startBusStopId),
-                Message = "Done"
-            });
+                var Journeys = await _UpcomingJourneysServices.GetAllJourneysByStartBusStopId(startBusStopId);
+                Log.Information($"Get All Journeys By Start Bus Stop Id Succeeded");
+                return Ok(new ResponseModel<List<ReturnedUpcomingJourneyDto>>
+                {
+                    StatusCode = 200,
+                    Body = Journeys,
+                    Message = "Done"
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get All Journeys By Start Bus Stop Id failed {ex.Message}");
+                return BadRequest(new ResponseModel<List<ReturnedUpcomingJourneyDto>>
+                {
+                    StatusCode = 400,
+                    Message = $"Get All Journeys By Start Bus Stop Id failed {ex.Message}"
+                });
+            }
         }
     }
 }

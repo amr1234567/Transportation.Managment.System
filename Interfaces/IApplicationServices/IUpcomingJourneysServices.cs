@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Core.Dto.UserOutput;
 using Core.Models;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,11 @@ namespace Interfaces.IApplicationServices
     {
         Task<TimeTableDto> SetUpcomingJourneys(TimeTableDto time);
         void RemoveUpcomingJourneys();
-        Task<List<ReturnTimeTableDto>> GetAllUpcomingJourneys();
-        Task<UpcomingJourney> GetJourneyById(Guid id);
-        Task<List<UpcomingJourney>> GetAllJourneysByDestinationBusStopId(string id);
-        Task<List<UpcomingJourney>> GetAllJourneysByStartBusStopId(string id);
-        Task<UpcomingJourney> GetNearestJourneyByDestination(string destinationId, string startBusStopId);
+        Task<List<ReturnedUpcomingJourneyDto>> GetAllUpcomingJourneys();
+        Task<ReturnedUpcomingJourneyDto> GetJourneyById(Guid id);
+        Task<List<ReturnedUpcomingJourneyDto>> GetAllJourneysByDestinationBusStopId(string id);
+        Task<List<ReturnedUpcomingJourneyDto>> GetAllJourneysByStartBusStopId(string id);
+        Task<ReturnedUpcomingJourneyDto> GetNearestJourneyByDestination(string destinationId, string startBusStopId);
         Task SetArrivalTime(DateTime time, Guid id);
         Task SetLeavingTime(DateTime time, Guid id);
     }

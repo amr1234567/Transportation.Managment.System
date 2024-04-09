@@ -8,8 +8,8 @@ namespace Interfaces.IIdentityServices
     {
         Task<bool> SignUp(SignUpDto NewUser);//, string Token);
         Task<LogInResponse> SignIn(LogInDto User);
-        Task<List<BusStopDto>> GetAllBusStops();
+        Task<List<ReturnedBusStopDto>> GetAllBusStops();
         Task enrollBusStop(string Id, string busStopId);
-        Task<BusStopDto> GetBusStop(string Id);
+        Task<ReturnedBusStopDto> GetBusStop(string Id);
     }
 }

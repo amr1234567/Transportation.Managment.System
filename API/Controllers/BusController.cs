@@ -5,6 +5,7 @@ using Core.Models;
 using Interfaces.IApplicationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,39 +26,81 @@ namespace API.Controllers
         [HttpGet("All")]
         public async Task<ActionResult<ResponseModel<List<Bus>>>> GetAllBuses()
         {
-            return new ResponseModel<List<Bus>>
+            try
             {
-                StatusCode = 200,
-                Message = "Done",
-                Body = await _busService.GetAllBuses()
-            };
+                var model = new ResponseModel<List<Bus>>
+                {
+
+                    StatusCode = 200,
+                    Message = "Done",
+                    Body = await _busService.GetAllBuses(),
+
+                };
+                Log.Information("Get All Buses Success");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                var model = new ResponseModel<List<Bus>>
+                {
+                    StatusCode = 404,
+                    Message = ex.Message,
+                    Body = new List<Bus>()
+                };
+                Log.Error($"Get All Buses Error:{ex.Message}");
+                return model;
+            }
+
         }
 
         [HttpGet("{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> GetBus([FromRoute] Guid BusId)
         {
-            var bus = await _busService.GetBusById(BusId);
-            if (bus == null)
-                return new ResponseModel<Bus>
+            try
+            {
+                var bus = await _busService.GetBusById(BusId);
+                var model = new ResponseModel<Bus>
+                {
+                    StatusCode = 200,
+                    Message = "Done",
+                    Body = bus
+                };
+                Log.Information($"get Bus By Id Success: {bus}");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                var model = new ResponseModel<Bus>
                 {
                     StatusCode = 400,
-                    Message = "No bus with this id"
+                    Message = $"Get Bus By Id Error occurred :{ex.Message}"
                 };
-            return new ResponseModel<Bus>
-            {
-                StatusCode = 200,
-                Message = "Done",
-                Body = bus
-            };
+                Log.Error($"get Bus By Id failed: {ex.Message}");
+                return model;
+            }
+
+
+
+
         }
 
         [HttpPut("{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto busDto)
         {
-            var res = await _busService.EditBus(BusId, busDto);
-            if (res.StatusCode == 200)
-                return Ok(res);
-            return BadRequest(res);
+            try
+            {
+                var res = await _busService.EditBus(BusId, busDto);
+                Log.Information($"edit Bus Success: {res}");
+                if (res.StatusCode == 200)
+                    return Ok(res);
+                Log.Error($"edit Bus failed");
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"edit Bus failed: {ex.Message}");
+                return BadRequest($"edit Bus failed: {ex.Message}");
+            }
         }
     }
 }

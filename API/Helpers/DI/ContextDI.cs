@@ -31,6 +31,7 @@ namespace API.Helpers.DI
             {
                 options.SignIn.RequireConfirmedPhoneNumber = true;
             })
+                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

@@ -23,25 +23,15 @@ namespace Services.IdentityServices
         public async Task<LogInResponse> SignIn(LogInDto User)
         {
             if (User == null)
-                return new LogInResponse()
-                {
-                    StatusCode = 400,
-                    Message = "Model is Empty"
-                };
+                throw new ArgumentNullException("Model Can't Be null");
+
             var user = await _userManager.FindByEmailAsync(User.Email);
             if (user == null)
-                return new LogInResponse()
-                {
-                    StatusCode = 404,
-                    Message = "Wrong Email Or Password"
-                };
+                throw new NullReferenceException("Email or Password Wrong");
+
             var check = await _userManager.CheckPasswordAsync(user, User.Password);
             if (!check)
-                return new LogInResponse()
-                {
-                    StatusCode = 404,
-                    Message = "Wrong Email Or Password"
-                };
+                throw new NullReferenceException("Email or Password Wrong");
 
             var userRoles = await _userManager.GetRolesAsync(user);
             var token = await _tokenService.CreateToken(user, userRoles.ToList());
@@ -56,10 +46,12 @@ namespace Services.IdentityServices
         public async Task<bool> SignUp(SignUpDto NewUser)
         {
             if (NewUser == null)
-                return false;
+                throw new ArgumentNullException("Model Can't Be null");
+
             var user = await _userManager.FindByEmailAsync(NewUser.Email);
+
             if (user != null)
-                return false;
+                throw new Exception("Email Exist for another account");
 
             var appUser = new ApplicationAdmin
             {
@@ -69,22 +61,26 @@ namespace Services.IdentityServices
                 PhoneNumber = NewUser.PhoneNumber,
                 PhoneNumberConfirmed = false,
             };
+
+
             var response = await _userManager.CreateAsync(appUser, NewUser.Password);
             if (!response.Succeeded)
-                return false;
+                throw new Exception("Something went wrong");
 
 
             var User = await _userManager.FindByEmailAsync(appUser.Email);
             if (User == null)
-                return false;
+                throw new Exception("Something went wrong");
+
             var res = await _userManager.SetPhoneNumberAsync(User, NewUser.PhoneNumber);
 
             if (!res.Succeeded)
-                return false;
+                throw new Exception("Can't Save Phone Number");
 
             var res2 = await _userManager.AddToRoleAsync(User, Roles.Admin);
             if (!res2.Succeeded)
-                return false;
+                throw new Exception($"Can't add the user for role {Roles.Admin}");
+
             return true;
         }
     }

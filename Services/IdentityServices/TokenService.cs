@@ -23,6 +23,12 @@ namespace ECommerce.InfaStructure.Services
 
         public Task<TokenModel> CreateToken(User user, List<string> roles, List<Claim>? InternalClaims = null)
         {
+            if (user is null)
+                throw new ArgumentNullException("User Can't be null");
+
+            if (roles is null || !roles.Any())
+                throw new ArgumentNullException("Roles Can't be null");
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
@@ -55,5 +61,6 @@ namespace ECommerce.InfaStructure.Services
                 TokenExpiration = ExpierdOn
             });
         }
+
     }
 }
