@@ -46,9 +46,3 @@ To prevent abuse and ensure fair usage, rate limiting is applied to certain endp
 ## Documentation
 
 For detailed information about each endpoint, authentication methods, rate limits, and more, please refer to the API documentation.
-
-## Contact
-
-If you have any questions, concerns, or feedback, please contact our support team at support@transportationapi.com.
-
-Thank you for using our Transportation Management System API! 🚌📊
