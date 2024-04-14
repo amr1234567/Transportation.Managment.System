@@ -14,8 +14,7 @@ namespace Core.Models
 
         public Guid? JourneyId { get; set; }
 
-        [Required]
-        public Guid? TimeTableId { get; set; }
+        public Guid? UpcomingJourneyId { get; set; }
 
         [Required]
         public DateTime CreatedTime { get; set; }

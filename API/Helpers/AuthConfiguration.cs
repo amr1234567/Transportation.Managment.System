@@ -24,9 +24,8 @@ namespace API.Helpers
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidateIssuer = true,
+                        ValidateIssuer = false,
                         ValidateAudience = false,
-                        ValidIssuer = Configuration["JWT:issuer"],
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))

@@ -11,7 +11,7 @@ namespace Core.Identity
         [Required(ErrorMessage = "{0} must contain value")]
         public string PhoneNumber { get; set; }
 
-        public List<Ticket>? Tickets { get; set; }
-        public List<JourneyHistory>? Journeys { get; set; }
+        //public List<Ticket>? Tickets { get; set; }
+        //public List<JourneyHistory>? Journeys { get; set; }
     }
 }

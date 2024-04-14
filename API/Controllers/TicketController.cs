@@ -23,8 +23,9 @@ namespace API.Controllers
         {
             try
             {
+                var time = DateTime.UtcNow;
                 var tikets = await _ticketServices.GetAllTickets();
-                Log.Information($"Get All Tickets Done Successfully");
+                Log.Information($"Get All Tickets Done Successfully ({time} -> {DateTime.UtcNow})");
                 return Ok(new ResponseModel<List<ReturnedTicketDto>>
                 {
                     StatusCode = 200,

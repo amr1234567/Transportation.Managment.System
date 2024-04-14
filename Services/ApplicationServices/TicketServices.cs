@@ -39,7 +39,7 @@ namespace Services.ApplicationServices
                 Id = Guid.NewGuid(),
                 CreatedTime = ticketDto.CreatedTime,
                 SeatNum = seatNum,
-                TimeTableId = ticketDto.JourneyId,
+                UpcomingJourneyId = ticketDto.JourneyId,
                 ConsumerId = ConsumerId,
                 ReservedOnline = Online,
                 Price = journey.TicketPrice,

@@ -1,0 +1,242 @@
+[
+  {
+    "Id": "b9e21f9b-8261-4a3f-8379-5a7e189f4a01",
+    "DestinationId": "D1",
+    "StartBusStopId": "S1",
+    "LeavingTime": "2024-03-09T08:00:00",
+    "ArrivalTime": "2024-03-09T10:00:00",
+    "Tickets": [],
+    "BusId": "7c7f4b7f-02be-4c30-bc18-86a3dfb08b2a",
+    "TicketPrice": 10.00
+  },
+  {
+    "Id": "c015e28a-2769-4d44-af5e-4cb95f5ab4c4",
+    "DestinationId": "D2",
+    "StartBusStopId": "S2",
+    "LeavingTime": "2024-03-09T09:00:00",
+    "ArrivalTime": "2024-03-09T11:00:00",
+    "Tickets": [],
+    "BusId": "26193d11-29d8-4e47-8ec9-15a3dc4d154f",
+    "TicketPrice": 15.00
+  },
+  {
+    "Id": "11e51a38-2738-48c2-9a29-4b2c60cf77dc",
+    "DestinationId": "D3",
+    "StartBusStopId": "S3",
+    "LeavingTime": "2024-03-09T10:00:00",
+    "ArrivalTime": "2024-03-09T12:00:00",
+    "Tickets": [],
+    "BusId": "8e7e7a38-05b0-4fc9-9a15-5c29ed1572c5",
+    "TicketPrice": 20.00
+  },
+  {
+    "Id": "d164b3b1-833e-4d8e-88fc-d57e33680d18",
+    "DestinationId": "D4",
+    "StartBusStopId": "S4",
+    "LeavingTime": "2024-03-09T11:00:00",
+    "ArrivalTime": "2024-03-09T13:00:00",
+    "Tickets": [],
+    "BusId": "41a59053-7e7d-4b2a-af0b-27e82040b408",
+    "TicketPrice": 12.50
+  },
+  {
+    "Id": "e8f053bb-14d5-4a15-b874-dcc83e69497a",
+    "DestinationId": "D5",
+    "StartBusStopId": "S5",
+    "LeavingTime": "2024-03-09T12:00:00",
+    "ArrivalTime": "2024-03-09T14:00:00",
+    "Tickets": [],
+    "BusId": "9d7f0595-4f94-4f4b-931d-819d8df41c17",
+    "TicketPrice": 18.75
+  },
+  {
+    "Id": "a6d1c77a-3d80-4e8a-a9f0-5b5c7e8ad90b",
+    "DestinationId": "D6",
+    "StartBusStopId": "S6",
+    "LeavingTime": "2024-03-09T13:00:00",
+    "ArrivalTime": "2024-03-09T15:00:00",
+    "Tickets": [],
+    "BusId": "16f84b56-2140-4a3e-8d88-9a28f35417cd",
+    "TicketPrice": 14.25
+  },
+  {
+    "Id": "b9e21f9b-8261-4a3f-8379-5a7e189f4a01",
+    "DestinationId": "D7",
+    "StartBusStopId": "S7",
+    "LeavingTime": "2024-03-09T14:00:00",
+    "ArrivalTime": "2024-03-09T16:00:00",
+    "Tickets": [],
+    "BusId": "3d9c44a5-61f6-4b38-8c84-652e9a20730d",
+    "TicketPrice": 22.50
+  },
+  {
+    "Id": "c015e28a-2769-4d44-af5e-4cb95f5ab4c4",
+    "DestinationId": "D8",
+    "StartBusStopId": "S8",
+    "LeavingTime": "2024-03-09T15:00:00",
+    "ArrivalTime": "2024-03-09T17:00:00",
+    "Tickets": [],
+    "BusId": "bd1c8498-261b-49d0-8398-c89d2f26bb20",
+    "TicketPrice": 17.50
+  },
+  {
+    "Id": "11e51a38-2738-48c2-9a29-4b2c60cf77dc",
+    "DestinationId": "D9",
+    "StartBusStopId": "S9",
+    "LeavingTime": "2024-03-09T16:00:00",
+    "ArrivalTime": "2024-03-09T18:00:00",
+    "Tickets": [],
+    "BusId": "2d56b999-9898-49db-ba91-2730513a6dc0",
+    "TicketPrice": 19.75
+  },
+  {
+    "Id": "d164b3b1-833e-4d8e-88fc-d57e33680d18",
+    "DestinationId": "D10",
+    "StartBusStopId": "S10",
+    "LeavingTime": "2024-03-09T17:00:00",
+    "ArrivalTime": "2024-03-09T19:00:00",
+    "Tickets": [],
+    "BusId": "6f9a315c-0db9-44f1-8cf2-fd583a5b47f7",
+    "TicketPrice": 15.25
+  },
+  {
+    "Id": "e8f053bb-14d5-4a15-b874-dcc83e69497a",
+    "DestinationId": "D11",
+    "StartBusStopId": "S11",
+    "LeavingTime": "2024-03-09T18:00:00",
+    "ArrivalTime": "2024-03-09T20:00:00",
+    "Tickets": [],
+    "BusId": "4d0c679a-d47b-4e1b-97f0-7b4bb736fe3b",
+    "TicketPrice": 13.50
+  },
+  {
+    "Id": "a6d1c77a-3d80-4e8a-a9f0-5b5c7e8ad90b",
+    "DestinationId": "D12",
+    "StartBusStopId": "S12",
+    "LeavingTime": "2024-03-09T19:00:00",
+    "ArrivalTime": "2024-03-09T21:00:00",
+    "Tickets": [],
+    "BusId": "fa4722fd-067d-4982-95a2-6a1c2d295f2a",
+    "TicketPrice": 20.00
+  },
+  {
+    "Id": "b9e21f9b-8261-4a3f-8379-5a7e189f4a01",
+    "DestinationId": "D13",
+    "StartBusStopId": "S13",
+    "LeavingTime": "2024-03-09T20:00:00",
+    "ArrivalTime": "2024-03-09T22:00:00",
+    "Tickets": [],
+    "BusId": "3e4cc7cf-bdd1-49f6-b2a2-741b7b1f05de",
+    "TicketPrice": 18.75
+  },
+  {
+    "Id": "c015e28a-2769-4d44-af5e-4cb95f5ab4c4",
+    "DestinationId": "D14",
+    "StartBusStopId": "S14",
+    "LeavingTime": "2024-03-09T21:00:00",
+    "ArrivalTime": "2024-03-09T23:00:00",
+    "Tickets": [],
+    "BusId": "df45b6d1-221e-4907-a9f8-8e9e45892dd9",
+    "TicketPrice": 22.50
+  },
+  {
+    "Id": "11e51a38-2738-48c2-9a29-4b2c60cf77dc",
+    "DestinationId": "D15",
+    "StartBusStopId": "S15",
+    "LeavingTime": "2024-03-09T22:00:00",
+    "ArrivalTime": "2024-03-10T00:00:00",
+    "Tickets": [],
+    "BusId": "21d6cfac-7952-4c05-9965-b9a92c3a7c8e",
+    "TicketPrice": 15.00
+  },
+  {
+    "Id": "d164b3b1-833e-4d8e-88fc-d57e33680d18",
+    "DestinationId": "D16",
+    "StartBusStopId": "S16",
+    "LeavingTime": "2024-03-10T00:00:00",
+    "ArrivalTime": "2024-03-10T02:00:00",
+    "Tickets": [],
+    "BusId": "bebbce9b-cda1-4933-ae3e-2e5cf41f82dc",
+    "TicketPrice": 19.50
+  },
+  {
+    "Id": "e8f053bb-14d5-4a15-b874-dcc83e69497a",
+    "DestinationId": "D17",
+    "StartBusStopId": "S17",
+    "LeavingTime": "2024-03-10T01:00:00",
+    "ArrivalTime": "2024-03-10T03:00:00",
+    "Tickets": [],
+    "BusId": "b1906d8d-aa24-4fc7-93f2-2cf7e31bfa1f",
+    "TicketPrice": 16.75
+  },
+  {
+    "Id": "a6d1c77a-3d80-4e8a-a9f0-5b5c7e8ad90b",
+    "DestinationId": "D18",
+    "StartBusStopId": "S18",
+    "LeavingTime": "2024-03-10T02:00:00",
+    "ArrivalTime": "2024-03-10T04:00:00",
+    "Tickets": [],
+    "BusId": "e9b1d87c-c8c0-4326-bb29-99a61b5e15a4",
+    "TicketPrice": 20.25
+  },
+  {
+    "Id": "b9e21f9b-8261-4a3f-8379-5a7e189f4a01",
+    "DestinationId": "D19",
+    "StartBusStopId": "S19",
+    "LeavingTime": "2024-03-10T03:00:00",
+    "ArrivalTime": "2024-03-10T05:00:00",
+    "Tickets": [],
+    "BusId": "fdf6e1de-ded6-4785-bd3b-d9309f5a1893",
+    "TicketPrice": 17.50
+  },
+  {
+    "Id": "c015e28a-2769-4d44-af5e-4cb95f5ab4c4",
+    "DestinationId": "D20",
+    "StartBusStopId": "S20",
+    "LeavingTime": "2024-03-10T04:00:00",
+    "ArrivalTime": "2024-03-10T06:00:00",
+    "Tickets": [],
+    "BusId": "9d7f0bb3-ebc2-41b8-ba02-54a1c1bb1f14",
+    "TicketPrice": 15.00
+  },
+  {
+    "Id": "11e51a38-2738-48c2-9a29-4b2c60cf77dc",
+    "DestinationId": "D21",
+    "StartBusStopId": "S21",
+    "LeavingTime": "2024-03-10T05:00:00",
+    "ArrivalTime": "2024-03-10T07:00:00",
+    "Tickets": [],
+    "BusId": "cf5e9379-9c5b-4937-8e61-635d5247d823",
+    "TicketPrice": 22.00
+  },
+  {
+    "Id": "d164b3b1-833e-4d8e-88fc-d57e33680d18",
+    "DestinationId": "D22",
+    "StartBusStopId": "S22",
+    "LeavingTime": "2024-03-10T06:00:00",
+    "ArrivalTime": "2024-03-10T08:00:00",
+    "Tickets": [],
+    "BusId": "27e5e760-52da-4c61-9828-59d6b7435643",
+    "TicketPrice": 18.50
+  },
+  {
+    "Id": "e8f053bb-14d5-4a15-b874-dcc83e69497a",
+    "DestinationId": "D23",
+    "StartBusStopId": "S23",
+    "LeavingTime": "2024-03-10T07:00:00",
+    "ArrivalTime": "2024-03-10T09:00:00",
+    "Tickets": [],
+    "BusId": "0c334d46-0c2d-44eb-af4b-70b438d132c1",
+    "TicketPrice": 21.75
+  },
+  {
+    "Id": "a6d1c77a-3d80-4e8a-a9f0-5b5c7e8ad90b",
+    "DestinationId": "D24",
+    "StartBusStopId": "S24",
+    "LeavingTime": "2024-03-10T08:00:00",
+    "ArrivalTime": "2024-03-10T10:00:00",
+    "Tickets": [],
+    "BusId": "6e22faca-12e2-4ebd-bc4a-5aa2b3698266",
+    "TicketPrice": 16.25
+  }
+]

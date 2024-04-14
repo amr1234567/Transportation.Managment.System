@@ -14,6 +14,7 @@ namespace InfraStructure.Helpers
         {
             model.SeedRoles();
             model.SeedAdmins();
+            model.SeedJourneys();
         }
     }
 }
