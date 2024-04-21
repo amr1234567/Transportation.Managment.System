@@ -12,7 +12,7 @@ namespace Core.Identity
     {
         [Required(ErrorMessage = "{0} must contain a value")]
         [StringLength(50, MinimumLength = 3)]
-        [Display(Name = "User Name")]
+        [Display(Name = "Bus Stop Name")]
         public string Name { get; set; }
     }
 }

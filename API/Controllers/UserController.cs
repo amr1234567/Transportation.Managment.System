@@ -1,5 +1,4 @@
 ﻿using Core.Constants;
-using Core.Dto;
 using Core.Dto.Identity;
 using Core.Dto.UserInput;
 using Core.Dto.UserOutput;
@@ -23,7 +22,7 @@ namespace API.Controllers
         private readonly IUserServices _userServices = userServices;
         private readonly ITicketServices _ticketServices = ticketServices;
 
-        [HttpPost("SignUp")]
+        [HttpPost("sign-up")]
         public async Task<ActionResult<ResponseModel<string>>> SignUp([FromBody] SignUpDto model)
         {
             try
@@ -67,7 +66,7 @@ namespace API.Controllers
         }
 
         [NonAction]
-        [HttpPost("ConfirmEmail")]
+        [HttpPost("confirm-email")]
         public async Task<ActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
             try
@@ -86,7 +85,7 @@ namespace API.Controllers
         }
 
 
-        [HttpPost("ConfirmPhoneNumber")]
+        [HttpPost("confirm-phone-number")]
         public async Task<ActionResult> ConfirmPhoneNumber([FromBody] ConfirmPhoneNumberDto model)
         {
             try
@@ -105,7 +104,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("SignIn")]
+        [HttpPost("sign-in")]
         public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn([FromBody] LogInDto model)
         {
             try
@@ -162,15 +161,15 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpGet("AllTicketsForUser")]
-        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByUserId()
+        [HttpGet("get-all-tickets-by-user")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTicketsByUserId()
         {
             try
             {
                 var tikets = await _ticketServices.GetAllTicketsByUserId(GetUserIdFromClaims());
                 Log.Information($"Get All Tickets By User Id Done successfully");
 
-                return Ok(new ResponseModel<List<ReturnedTicketDto>>
+                return Ok(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 200,
                     Body = tikets,
@@ -181,7 +180,7 @@ namespace API.Controllers
             {
                 Log.Error($"Get All Tickets By User Id Failed  ({ex.Message})");
 
-                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                return BadRequest(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 400,
                     Message = ex.Message
@@ -190,7 +189,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = Roles.User)]
-        [HttpPost("BookTicket")]
+        [HttpPost("book-ticket")]
         public async Task<ActionResult<ResponseModel<bool>>> BookTicket(TicketDto model)
         {
             try
@@ -223,7 +222,8 @@ namespace API.Controllers
                 });
             }
         }
-        [HttpPost("Forget-Password-Verify")]
+
+        [HttpPost("forget-password-verify")]
         public async Task<ActionResult<ResponseModel<bool>>> ForgetPasswordVerify([DataType(DataType.PhoneNumber), Required] string PhoneNumber)
         {
             try

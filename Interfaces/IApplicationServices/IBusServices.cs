@@ -12,7 +12,7 @@ namespace Interfaces.IApplicationServices
     public interface IBusServices
     {
         Task AddBus(BusDto busDto);
-        Task<List<Bus>> GetAllBuses();
+        Task<IEnumerable<Bus>> GetAllBuses();
         Task<Bus> GetBusById(Guid Id);
         Task<ResponseModel<Bus>> EditBus(Guid Id, BusDto busDto);
     }

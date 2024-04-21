@@ -9,14 +9,14 @@ namespace Core.Dto.Email
 {
     public class Message
     {
-        public List<MailboxAddress> To { get; set; }
+        public IEnumerable<MailboxAddress> To { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
         public Message()
         {
 
         }
-        public Message(List<string> addresses, string subject, string content)
+        public Message(IEnumerable<string> addresses, string subject, string content)
         {
             To = [.. addresses.Select(x => new MailboxAddress("email", x))];
             Subject = subject;

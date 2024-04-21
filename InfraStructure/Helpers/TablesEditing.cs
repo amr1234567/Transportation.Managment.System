@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -32,6 +33,7 @@ namespace InfraStructure.Helpers
             builder.Entity<Ticket>().ToTable("Tickets", AppSchema);
             builder.Entity<Seat>().ToTable("Seats", AppSchema);
             builder.Entity<UpcomingJourney>().ToTable("UpcomingJourneys", AppSchema);
+
             builder.Entity<BusStopManger>()
             .HasMany(n => n.BusStops)
             .WithMany(n => n.BusStopsRelations)
@@ -53,6 +55,10 @@ namespace InfraStructure.Helpers
                     j.ToTable("BusStopsRelations");
                 }
             );
+
+            builder.Entity<JourneyHistory>()
+                .Property(j => j.Date)
+                .HasColumnType("date");
         }
     }
 }

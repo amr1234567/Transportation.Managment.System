@@ -17,16 +17,15 @@ namespace API.Controllers
     [Route("api/[controller]")]
     [Authorize(Roles = Roles.BusStopManager)]
     [ApiController]
-    public class ManagerController(IBusServices busServices, ITicketServices ticketServices, IManagerServices managerServices, IJourneysHistoryServices journeyServices, IUpcomingJourneysServices timeTableService) : ControllerBase
+    public class ManagerController(IBusServices busServices, ITicketServices ticketServices, IManagerServices managerServices, IUpcomingJourneysServices UpcomingJourneysServices) : ControllerBase
     {
         private readonly IBusServices _busServices = busServices;
         private readonly ITicketServices _ticketServices = ticketServices;
         private readonly IManagerServices _managerServices = managerServices;
-        private readonly IJourneysHistoryServices _journeyServices = journeyServices;
-        private readonly IUpcomingJourneysServices _timeTableService = timeTableService;
+        private readonly IUpcomingJourneysServices _UpcomingJourneysServices = UpcomingJourneysServices;
 
         [AllowAnonymous]
-        [HttpPost("SignIn")]
+        [HttpPost("sign-in")]
         public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn(LogInDto model)
         {
             try
@@ -54,14 +53,14 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("AllJourneys")]
-        public async Task<ActionResult<ResponseModel<List<ReturnedUpcomingJourneyDto>>>> GetAllJourneys()
+        [HttpGet("get-all-history-journeys")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>>> GetAllJourneys()
         {
             try
             {
-                var journeys = await _timeTableService.GetAllJourneysByStartBusStopId(GetManagerIdFromClaims());
+                var journeys = await _UpcomingJourneysServices.GetAllJourneysByStartBusStopId(GetManagerIdFromClaims());
                 Log.Information($"GetAllJourneys Succeeded");
-                return Ok(new ResponseModel<List<ReturnedUpcomingJourneyDto>>
+                return Ok(new ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>
                 {
                     Body = journeys,
                     Message = "ALl Journeys",
@@ -71,7 +70,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"GetAllJourneys Failed ({ex.Message})");
-                return BadRequest(new ResponseModel<List<JourneyHistory>>
+                return BadRequest(new ResponseModel<IEnumerable<JourneyHistory>>
                 {
                     Message = ex.Message,
                     StatusCode = 400
@@ -79,7 +78,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("AddBus")]
+        [HttpPost("add-bus")]
         public async Task<ActionResult<ResponseModel<bool>>> AddBus([FromBody] BusDto model)
         {
             try
@@ -110,8 +109,8 @@ namespace API.Controllers
         }
 
 
-        [HttpPost("Add-Journey")]
-        public async Task<ActionResult<ResponseModel<bool>>> AddJourney([FromBody] TimeTableDto model)
+        [HttpPost("add-journey")]
+        public async Task<ActionResult<ResponseModel<bool>>> AddJourney([FromBody] UpcomingJourneyDto model)
         {
             try
             {
@@ -132,10 +131,10 @@ namespace API.Controllers
                         StatusCode = 400
                     });
                 }
-                await _timeTableService.SetUpcomingJourneys(model);
+                await _UpcomingJourneysServices.AddUpcomingJourney(model);
 
                 TimeSpan duration = model.ArrivalTime - DateTime.UtcNow;
-                BackgroundJob.Schedule(() => _timeTableService.RemoveUpcomingJourneys(), duration);
+                BackgroundJob.Schedule(() => _UpcomingJourneysServices.TurnUpcomingJourneysIntoHistoryJourneys(), duration);
 
                 Log.Information($"AddJourney Succeeded");
                 return Ok(new ResponseModel<bool>
@@ -157,12 +156,12 @@ namespace API.Controllers
         }
 
         [NonAction]
-        [HttpDelete("remove-Time-Table")]
-        public ActionResult Remove()
+        [HttpDelete("turn-upcoming-journeys-into-history-journeys")]
+        public ActionResult TurnUpcomingJourneysIntoHistoryJourneys()
         {
             try
             {
-                _timeTableService.RemoveUpcomingJourneys();
+                _UpcomingJourneysServices.TurnUpcomingJourneysIntoHistoryJourneys();
                 Log.Information($"Empty the Upcoming journeys Succeeded");
                 return Ok();
             }
@@ -173,7 +172,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("CutTicket")]
+        [HttpPost("cut-ticket")]
         public async Task<ActionResult<ResponseModel<bool>>> CutTicket(TicketDto model)
         {
             try
@@ -205,6 +204,7 @@ namespace API.Controllers
                 });
             }
         }
+
         private string GetManagerIdFromClaims()
         {
             return User.FindFirstValue("Id");

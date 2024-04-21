@@ -1,4 +1,4 @@
-﻿using Core.Dto;
+﻿using Core.Dto.UserInput;
 using Core.Dto.UserOutput;
 using Core.Models;
 using System;
@@ -11,14 +11,14 @@ namespace Interfaces.IApplicationServices
 {
     public interface ITicketServices
     {
-        Task<List<ReturnedTicketDto>> GetAllTickets();
-        Task<List<ReturnedTicketDto>> GetAllTicketsByJourneyId(Guid id);
-        Task<List<ReturnedTicketDto>> GetAllTicketsByUserId(string id);
+        Task<IEnumerable<ReturnedTicketDto>> GetAllTickets();
+        Task<IEnumerable<ReturnedTicketDto>> GetAllTicketsByJourneyId(Guid id);
+        Task<IEnumerable<ReturnedTicketDto>> GetAllTicketsByUserId(string id);
         Task<ReturnedTicketDto> GetTicketById(Guid id);
-        Task<List<ReturnedTicketDto>> GetTicketsByReservedTime(DateTime dateTime);
+        Task<IEnumerable<ReturnedTicketDto>> GetTicketsByReservedTime(DateTime dateTime);
         Task<ResponseModel<bool>> CutTicket(TicketDto ticketDto, string ConsumerId);
         Task<ResponseModel<bool>> BookTicket(TicketDto ticketDto, string ConsumerId);
-        Task<List<ReturnedTicketDto>> GetAllCutTickets();
-        Task<List<ReturnedTicketDto>> GetAllBookedTickets();
+        Task<IEnumerable<ReturnedTicketDto>> GetAllCutTickets();
+        Task<IEnumerable<ReturnedTicketDto>> GetAllBookedTickets();
     }
 }

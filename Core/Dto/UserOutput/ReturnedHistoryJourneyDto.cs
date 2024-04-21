@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Dto
+namespace Core.Dto.UserOutput
 {
-    public class ReturnTimeTableDto
+    public class ReturnedHistoryJourneyDto
     {
 
         public double TicketPrice { get; set; }

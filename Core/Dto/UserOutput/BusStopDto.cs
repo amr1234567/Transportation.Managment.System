@@ -14,6 +14,6 @@ namespace Core.Dto.UserOutput
         [Required]
         public string Name { get; set; }
         [Required]
-        public List<BusStopDto> BusStops { get; set; }
+        public IEnumerable<BusStopDto> BusStops { get; set; }
     }
 }

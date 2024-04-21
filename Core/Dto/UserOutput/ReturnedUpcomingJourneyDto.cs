@@ -32,6 +32,6 @@ namespace Core.Dto.UserOutput
         public string? DestinationName { get; set; }
 
         public string? StartBusStopName { get; set; }
-        public List<Seat> Seats { get; set; }
+        public IEnumerable<Seat> Seats { get; set; }
     }
 }

@@ -23,12 +23,12 @@ namespace API.Controllers
             _busService = busService;
         }
 
-        [HttpGet("All")]
-        public async Task<ActionResult<ResponseModel<List<Bus>>>> GetAllBuses()
+        [HttpGet("all")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<Bus>>>> GetAllBuses()
         {
             try
             {
-                var model = new ResponseModel<List<Bus>>
+                var model = new ResponseModel<IEnumerable<Bus>>
                 {
 
                     StatusCode = 200,
@@ -41,7 +41,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                var model = new ResponseModel<List<Bus>>
+                var model = new ResponseModel<IEnumerable<Bus>>
                 {
                     StatusCode = 404,
                     Message = ex.Message,
@@ -53,7 +53,7 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("{BusId}")]
+        [HttpGet("get-bus/{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> GetBus([FromRoute] Guid BusId)
         {
             try
@@ -84,12 +84,12 @@ namespace API.Controllers
 
         }
 
-        [HttpPut("{BusId}")]
-        public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto busDto)
+        [HttpPut("edit-bus/{BusId}")]
+        public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto model)
         {
             try
             {
-                var res = await _busService.EditBus(BusId, busDto);
+                var res = await _busService.EditBus(BusId, model);
                 Log.Information($"edit Bus Success: {res}");
                 if (res.StatusCode == 200)
                     return Ok(res);

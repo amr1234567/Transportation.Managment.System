@@ -25,7 +25,6 @@ namespace Services.ApplicationServices
                 seats = seats,
                 NumberOfSeats = busDto.NumberOfSeats,
                 IsAvailable = true
-
             };
 
             for (int i = 1; i <= busDto.NumberOfSeats; i++)
@@ -78,8 +77,11 @@ namespace Services.ApplicationServices
                                             .TakeLast(bus.NumberOfSeats - busDto.NumberOfSeats)
                                             .ToList();
 
+                var updatedSeats = bus.seats.ToList();
                 foreach (var seat in removedSeats)
-                    bus.seats.Remove(seat);
+                    updatedSeats.Remove(seat);
+
+                bus.seats = [.. updatedSeats];
             }
 
             bus.NumberOfSeats = busDto.NumberOfSeats;
@@ -94,9 +96,9 @@ namespace Services.ApplicationServices
             };
         }
 
-        public async Task<List<Bus>> GetAllBuses()//done
+        public async Task<IEnumerable<Bus>> GetAllBuses()//done
         {
-            var buses = await _context.Buses.Include(b => b.seats).ToListAsync();
+            var buses = _context.Buses.Include(b => b.seats).AsNoTracking().AsEnumerable();
             if (buses == null)
                 throw new ArgumentNullException("No Bus Exist");
             return buses;

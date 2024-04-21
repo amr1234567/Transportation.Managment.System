@@ -11,7 +11,7 @@ namespace Interfaces.IApplicationServices
     public interface IJourneysHistoryServices
     {
         void AddJourney(JourneyDto journeyDto);
-        Task<List<JourneyHistory>> GetAllJourneys();
+        Task<IEnumerable<JourneyHistory>> GetAllJourneys();
         Task<JourneyHistory> GetJourneyById(Guid id);
     }
 }

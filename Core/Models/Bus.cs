@@ -18,7 +18,7 @@ namespace Core.Models
         public int NumberOfSeats { get; set; }
 
         [Required]
-        public List<Seat> seats { get; set; }
+        public IEnumerable<Seat> seats { get; set; }
         [Required]
         public bool IsAvailable { get; set; }
     }

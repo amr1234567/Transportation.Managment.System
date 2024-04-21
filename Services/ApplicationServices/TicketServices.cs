@@ -1,4 +1,4 @@
-﻿using Core.Dto;
+﻿using Core.Dto.UserInput;
 using Core.Dto.UserOutput;
 using Core.Identity;
 using Core.Models;
@@ -89,9 +89,9 @@ namespace Services.ApplicationServices
             };
         }
 
-        public async Task<List<ReturnedTicketDto>> GetAllTickets()
+        public Task<IEnumerable<ReturnedTicketDto>> GetAllTickets()
         {
-            var tickets = await _context.Tickets.Select(t => new ReturnedTicketDto
+            var tickets = _context.Tickets.Select(t => new ReturnedTicketDto
             {
                 ArrivalTime = t.ArrivalTime,
                 LeavingTime = t.LeavingTime,
@@ -100,17 +100,17 @@ namespace Services.ApplicationServices
                 Price = t.Price,
                 SeatNumber = t.SeatNum,
                 StartBusStopName = t.StartBusStopName
-            }).ToListAsync();
+            }).AsNoTracking().AsEnumerable();
             if (tickets == null)
                 throw new ArgumentNullException("No Tickets Exist");
 
-            return tickets;
+            return Task.FromResult(tickets);
         }
 
 
-        public async Task<List<ReturnedTicketDto>> GetAllTicketsByJourneyId(Guid id)
+        public Task<IEnumerable<ReturnedTicketDto>> GetAllTicketsByJourneyId(Guid id)
         {
-            var tickets = await _context.Tickets.Where(t => t.JourneyId.Equals(id))
+            var tickets = _context.Tickets.Where(t => t.JourneyId.Equals(id))
                 .Select(t => new ReturnedTicketDto
                 {
                     ArrivalTime = t.ArrivalTime,
@@ -120,17 +120,17 @@ namespace Services.ApplicationServices
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
                     StartBusStopName = t.StartBusStopName
-                }).ToListAsync();
+                }).AsNoTracking().AsEnumerable();
 
             if (tickets is null)
                 throw new NullReferenceException($"{id} doesn't exist");
 
-            return tickets;
+            return Task.FromResult(tickets);
         }
 
-        public async Task<List<ReturnedTicketDto>> GetAllTicketsByUserId(string id)
+        public Task<IEnumerable<ReturnedTicketDto>> GetAllTicketsByUserId(string id)
         {
-            var Tickets = await _context.Tickets.Where(x => x.ConsumerId == id)
+            var Tickets = _context.Tickets.Where(x => x.ConsumerId == id)
                 .Select(t => new ReturnedTicketDto
                 {
                     ArrivalTime = t.ArrivalTime,
@@ -140,13 +140,13 @@ namespace Services.ApplicationServices
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
                     StartBusStopName = t.StartBusStopName
-                }).ToListAsync();
-            return Tickets;
+                }).AsNoTracking().AsEnumerable();
+            return Task.FromResult(Tickets);
         }
 
-        public async Task<List<ReturnedTicketDto>> GetAllBookedTickets()
+        public Task<IEnumerable<ReturnedTicketDto>> GetAllBookedTickets()
         {
-            var Tickets = await _context.Tickets.Where(x => x.ReservedOnline)
+            var Tickets = _context.Tickets.Where(x => x.ReservedOnline)
                 .Select(t => new ReturnedTicketDto
                 {
                     ArrivalTime = t.ArrivalTime,
@@ -156,13 +156,13 @@ namespace Services.ApplicationServices
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
                     StartBusStopName = t.StartBusStopName
-                }).ToListAsync();
-            return Tickets;
+                }).AsNoTracking().AsEnumerable();
+            return Task.FromResult(Tickets);
         }
 
-        public async Task<List<ReturnedTicketDto>> GetAllCutTickets()
+        public Task<IEnumerable<ReturnedTicketDto>> GetAllCutTickets()
         {
-            var Tickets = await _context.Tickets.Where(x => !x.ReservedOnline)
+            var Tickets = _context.Tickets.Where(x => !x.ReservedOnline)
                 .Select(t => new ReturnedTicketDto
                 {
                     ArrivalTime = t.ArrivalTime,
@@ -172,8 +172,8 @@ namespace Services.ApplicationServices
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
                     StartBusStopName = t.StartBusStopName
-                }).ToListAsync();
-            return Tickets;
+                }).AsNoTracking().AsEnumerable();
+            return Task.FromResult(Tickets);
         }
 
         public async Task<ReturnedTicketDto> GetTicketById(Guid id)
@@ -194,19 +194,22 @@ namespace Services.ApplicationServices
         }
 
 
-        public async Task<List<ReturnedTicketDto>> GetTicketsByReservedTime(DateTime dateTime)
+        public Task<IEnumerable<ReturnedTicketDto>> GetTicketsByReservedTime(DateTime dateTime)
         {
-            return await _context.Tickets.Where(x => x.CreatedTime >= dateTime)
-                .Select(t => new ReturnedTicketDto
-                {
-                    ArrivalTime = t.ArrivalTime,
-                    LeavingTime = t.LeavingTime,
-                    DestinationBusStopName = t.DestinationName,
-                    JourneyId = t.JourneyId,
-                    Price = t.Price,
-                    SeatNumber = t.SeatNum,
-                    StartBusStopName = t.StartBusStopName
-                }).ToListAsync();
+            var tickets = _context.Tickets.Where(x => x.CreatedTime >= dateTime);
+
+            var returnedTickets = tickets.Select(t => new ReturnedTicketDto
+            {
+                ArrivalTime = t.ArrivalTime,
+                LeavingTime = t.LeavingTime,
+                DestinationBusStopName = t.DestinationName,
+                JourneyId = t.JourneyId,
+                Price = t.Price,
+                SeatNumber = t.SeatNum,
+                StartBusStopName = t.StartBusStopName
+            }).AsNoTracking().AsEnumerable();
+
+            return Task.FromResult(returnedTickets);
         }
 
     }

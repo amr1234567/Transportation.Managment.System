@@ -26,7 +26,7 @@ namespace Core.Dto.ServiceInput
 
         [Required]
         public Guid BusId { get; set; }
-        public List<Ticket> ReservedTickets { get; set; }
+        public IEnumerable<Ticket> ReservedTickets { get; set; }
 
     }
 }

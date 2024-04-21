@@ -11,12 +11,12 @@ namespace Interfaces.IApplicationServices
 {
     public interface IUpcomingJourneysServices
     {
-        Task<TimeTableDto> SetUpcomingJourneys(TimeTableDto time);
-        void RemoveUpcomingJourneys();
-        Task<List<ReturnedUpcomingJourneyDto>> GetAllUpcomingJourneys();
+        Task<UpcomingJourneyDto> AddUpcomingJourney(UpcomingJourneyDto time);
+        void TurnUpcomingJourneysIntoHistoryJourneys();
+        Task<IEnumerable<ReturnedUpcomingJourneyDto>> GetAllUpcomingJourneys();
         Task<ReturnedUpcomingJourneyDto> GetJourneyById(Guid id);
-        Task<List<ReturnedUpcomingJourneyDto>> GetAllJourneysByDestinationBusStopId(string id);
-        Task<List<ReturnedUpcomingJourneyDto>> GetAllJourneysByStartBusStopId(string id);
+        Task<IEnumerable<ReturnedUpcomingJourneyDto>> GetAllJourneysByDestinationBusStopId(string id);
+        Task<IEnumerable<ReturnedUpcomingJourneyDto>> GetAllJourneysByStartBusStopId(string id);
         Task<ReturnedUpcomingJourneyDto> GetNearestJourneyByDestination(string destinationId, string startBusStopId);
         Task SetArrivalTime(DateTime time, Guid id);
         Task SetLeavingTime(DateTime time, Guid id);

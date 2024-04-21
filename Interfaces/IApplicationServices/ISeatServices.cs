@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Interfaces.IApplicationServices
 {
     public interface ISeatServices
     {
+        Task<IEnumerable<Seat>> GetAllSeatsInBusByBusId(Guid BusId);
         Task ReserveSeat(Guid id);
     }
 }

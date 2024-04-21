@@ -1,4 +1,5 @@
 ﻿using Core.Dto.ServiceInput;
+using Core.Dto.UserOutput;
 using Core.Models;
 using Infrastructure.Context;
 using Interfaces.IApplicationServices;
@@ -22,36 +23,33 @@ namespace Services.ApplicationServices
                 BusId = journeyDto.BusId,
                 ArrivalTime = journeyDto.ArrivalTime,
                 LeavingTime = journeyDto.LeavingTime,
-                Tickets = journeyDto.ReservedTickets
+                Tickets = journeyDto.ReservedTickets,
+                Date = new DateTime(journeyDto.LeavingTime.Year, journeyDto.LeavingTime.Month, journeyDto.LeavingTime.Day)
             };
 
             _context.Journeys.Add(journey);
             _context.SaveChanges();
         }
 
-        public async Task<List<JourneyHistory>> GetAllJourneys()
+        public Task<IEnumerable<JourneyHistory>> GetAllJourneys()
         {
-            var Journeys = await _context.Journeys
+            var Journeys = _context.Journeys
                                     .Include(j => j.Destination)
                                     .Include(j => j.StartBusStop)
                                     .Include(j => j.Tickets)
-                                    .ToListAsync();
+                                    .AsNoTracking().AsEnumerable();
             if (Journeys == null)
                 throw new ArgumentNullException("No Journeys Right Now Check out Later");
-            return Journeys;
+            return Task.FromResult(Journeys);
         }
 
-
-
-        public async Task<JourneyHistory> GetJourneyById(Guid id)
+        public Task<JourneyHistory> GetJourneyById(Guid id)
         {
 
             var journey = _context.Journeys.FirstOrDefault(j => j.Id.CompareTo(id) == 0);
             if (journey == null)
                 throw new ArgumentNullException("Journey Doesn't Exist");
-            return journey;
+            return Task.FromResult(journey);
         }
-
-
     }
 }

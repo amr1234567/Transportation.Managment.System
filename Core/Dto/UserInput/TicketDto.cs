@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.Dto
+namespace Core.Dto.UserInput
 {
     public class TicketDto
     {

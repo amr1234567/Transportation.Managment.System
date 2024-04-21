@@ -18,15 +18,15 @@ namespace API.Controllers
     {
         private readonly ITicketServices _ticketServices = ticketServices;
 
-        [HttpGet("All")]
-        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTickets()
+        [HttpGet("get-all-tickets")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTickets()
         {
             try
             {
                 var time = DateTime.UtcNow;
                 var tikets = await _ticketServices.GetAllTickets();
                 Log.Information($"Get All Tickets Done Successfully ({time} -> {DateTime.UtcNow})");
-                return Ok(new ResponseModel<List<ReturnedTicketDto>>
+                return Ok(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 200,
                     Body = tikets,
@@ -36,7 +36,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get All Tickets Failed ({ex.Message})");
-                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                return BadRequest(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 400,
                     Message = "Failed " + ex.Message
@@ -44,14 +44,14 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("AllByJourney/{id}")]
-        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByJourneyId(Guid id)
+        [HttpGet("get-all-tickets-by-journey/{id}")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTicketsByJourneyId(Guid id)
         {
             try
             {
                 var tikets = await _ticketServices.GetAllTicketsByJourneyId(id);
                 Log.Information($"Get All Tickets By Journey Id Done Successfully");
-                return Ok(new ResponseModel<List<ReturnedTicketDto>>
+                return Ok(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 200,
                     Body = tikets,
@@ -61,7 +61,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get All Tickets By Journey Id Failed ({ex.Message})");
-                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                return BadRequest(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 400,
                     Message = "Failed " + ex.Message
@@ -69,15 +69,15 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("AllByReservedTime")]
-        public async Task<ActionResult<ResponseModel<List<ReturnedTicketDto>>>> GetAllTicketsByReservedTime([FromRoute] DateTime time)
+        [HttpGet("get-all-tickets-by-reserved-time")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTicketsByReservedTime([FromRoute] DateTime time)
         {
             try
             {
                 var tikets = await _ticketServices.GetTicketsByReservedTime(time);
                 Log.Information($"Get All Tickets By Reserved Time Done Successfully");
 
-                return Ok(new ResponseModel<List<ReturnedTicketDto>>
+                return Ok(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 200,
                     Body = tikets,
@@ -87,7 +87,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get All Tickets By Reserved Time Failed ({ex.Message})");
-                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                return BadRequest(new ResponseModel<IEnumerable<ReturnedTicketDto>>
                 {
                     StatusCode = 400,
                     Message = "Failed " + ex.Message
@@ -95,7 +95,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("ticket/{id}")]
+        [HttpGet("get-ticket/{id}")]
         public async Task<ActionResult<ResponseModel<ReturnedTicketDto>>> GetTicket(Guid id)
         {
             try
@@ -112,7 +112,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get All Tickets By Reserved Time Failed ({ex.Message})");
-                return BadRequest(new ResponseModel<List<ReturnedTicketDto>>
+                return BadRequest(new ResponseModel<ReturnedTicketDto>
                 {
                     StatusCode = 400,
                     Message = "Failed " + ex.Message

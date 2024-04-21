@@ -12,9 +12,9 @@ namespace Core.Identity
     public class BusStopManger : User
     {
 
-        public List<BusStopManger>? BusStopsRelations { get; set; }
-        public List<BusStopManger>? BusStops { get; set; }
+        public IEnumerable<BusStopManger>? BusStopsRelations { get; set; }
+        public IEnumerable<BusStopManger>? BusStops { get; set; }
 
-        public List<Bus> Buses { get; set; }
+        public IEnumerable<Bus> Buses { get; set; }
     }
 }

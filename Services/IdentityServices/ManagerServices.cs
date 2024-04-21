@@ -83,34 +83,36 @@ namespace Services.IdentityServices
             return true;
 
         }
-        public async Task enrollBusStop(string Id, string busStopId)
+        public async Task enrollBusStop(string StartBusStopId, string DestrnationBusStopId)
         {
             var record = await _context.BusStopMangers.Include(bs => bs.BusStops)
-                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(Id));
+                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(StartBusStopId));
 
-            if (record == null)
-                throw new NullReferenceException($"Bus stop with Id {Id} Doesn't Exist");
+            if (record == null || record.BusStops is null)
+                throw new NullReferenceException($"Bus stop with Id {StartBusStopId} Doesn't Exist");
 
             var record2 = await _context.BusStopMangers.Include(bs => bs.BusStops)
-                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(busStopId));
+                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(DestrnationBusStopId));
 
-            if (record2 == null)
-                throw new NullReferenceException($"Bus stop with Id {busStopId} Doesn't Exist");
+            if (record2 == null || record2.BusStops is null)
+                throw new NullReferenceException($"Bus stop with Id {DestrnationBusStopId} Doesn't Exist");
 
-            record.BusStops.Add(record2);
+            record.BusStops = [.. record.BusStops, record2];
+            record2.BusStops = [.. record2.BusStops, record];
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<ReturnedBusStopDto>> GetAllBusStops()
+        public Task<IEnumerable<ReturnedBusStopDto>> GetAllBusStops()
         {
-            return _context.BusStopMangers.Include(bs => bs.BusStops)
+            var busStops = _context.BusStopMangers.Include(bs => bs.BusStops)
                 .Select(x => new ReturnedBusStopDto
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    busStops = x.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name }).ToList(),
-                }).ToList();
+                    busStops = x.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name }),
+                }).AsNoTracking().AsEnumerable();
+            return Task.FromResult(busStops);
         }
 
         public async Task<ReturnedBusStopDto> GetBusStop(string Id)
@@ -125,7 +127,7 @@ namespace Services.IdentityServices
             {
                 Id = record.Id,
                 Name = record.Name,
-                busStops = record.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name }).ToList()
+                busStops = record.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name })
             };
         }
     }

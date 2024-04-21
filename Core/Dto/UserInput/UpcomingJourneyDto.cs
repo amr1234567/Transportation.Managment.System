@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Core.Dto
 {
-    public class TimeTableDto
+    public class UpcomingJourneyDto
     {
         [Required]
         [Range(10, 100)]

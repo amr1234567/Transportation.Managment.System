@@ -8,7 +8,7 @@ namespace Interfaces.IIdentityServices
     {
         Task<bool> SignUp(SignUpAsManagerDto NewUser);//, string Token);
         Task<LogInResponse> SignIn(LogInDto User);
-        Task<List<ReturnedBusStopDto>> GetAllBusStops();
+        Task<IEnumerable<ReturnedBusStopDto>> GetAllBusStops();
         Task enrollBusStop(string Id, string busStopId);
         Task<ReturnedBusStopDto> GetBusStop(string Id);
     }

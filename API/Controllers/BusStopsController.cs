@@ -23,14 +23,14 @@ namespace API.Controllers
             _managerServices = managerServices;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<ResponseModel<List<ReturnedBusStopDto>>>> GetAllBusStops()
+        [HttpGet("get-all")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllBusStops()
         {
             try
             {
                 var records = await _managerServices.GetAllBusStops();
                 Log.Information("Get All BusStops succeeded");
-                return Ok(new ResponseModel<List<ReturnedBusStopDto>>()
+                return Ok(new ResponseModel<IEnumerable<ReturnedBusStopDto>>()
                 {
                     Body = records,
                     Message = "Done",
@@ -40,7 +40,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get All BusStops Failed :{ex.Message}");
-                return Ok(new ResponseModel<List<BusStopDto>>()
+                return Ok(new ResponseModel<IEnumerable<BusStopDto>>()
                 {
                     Body = new List<BusStopDto>(),
                     Message = $"Get All BusStops Failed :{ex.Message}",
@@ -50,12 +50,12 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("AllBuses/{id}")]
-        public async Task<ActionResult<List<Bus>>> GetBusStopById(string id)
+        [HttpGet("get-Bus-stop/{id}")]
+        public async Task<ActionResult<ReturnedBusStopDto>> GetBusStopById(string BusStopId)
         {
             try
             {
-                var BusStop = await _managerServices.GetBusStop(id);
+                var BusStop = await _managerServices.GetBusStop(BusStopId);
 
                 Log.Information("Get  BusStop By Id succeeded");
                 if (BusStop == null)

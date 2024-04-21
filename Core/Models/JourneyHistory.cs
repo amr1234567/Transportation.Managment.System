@@ -20,10 +20,12 @@ namespace Core.Models
         public string StartBusStopId { get; set; }
         public BusStopManger? StartBusStop { get; set; }
 
+        public DateTime Date { get; set; }
+
         public DateTime LeavingTime { get; set; }
         public DateTime ArrivalTime { get; set; }
 
-        public List<Ticket>? Tickets { get; set; }
+        public IEnumerable<Ticket>? Tickets { get; set; }
 
         [ForeignKey(nameof(Bus))]
         [Required]
