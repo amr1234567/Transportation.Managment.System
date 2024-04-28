@@ -10,35 +10,29 @@ using Core.Helpers.Classes;
 
 namespace ECommerce.InfaStructure.Services
 {
-    public class TokenService : ITokenService
+    public class TokenService(IOptions<JwtHelper> config) : ITokenService
     {
-        private SymmetricSecurityKey _key;
-        private readonly JwtHelper _config;
-
-        public TokenService(IOptions<JwtHelper> config)
-        {
-            _key = new SymmetricSecurityKey(new byte[10]);
-            _config = config.Value;
-        }
+        private SymmetricSecurityKey _key = new SymmetricSecurityKey(new byte[10]);
+        private readonly JwtHelper _config = config.Value;
 
         public Task<TokenModel> CreateToken(User user, List<string> roles, List<Claim>? InternalClaims = null)
         {
             if (user is null)
                 throw new ArgumentNullException("User Can't be null");
 
-            if (roles is null || !roles.Any())
+            if (roles is null || roles.Count == 0)
                 throw new ArgumentNullException("Roles Can't be null");
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim("Id", user.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.Name, user.Name),
+                new("Id", user.Id),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             if (InternalClaims is not null)
-                claims.Union(InternalClaims);
+                _ = claims.Union(InternalClaims);
 
 
             foreach (var role in roles)

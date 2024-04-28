@@ -10,12 +10,10 @@ namespace Core.Dto.Identity
     public class ResetPasswordDto
     {
         [Required]
-        public string code {  get; set; }
+        public string code { get; set; }
         [Required]
-        public string password {  get; set; }
+        public string password { get; set; }
         [Required]
-        public string email {  get; set; }
-        [Required]
-        public string Realcode { get; set; }
+        public string phoneNumber { get; set; }
     }
 }

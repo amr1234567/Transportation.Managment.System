@@ -13,7 +13,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = $"{Roles.BusStopManager},{Roles.User},{Roles.Admin}")]
+    [Authorize(Roles = $"{Roles.BusStopManager},{Roles.Admin}")]
     public class TicketController(ITicketServices ticketServices) : ControllerBase
     {
         private readonly ITicketServices _ticketServices = ticketServices;
@@ -95,6 +95,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize(Roles = $"{Roles.BusStopManager},{Roles.User},{Roles.Admin}")]
         [HttpGet("get-ticket/{id}")]
         public async Task<ActionResult<ResponseModel<ReturnedTicketDto>>> GetTicket(Guid id)
         {

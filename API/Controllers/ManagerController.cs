@@ -53,7 +53,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("get-all-history-journeys")]
+        [HttpGet("get-all-upcoming-journeys")]
         public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>>> GetAllJourneys()
         {
             try
@@ -209,6 +209,5 @@ namespace API.Controllers
         {
             return User.FindFirstValue("Id");
         }
-
     }
 }

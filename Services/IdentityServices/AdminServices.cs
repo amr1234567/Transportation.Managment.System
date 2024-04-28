@@ -9,16 +9,10 @@ using System.Net.Mail;
 
 namespace Services.IdentityServices
 {
-    public class AdminServices : IAdminServices
+    public class AdminServices(UserManager<ApplicationAdmin> userManager, ITokenService tokenService) : IAdminServices
     {
-        private readonly UserManager<ApplicationAdmin> _userManager;
-        private readonly ITokenService _tokenService;
-
-        public AdminServices(UserManager<ApplicationAdmin> userManager, ITokenService tokenService)
-        {
-            _userManager = userManager;
-            _tokenService = tokenService;
-        }
+        private readonly UserManager<ApplicationAdmin> _userManager = userManager;
+        private readonly ITokenService _tokenService = tokenService;
 
         public async Task<LogInResponse> SignIn(LogInDto User)
         {

@@ -2,7 +2,6 @@
 using Core.Dto.Identity;
 using Core.Dto.UserInput;
 using Core.Dto.UserOutput;
-using Core.Helpers.Functions;
 using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
@@ -23,29 +22,17 @@ namespace API.Controllers
         private readonly ITicketServices _ticketServices = ticketServices;
 
         [HttpPost("sign-up")]
-        public async Task<ActionResult<ResponseModel<string>>> SignUp([FromBody] SignUpDto model)
+        public async Task<ActionResult<ResponseModel<bool>>> SignUp([FromBody] SignUpDto model)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
                 var response = await _userServices.SignUp(model);
-                if (string.IsNullOrEmpty(response))
-                    return BadRequest(new ResponseModel<string>
-                    {
-                        StatusCode = 400,
-                        Body = response,
-                        Message = "Bad Email or password"
-                    });
+                if (response.StatusCode != 200)
+                    return BadRequest(response);
                 Log.Information($"Sign Up Done Successfully");
-                Response.Headers.Add("Vf-Code", response);
-                Log.Information($"Vociferation Code has stored in header 'Vf-Code' ");
-                return Ok(new ResponseModel<string>
-                {
-                    StatusCode = 200,
-                    Body = response,
-                    Message = "Signed Up"
-                });
+                return Ok(response);
 
                 #region Confirm With Email
                 //var url = Url.Action(nameof(ConfirmEmail), "Authentication");
@@ -92,7 +79,7 @@ namespace API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                var res = await _userServices.ConfirmPhoneNumber(model.PhoneNumber, model.RealCode, model.VerifactionCode);
+                var res = await _userServices.ConfirmPhoneNumber(model.PhoneNumber, model.VerifactionCode);
                 Log.Information($"Confirming phone number succeeded");
 
                 return res ? Ok("Ur PhoneNumber Has Been Verify") : BadRequest("Something went Wrong");
@@ -230,15 +217,24 @@ namespace API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest("Bad model");
-                var token = await _userServices.ResetPassword(PhoneNumber);
-                Response.Headers.Add("Vf-Code", token);
-
-                Log.Information($"Forget Password Verification Done successfully");
-
-                return Ok(new ResponseModel<bool>
+                var response = await _userServices.ResetPassword(PhoneNumber);
+                if (response.StatusCode == 200)
                 {
-                    Message = "Verification Code has been sent",
-                    StatusCode = 200,
+                    Log.Information($"Forget Password Verification Done successfully");
+
+                    return Ok(new ResponseModel<bool>
+                    {
+                        Message = "Verification Code has been sent",
+                        StatusCode = 200,
+                    });
+                }
+                Log.Information($"Forget Password Verification Failed, Please Try Again");
+
+                return BadRequest(new ResponseModel<bool>
+                {
+                    Message = response.Message,
+                    StatusCode = response.StatusCode,
+                    Body = response.Body
                 });
             }
             catch (Exception ex)
@@ -281,6 +277,28 @@ namespace API.Controllers
                     Message = ex.Message
                 });
             }
+        }
+
+        [HttpPost("edit-personal-data")]
+        public async Task<ActionResult<ResponseModel<bool>>> EditPersonalData(EditPersonalDataDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _userServices.EditPersonalData(model, GetUserIdFromClaims());
+                if (response.StatusCode == 200)
+                    return Ok(response);
+
+                else if (response.StatusCode == 400)
+                    return BadRequest(response);
+                else if (response.StatusCode == 500)
+                    return StatusCode(response.StatusCode);
+            }
+            return BadRequest(new ResponseModel<bool>
+            {
+                Message = "Input is invalid",
+                StatusCode = 400,
+                Body = false
+            });
         }
 
         private string GetUserIdFromClaims()

@@ -6,10 +6,11 @@ namespace Interfaces.IIdentityServices
 {
     public interface IManagerServices
     {
-        Task<bool> SignUp(SignUpAsManagerDto NewUser);//, string Token);
-        Task<LogInResponse> SignIn(LogInDto User);
-        Task<IEnumerable<ReturnedBusStopDto>> GetAllBusStops();
-        Task enrollBusStop(string Id, string busStopId);
+        Task<bool> SignUp(SignUpAsManagerDto model);//, string Token);
+        Task<LogInResponse> SignIn(LogInDto model);
+        Task<IEnumerable<ReturnedBusStopDto>> GetAllStartBusStops();
+        Task<IEnumerable<ReturnedBusStopDto>> GetAllDestinationBusStops(string StartBusStopId);
+        Task enrollBusStop(string StartBusStopId, string DestinationBusStopId);
         Task<ReturnedBusStopDto> GetBusStop(string Id);
     }
 }

@@ -13,29 +13,22 @@ using System.Net.Mail;
 
 namespace Services.IdentityServices
 {
-    public class ManagerServices : IManagerServices
+    public class ManagerServices(UserManager<BusStopManger> userManager, ITokenService tokenService, ApplicationDbContext context) : IManagerServices
     {
-        private readonly UserManager<BusStopManger> _userManager;
-        private readonly ITokenService _tokenService;
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<BusStopManger> _userManager = userManager;
+        private readonly ITokenService _tokenService = tokenService;
+        private readonly ApplicationDbContext _context = context;
 
-        public ManagerServices(UserManager<BusStopManger> userManager, ITokenService tokenService, ApplicationDbContext context)
+        public async Task<LogInResponse> SignIn(LogInDto model)
         {
-            _userManager = userManager;
-            _tokenService = tokenService;
-            _context = context;
-        }
-
-        public async Task<LogInResponse> SignIn(LogInDto User)
-        {
-            if (User == null)
+            if (model == null)
                 throw new ArgumentNullException("Model Can't Be null");
 
-            var user = await _userManager.FindByEmailAsync(User.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
                 throw new NullReferenceException("Email or Password Wrong");
 
-            var check = await _userManager.CheckPasswordAsync(user, User.Password);
+            var check = await _userManager.CheckPasswordAsync(user, model.Password);
             if (!check)
                 throw new NullReferenceException("Email or Password Wrong");
 
@@ -49,24 +42,24 @@ namespace Services.IdentityServices
             };
         }
 
-        public async Task<bool> SignUp(SignUpAsManagerDto NewUser)
+        public async Task<bool> SignUp(SignUpAsManagerDto model)
         {
-            if (NewUser == null)
+            if (model == null)
                 throw new ArgumentNullException("Model Can't Be null");
 
-            var user = await _userManager.FindByEmailAsync(NewUser.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user != null)
                 throw new Exception("Email Exist for another account");
 
             var NewManager = new BusStopManger
             {
-                Email = NewUser.Email,
-                Name = NewUser.Name,
-                UserName = new MailAddress(NewUser.Email).User
+                Email = model.Email,
+                Name = model.Name,
+                UserName = new MailAddress(model.Email).User
             };
 
-            var response = await _userManager.CreateAsync(NewManager, NewUser.Password);
+            var response = await _userManager.CreateAsync(NewManager, model.Password);
             if (!response.Succeeded)
                 throw new Exception("Something went wrong");
 
@@ -83,7 +76,8 @@ namespace Services.IdentityServices
             return true;
 
         }
-        public async Task enrollBusStop(string StartBusStopId, string DestrnationBusStopId)
+
+        public async Task enrollBusStop(string StartBusStopId, string DestinationBusStopId)
         {
             var record = await _context.BusStopMangers.Include(bs => bs.BusStops)
                                         .FirstOrDefaultAsync(bs => bs.Id.Equals(StartBusStopId));
@@ -92,10 +86,10 @@ namespace Services.IdentityServices
                 throw new NullReferenceException($"Bus stop with Id {StartBusStopId} Doesn't Exist");
 
             var record2 = await _context.BusStopMangers.Include(bs => bs.BusStops)
-                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(DestrnationBusStopId));
+                                        .FirstOrDefaultAsync(bs => bs.Id.Equals(DestinationBusStopId));
 
             if (record2 == null || record2.BusStops is null)
-                throw new NullReferenceException($"Bus stop with Id {DestrnationBusStopId} Doesn't Exist");
+                throw new NullReferenceException($"Bus stop with Id {DestinationBusStopId} Doesn't Exist");
 
             record.BusStops = [.. record.BusStops, record2];
             record2.BusStops = [.. record2.BusStops, record];
@@ -103,14 +97,13 @@ namespace Services.IdentityServices
             await _context.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<ReturnedBusStopDto>> GetAllBusStops()
+        public Task<IEnumerable<ReturnedBusStopDto>> GetAllStartBusStops()
         {
-            var busStops = _context.BusStopMangers.Include(bs => bs.BusStops)
+            var busStops = _context.BusStopMangers
                 .Select(x => new ReturnedBusStopDto
                 {
                     Id = x.Id,
-                    Name = x.Name,
-                    busStops = x.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name }),
+                    Name = x.Name
                 }).AsNoTracking().AsEnumerable();
             return Task.FromResult(busStops);
         }
@@ -126,9 +119,27 @@ namespace Services.IdentityServices
             return new ReturnedBusStopDto
             {
                 Id = record.Id,
-                Name = record.Name,
-                busStops = record.BusStops.Select(x => new ReturnedBusStopDto { Id = x.Id, Name = x.Name })
+                Name = record.Name
             };
+        }
+
+        public async Task<IEnumerable<ReturnedBusStopDto>> GetAllDestinationBusStops(string StartBusStopId)
+        {
+            var startBusStop = await _userManager.Users.Include(bs => bs.BusStops)
+                                    .FirstOrDefaultAsync(bs => bs.Id.Equals(StartBusStopId));
+            if (startBusStop == null)
+                throw new NullReferenceException($"Bus Stop with id '{startBusStop}' doesn't exist");
+
+            if (startBusStop.BusStops == null || !startBusStop.BusStops.Any())
+                return [];
+
+            var busStops = startBusStop.BusStops?
+                .Select(x => new ReturnedBusStopDto
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                });
+            return busStops;
         }
     }
 }

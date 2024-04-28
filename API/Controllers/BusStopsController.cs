@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Security.Claims;
 using Twilio.TwiML.Voice;
 
 namespace API.Controllers
@@ -23,12 +24,39 @@ namespace API.Controllers
             _managerServices = managerServices;
         }
 
-        [HttpGet("get-all")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllBusStops()
+        [HttpGet("get-all-related-by-start")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllRelatedBusStops()
         {
             try
             {
-                var records = await _managerServices.GetAllBusStops();
+                var records = await _managerServices.GetAllDestinationBusStops(GetManagerIdFromClaims());
+                Log.Information("Get All BusStops succeeded");
+                return Ok(new ResponseModel<IEnumerable<ReturnedBusStopDto>>()
+                {
+                    Body = records,
+                    Message = "Done",
+                    StatusCode = 200
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get All related BusStops Failed :{ex.Message}");
+                return Ok(new ResponseModel<IEnumerable<BusStopDto>>()
+                {
+                    Body = new List<BusStopDto>(),
+                    Message = $"Get All related BusStops Failed :{ex.Message}",
+                    StatusCode = 400
+                });
+            }
+
+        }
+
+        [HttpGet("get-all")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllStartBusStops()
+        {
+            try
+            {
+                var records = await _managerServices.GetAllStartBusStops();
                 Log.Information("Get All BusStops succeeded");
                 return Ok(new ResponseModel<IEnumerable<ReturnedBusStopDto>>()
                 {
@@ -68,6 +96,11 @@ namespace API.Controllers
                 Log.Error($"Get  BusStop By Id Failed :{ex.Message}");
                 return BadRequest($"Get  BusStop By Id Failed :{ex.Message}");
             }
+        }
+
+        private string GetManagerIdFromClaims()
+        {
+            return User.FindFirstValue("Id");
         }
     }
 }

@@ -11,11 +11,14 @@ namespace Interfaces.IIdentityServices
 {
     public interface IUserServices
     {
-        Task<string> SignUp(SignUpDto NewUser);//, string Token);
+        Task<ResponseModel<bool>> SignUp(SignUpDto NewUser);//, string Token);
         Task<LogInResponse> SignIn(LogInDto User);
         Task<bool> ConfirmEmail(string Email, string Token);
-        Task<bool> ConfirmPhoneNumber(string PhoneNumber, string DBCode, string UserCode);
+        Task<bool> ConfirmPhoneNumber(string PhoneNumber, string UserCode);
         Task<ResponseModel<string>> ResetPasswordConfirmation(ResetPasswordDto model);
-        Task<string> ResetPassword(string PnoneNumber);
+        Task<ResponseModel<bool>> ResetPassword(string PhoneNumber);
+        Task<ResponseModel<bool>> VerifyChangePhoneNumber(string PhoneNumber);
+        Task<ResponseModel<bool>> ChangePhoneNumber(string Verifytoken, string PhoneNumber);
+        Task<ResponseModel<bool>> EditPersonalData(EditPersonalDataDto model, string userId);
     }
 }

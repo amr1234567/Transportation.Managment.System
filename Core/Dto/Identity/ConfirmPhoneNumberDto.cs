@@ -12,6 +12,5 @@ namespace Core.Dto.Identity
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
         public string VerifactionCode { get; set; }
-        public string RealCode { get; set; }
     }
 }

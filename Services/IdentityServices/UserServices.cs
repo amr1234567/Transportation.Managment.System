@@ -41,63 +41,6 @@ namespace Services.IdentityServices
             _tokenService = tokenService;
         }
 
-        public async Task<bool> ConfirmEmail(string Email, string Token)
-        {
-            if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Token))
-                throw new ArgumentNullException("Input Can't be null");
-
-            var user = await _userManager.FindByNameAsync(Email);
-            if (user == null)
-                throw new NullReferenceException($"Account with Email {Email} Not Found");
-
-            var response = await _userManager.ConfirmEmailAsync(user, Token);
-            if (!response.Succeeded)
-                throw new Exception($"Something went wrong");
-
-            return true;
-        }
-
-        public async Task<bool> ConfirmPhoneNumber(string PhoneNumber, string DBCode, string UserCode)
-        {
-            if (string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(DBCode) || string.IsNullOrEmpty(UserCode))
-                throw new ArgumentNullException("Input Can't be null");
-
-            #region  With VerificationCheckResource
-            //var verification = await VerificationCheckResource.CreateAsync(
-            //      to: PhoneNumber,
-            //      code: Code,
-            //      pathServiceSid: _TwilioSettings.Value.VerificationServiceSID
-            //  );
-
-            //if (verification.Status == "approved")
-            //{
-            //    var identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(PhoneNumber));
-            //    identityUser.PhoneNumberConfirmed = true;
-            //    var updateResult = await _userManager.UpdateAsync(identityUser);
-
-            //    if (updateResult.Succeeded)
-            //    {
-            //        return true;
-            //    }
-            //}
-            //return false; 
-            #endregion
-            if (!DBCode.Equals(UserCode))
-                throw new Exception("Two Codes are not equal");
-
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(PhoneNumber));
-            if (user == null)
-                throw new NullReferenceException($"Phone Number is Wrong");
-
-            user.PhoneNumberConfirmed = true;
-            var response = await _userManager.UpdateAsync(user);
-
-            if (!response.Succeeded)
-                throw new Exception($"Something went wrong");
-
-            return true;
-        }
-
         public async Task<LogInResponse> SignIn(LogInDto User)
         {
             if (User == null)
@@ -121,7 +64,9 @@ namespace Services.IdentityServices
             };
         }
 
-        public async Task<string> SignUp(SignUpDto NewUser)//, string UrlToAction)
+
+
+        public async Task<ResponseModel<bool>> SignUp(SignUpDto NewUser)//, string UrlToAction)
         {
             if (NewUser == null)
                 throw new ArgumentNullException("Model Can't Be null");
@@ -152,7 +97,6 @@ namespace Services.IdentityServices
             if (!res.Succeeded)
                 throw new Exception("Can't Save Phone Number");
 
-
             #region Add Role
 
             var res2 = await _userManager.AddToRoleAsync(User, Roles.User);
@@ -162,14 +106,25 @@ namespace Services.IdentityServices
             #endregion
 
             #region Custom Code
-            var code = _smsSevices.GenerateCode();
-            if (string.IsNullOrEmpty(code))
-                throw new Exception("Something went wrong in GenerateCode Function");
+            //var code = _smsSevices.GenerateCode();
+            //if (string.IsNullOrEmpty(code))
+            //    throw new Exception("Something went wrong in GenerateCode Function");
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(User, NewUser.PhoneNumber);
+            var result = _smsSevices.Send($"Verification Code : {code}", appUser.PhoneNumber);
 
-            var _ = _smsSevices.Send($"Verification Code : {code}", appUser.PhoneNumber);
-
-            return code;
-
+            if (result.Status == Twilio.Rest.Api.V2010.Account.MessageResource.StatusEnum.Accepted)
+                return new ResponseModel<bool>
+                {
+                    StatusCode = 200,
+                    Message = "Registering operation succeeded, please confirm your email",
+                    Body = true
+                };
+            else
+                return new ResponseModel<bool>
+                {
+                    StatusCode = 500,
+                    Message = "SomeThing Went Wrong, Please Try Again"
+                };
             #endregion
 
             #region Phone Verification First Try
@@ -199,35 +154,106 @@ namespace Services.IdentityServices
             #endregion
             //return code;
         }
-        public async Task<string> ResetPassword(string PnoneNumber)
+
+        public async Task<bool> ConfirmEmail(string Email, string Token)
         {
-            var user = _userManager.Users.FirstOrDefault(x => x.PhoneNumber == PnoneNumber);
+            if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Token))
+                throw new ArgumentNullException("Input Can't be null");
+
+            var user = await _userManager.FindByEmailAsync(Email);
             if (user == null)
-                throw new NullReferenceException($"Phone Number isn't correct");
+                throw new NullReferenceException($"Account with Email {Email} Not Found");
 
-            var code = _smsSevices.GenerateCode();
+            var response = await _userManager.ConfirmEmailAsync(user, Token);
+            if (!response.Succeeded)
+                throw new Exception($"Something went wrong");
 
-            if (string.IsNullOrEmpty(code))
-                throw new Exception("Something went wrong in GenerateCode Function");
+            return true;
+        }
 
-            var _ = _smsSevices.Send($"Verification Code : {code}", PnoneNumber);
+        public async Task<bool> ConfirmPhoneNumber(string PhoneNumber, string ConfirmToken)
+        {
+            if (string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(ConfirmToken))
+                throw new ArgumentNullException("Input Can't be null");
 
-            return code;
+            #region  With VerificationCheckResource
+            //var verification = await VerificationCheckResource.CreateAsync(
+            //      to: PhoneNumber,
+            //      code: Code,
+            //      pathServiceSid: _TwilioSettings.Value.VerificationServiceSID
+            //  );
+
+            //if (verification.Status == "approved")
+            //{
+            //    var identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(PhoneNumber));
+            //    identityUser.PhoneNumberConfirmed = true;
+            //    var updateResult = await _userManager.UpdateAsync(identityUser);
+
+            //    if (updateResult.Succeeded)
+            //    {
+            //        return true;
+            //    }
+            //}
+            //return false; 
+            #endregion
+
+            var user = await FindUserByPhoneNumberAsync(PhoneNumber);
+
+            var result = await _userManager.VerifyChangePhoneNumberTokenAsync(user, ConfirmToken, PhoneNumber);
+            if (result)
+            {
+                user.PhoneNumberConfirmed = true;
+                var response = await _userManager.UpdateAsync(user);
+
+                if (!response.Succeeded)
+                    throw new Exception($"Something went wrong");
+            }
+            else
+                throw new Exception($"Verification Code is wrong");
+            return result;
         }
 
 
+
+        public async Task<ResponseModel<bool>> ResetPassword(string PhoneNumber)
+        {
+            var user = await FindUserByPhoneNumberAsync(PhoneNumber);
+
+            //var code = _smsSevices.GenerateCode();
+
+            //if (string.IsNullOrEmpty(code))
+            //    throw new Exception("Something went wrong in GenerateCode Function");
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, PhoneNumber);
+            var result = _smsSevices.Send($"Verification Code : {code}", PhoneNumber);
+
+            if (result.Status == Twilio.Rest.Api.V2010.Account.MessageResource.StatusEnum.Accepted)
+                return new ResponseModel<bool>
+                {
+                    StatusCode = 200,
+                    Body = true,
+                    Message = "Verify Message Sent"
+                };
+            else
+                return new ResponseModel<bool>
+                {
+                    StatusCode = 500,
+                    Message = "SomeThing Went Wrong, Please Try Again"
+                };
+
+        }
+
         public async Task<ResponseModel<string>> ResetPasswordConfirmation(ResetPasswordDto model)
         {
-            var user = await _userManager.FindByEmailAsync(model.email);
-            if (user == null)
-                throw new NullReferenceException("Email Doesn't Exist");
-            if (model.Realcode != model.code)
-                throw new Exception("Verification Wrong");
+            var user = await FindUserByPhoneNumberAsync(model.phoneNumber);
+
+            var response = await _userManager.VerifyChangePhoneNumberTokenAsync(user, model.code, model.phoneNumber);
+            if (!response)
+                throw new Exception("Verification Code is Wrong");
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             if (string.IsNullOrEmpty(token))
-                throw new Exception("Something went wrong in GenerateCode Function");
+                throw new Exception("Something went wrong in Generate Code Service");
 
             var result = await _userManager.ResetPasswordAsync(user, token, model.password);
             if (!result.Succeeded)
@@ -235,10 +261,86 @@ namespace Services.IdentityServices
 
             return new ResponseModel<string>
             {
-                Message = "Code sent to phoneNumber",
+                Message = "Password Reseted Successfully",
                 StatusCode = 200
             };
 
+        }
+
+
+
+        public async Task<ResponseModel<bool>> EditPersonalData(EditPersonalDataDto model, string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new NullReferenceException($"user with id '{userId}' can't be found");
+            user.Email = string.IsNullOrEmpty(model.Email) ? user.Email : model.Email;
+            user.Name = string.IsNullOrEmpty(model.Name) ? user.Name : model.Name;
+            var result = await _userManager.UpdateAsync(user);
+            return (result.Succeeded) ?
+                new ResponseModel<bool>
+                {
+                    StatusCode = 200,
+                    Message = "Data Edited Successfully"
+                } : new ResponseModel<bool>
+                {
+                    StatusCode = 500,
+                    Message = "Something Went Wrong"
+                };
+        }
+
+
+
+        public async Task<ResponseModel<bool>> VerifyChangePhoneNumber(string PhoneNumber)
+        {
+            var user = await FindUserByPhoneNumberAsync(PhoneNumber);
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, PhoneNumber);
+            var result = _smsSevices.Send($"Verification Code : {code}", PhoneNumber);
+
+            if (result.Status == Twilio.Rest.Api.V2010.Account.MessageResource.StatusEnum.Accepted)
+                return new ResponseModel<bool>
+                {
+                    StatusCode = 200,
+                    Message = "Registering operation succeeded, please confirm your email"
+                };
+            else
+                return new ResponseModel<bool>
+                {
+                    StatusCode = 500,
+                    Message = "SomeThing Went Wrong, Please Try Again"
+                };
+        }
+
+        public async Task<ResponseModel<bool>> ChangePhoneNumber(string VerificationToken, string PhoneNumber)
+        {
+            var user = await FindUserByPhoneNumberAsync(PhoneNumber);
+            var result = await _userManager.VerifyChangePhoneNumberTokenAsync(user, VerificationToken, PhoneNumber);
+            if (!result)
+                throw new Exception("Verification Code is Wrong");
+            user.PhoneNumber = PhoneNumber;
+            var response = await _userManager.UpdateAsync(user);
+            return response.Succeeded ? new ResponseModel<bool>
+            {
+                StatusCode = 200,
+                Body = true,
+                Message = "Change your phone number has been done successfully"
+            } : new ResponseModel<bool>
+            {
+                StatusCode = 500,
+                Message = "Something went wrong while change your password, please try again"
+            };
+        }
+
+
+
+        private async Task<ApplicationUser> FindUserByPhoneNumberAsync(string PhoneNumber)
+        {
+            if (string.IsNullOrEmpty(PhoneNumber))
+                throw new ArgumentNullException("Input Can't be null");
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == PhoneNumber);
+            if (user == null)
+                throw new NullReferenceException($"user with phone number '{PhoneNumber}' doesn't exist");
+            return user;
         }
     }
 }

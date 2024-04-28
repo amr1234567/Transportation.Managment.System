@@ -9,18 +9,20 @@ using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using Services.ApplicationServices;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = Roles.Admin)]
     [ApiController]
-    public class AdminController(IAdminServices adminServices, IManagerServices managerServices, IJourneysHistoryServices journeysHistoryServices, ApplicationDbContext context) : ControllerBase
+    public class AdminController(IBusServices busService, IAdminServices adminServices, IManagerServices managerServices, IJourneysHistoryServices journeysHistoryServices, ApplicationDbContext context) : ControllerBase
     {
         private readonly ApplicationDbContext _context = context;
         private readonly IAdminServices _adminServices = adminServices;
         private readonly IManagerServices _managerServices = managerServices;
         private readonly IJourneysHistoryServices _journeysHistoryServices = journeysHistoryServices;
+        private readonly IBusServices _busService = busService;
 
         [NonAction]
         [HttpPost("sign-up")]
@@ -82,7 +84,7 @@ namespace API.Controllers
                 return BadRequest(new ResponseModel<string>
                 {
                     StatusCode = 400,
-                    Message = "Bad"
+                    Message = "Bad Input"
                 });
             }
             catch (Exception ex)
@@ -133,11 +135,11 @@ namespace API.Controllers
         }
 
         [HttpPost("enroll-bus-stop-to-bus-stop")]
-        public async Task<ActionResult<ResponseModel<bool>>> EnrollBusStopToAnother(string StartBusStopId, string DestenationBusStopId)
+        public async Task<ActionResult<ResponseModel<bool>>> EnrollBusStopToAnother(string StartBusStopId, string DestinationBusStopId)
         {
             try
             {
-                await _managerServices.enrollBusStop(StartBusStopId, DestenationBusStopId);
+                await _managerServices.enrollBusStop(StartBusStopId, DestinationBusStopId);
                 Log.Information($"Enrolled Process Succeeded");
                 return Ok(new ResponseModel<bool>
                 {
@@ -158,6 +160,27 @@ namespace API.Controllers
                 });
             }
         }
+
+        //[AllowAnonymous]
+        //[HttpGet("gg/{desId}/{startId}")]
+        //public IEnumerable<ReturnedHistoryJourneyDto> get(string desId, string startId)
+        //{
+        //    return [.. _context.Journeys
+        //        .Include(x => x.Destination)
+        //        .Include(x => x.StartBusStop)
+        //        .Include(x => x.Tickets)
+        //        .Where(x => x.DestinationId == desId && x.StartBusStopId == startId)
+        //        .Select(hj => new ReturnedHistoryJourneyDto
+        //            {
+        //                ArrivalTime = hj.ArrivalTime,
+        //                BusId = hj.BusId,
+        //                LeavingTime = hj.LeavingTime,
+        //                NumberOfAvailableTickets = hj.Tickets.Count(),
+        //                DestinationName = hj.Destination.Name,
+        //                StartBusStopName = hj.StartBusStop.Name,
+        //                TicketPrice = hj.TicketPrice
+        //            })];
+        //}
 
         [HttpGet("get-all-history-journeys")]
         public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedHistoryJourneyDto>>>> GetAllJourneysInDb()
@@ -194,15 +217,47 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("all")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<Bus>>>> GetAllBuses()
+        {
+            try
+            {
+                var model = new ResponseModel<IEnumerable<Bus>>
+                {
+
+                    StatusCode = 200,
+                    Message = "Done",
+                    Body = await _busService.GetAllBuses(),
+
+                };
+                Log.Information("Get All Buses Success");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                var model = new ResponseModel<IEnumerable<Bus>>
+                {
+                    StatusCode = 404,
+                    Message = ex.Message,
+                    Body = new List<Bus>()
+                };
+                Log.Error($"Get All Buses Error:{ex.Message}");
+                return model;
+            }
+
+        }
+
+
         #region Seeding Data By Api
         [NonAction]
         [AllowAnonymous]
         [HttpGet("Zena")]
-        public bool Zena7arfy()
+        public bool ManoalSeeding()
         {
             var busStops = _context.BusStopMangers.ToList();
+            var buses = _context.Buses.ToList();
 
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 200; i++)
             {
                 Random random = new Random();
                 var randomNum1 = random.Next(busStops.Count - 1);
@@ -218,9 +273,9 @@ namespace API.Controllers
 
 
                 // Generate random values for year, month, day, hour, minute, second, and millisecond
-                int year = 2024;
-                int month = 3;
-                int day = random.Next(1, 32);
+                int year = 2023;
+                int month = random.Next(1, 13);
+                int day = random.Next(1, 29);
                 int hour = random.Next(0, 24);
                 int minute = random.Next(0, 60);
                 int second = random.Next(0, 60);
@@ -234,7 +289,7 @@ namespace API.Controllers
 
                 var tickets = new List<Ticket>();
 
-                for (int j = 0; j < 40; j++)
+                for (int j = 0; j < random.Next(25, 40); j++)
                 {
                     var ticket = new Ticket
                     {
@@ -259,13 +314,14 @@ namespace API.Controllers
                 var journey = new JourneyHistory
                 {
                     ArrivalTime = arrivalTime,
-                    BusId = Guid.Parse("78e85dbc-411b-4d83-9924-4688d2601715"),
+                    BusId = buses[random.Next(buses.Count)].Id,
                     DestinationId = dest.Id,
                     StartBusStopId = Start.Id,
                     LeavingTime = LeavingTime,
                     TicketPrice = 70,
                     Id = JourneyId,
-                    Tickets = tickets
+                    Tickets = tickets,
+                    Date = new DateTime(LeavingTime.Year, LeavingTime.Month, LeavingTime.Day)
                 };
 
                 //journeys.Add(journey);
@@ -279,7 +335,7 @@ namespace API.Controllers
         [NonAction]
         [AllowAnonymous]
         [HttpGet("zena2")]
-        public bool ZenaLEvel2()
+        public bool ManoalDeleteing()
         {
             var tickets = _context.Tickets;
             foreach (var ticket in tickets)
@@ -293,5 +349,6 @@ namespace API.Controllers
             return true;
         }
         #endregion
+
     }
 }

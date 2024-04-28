@@ -14,44 +14,9 @@ namespace API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = $"{Roles.BusStopManager},{Roles.Admin}")]
-    public class BusController : ControllerBase
+    public class BusController(IBusServices busService) : ControllerBase
     {
-        private readonly IBusServices _busService;
-
-        public BusController(IBusServices busService)
-        {
-            _busService = busService;
-        }
-
-        [HttpGet("all")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<Bus>>>> GetAllBuses()
-        {
-            try
-            {
-                var model = new ResponseModel<IEnumerable<Bus>>
-                {
-
-                    StatusCode = 200,
-                    Message = "Done",
-                    Body = await _busService.GetAllBuses(),
-
-                };
-                Log.Information("Get All Buses Success");
-                return model;
-            }
-            catch (Exception ex)
-            {
-                var model = new ResponseModel<IEnumerable<Bus>>
-                {
-                    StatusCode = 404,
-                    Message = ex.Message,
-                    Body = new List<Bus>()
-                };
-                Log.Error($"Get All Buses Error:{ex.Message}");
-                return model;
-            }
-
-        }
+        private readonly IBusServices _busService = busService;
 
         [HttpGet("get-bus/{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> GetBus([FromRoute] Guid BusId)

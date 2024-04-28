@@ -10,6 +10,5 @@ namespace Core.Dto.UserOutput
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<ReturnedBusStopDto> busStops { get; set; }
     }
 }
