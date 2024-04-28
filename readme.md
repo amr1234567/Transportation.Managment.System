@@ -54,6 +54,8 @@ This project was built using the following technologies:
 - Twilio
 - Sql Server
 - Jwt
+- Hangfire
+- Serilog
 
 ## Documentation
 
