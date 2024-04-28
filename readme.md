@@ -50,7 +50,7 @@ To prevent abuse and ensure fair usage, rate limiting is applied to certain endp
 
 ## Documentation
 
-For detailed information about each endpoint, authentication methods, rate limits, and more, [Documentation](http://transportationsystem.somee.com/swagger/index.html)
+For detailed information about each endpoint, authentication methods, and more, [Documentation](http://transportationsystem.somee.com/swagger/index.html)
 
 ## Contributors
 
