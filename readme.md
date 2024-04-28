@@ -44,9 +44,16 @@ The Online User System caters to users who wish to book tickets and obtain infor
 
 Authentication is required for accessing certain endpoints. Each system has its own authentication mechanism to ensure secure access.
 
-## Rate Limiting
+## Technologies Used
 
-To prevent abuse and ensure fair usage, rate limiting is applied to certain endpoints. Please check the Documentation
+This project was built using the following technologies:
+
+- .Net 8
+- Asp.Net
+- Entity Framework
+- Twilio
+- Sql Server
+- Jwt
 
 ## Documentation
 
