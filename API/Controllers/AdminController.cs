@@ -217,7 +217,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("all")]
+        [HttpGet("get-all-buses")]
         public async Task<ActionResult<ResponseModel<IEnumerable<Bus>>>> GetAllBuses()
         {
             try

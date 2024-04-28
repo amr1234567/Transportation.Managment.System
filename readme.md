@@ -2,19 +2,20 @@
 
 Welcome to the Transportation Management System API! This API facilitates the management of transportation services through three main systems:
 
-1. Manager System
+1. Admin System
 2. Bus Stop System
 3. Online User System
 
-## Manager System
+## Admin System
 
-The Manager System allows for the creation of new managers and provides access to reports regarding the system's performance and profit.
+The Admin System allows for the creation of new managers and provides access to reports regarding the system's performance and profit.
 
 ### Endpoints:
 
-- `/manager/create`: Create a new manager account.
-- `/manager/reports/system`: Get reports about the system's performance.
-- `/manager/reports/profit`: Get reports about the system's profit.
+- `/api/Admin/create-manager`: Create a new Bus stop Manager
+- `/api/Admin/enroll-bus-stop-to-bus-stop`: Add a connection between 2 bus stops.
+- `/api/Admin/get-all-history-journeys`: Get all journeys from DB.
+- `/api/Admin/get-all-buses`: Get all Buses from DB.
 
 ## Bus Stop System
 
@@ -22,9 +23,9 @@ The Bus Stop System manages each individual bus stop, providing access to create
 
 ### Endpoints:
 
-- `/busstop/create/bus`: Create a new bus at a specific bus stop.
-- `/busstop/create/journey`: Create a journey from one bus stop to another.
-- `/busstop/ticketing/cut`: Cut tickets for passengers at a specific bus stop.
+- `/api/Manager/add-bus`: Create a new Bus to the system and bus stop.
+- `/api/Manager/add-journey`: Create a new journey to the upcoming journeys.
+- `/api/Manager/cut-ticket`: Generate a new ticket.
 
 ## Online User System
 
@@ -32,8 +33,12 @@ The Online User System caters to users who wish to book tickets and obtain infor
 
 ### Endpoints:
 
-- `/user/book/ticket`: Book a ticket for a specific journey.
-- `/user/journey/info`: Get information about available journeys between bus stops.
+- `/api/User/book-ticket`: Book a ticket for a specific journey.
+- `/api/UpcomingJourney/get-all-upcoming-journeys`: Get information about available journeys between bus stops.
+
+
+### Note:
+- These end points , not all the endpoints in the project , go to documention to explore all the endpoints ☺️.
 
 ## Authentication
 
@@ -41,8 +46,15 @@ Authentication is required for accessing certain endpoints. Each system has its 
 
 ## Rate Limiting
 
-To prevent abuse and ensure fair usage, rate limiting is applied to certain endpoints. Please refer to the documentation for specific rate limits.
+To prevent abuse and ensure fair usage, rate limiting is applied to certain endpoints. Please check the Documentation
 
 ## Documentation
 
-For detailed information about each endpoint, authentication methods, rate limits, and more, please refer to the API documentation.
+For detailed information about each endpoint, authentication methods, rate limits, and more, [Documentation](http://transportationsystem.somee.com/swagger/index.html)
+
+## Contributors
+
+We'd like to acknowledge the following individuals for their contributions to this project:
+
+- [Amr Shalaby](https://github.com/amr1234567)
+- [Mohamed El-Sayed](https://github.com/mhmdelsyd)
