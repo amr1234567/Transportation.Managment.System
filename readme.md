@@ -70,4 +70,4 @@ We'd like to acknowledge the following individuals for their contributions to th
 - [Mohamed El-Sayed](https://github.com/mhmdelsyd)
 
 ### Reporting 
--[Abd El-Rahman Darwish](https://github.com/abdoDarwish)
+- [Abd El-Rahman Darwish](https://github.com/abdoDarwish)
