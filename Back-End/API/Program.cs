@@ -1,3 +1,4 @@
+using API.Filters;
 using API.Helpers;
 using API.Helpers.DI;
 using Hangfire;
@@ -17,7 +18,10 @@ builder.Services.AddHangfire(options =>
 });
 builder.Services.AddHangfireServer();
 
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(typeof(ValidationFilterAttribute));
+}).ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
     .AddJsonOptions(x =>
     {
         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;

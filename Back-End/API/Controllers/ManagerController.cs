@@ -16,6 +16,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = Roles.BusStopManager)]
+    [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status401Unauthorized)]
     [ApiController]
     public class ManagerController(IBusServices busServices, ITicketServices ticketServices, IManagerServices managerServices, IUpcomingJourneysServices UpcomingJourneysServices) : ControllerBase
     {
@@ -24,6 +25,8 @@ namespace API.Controllers
         private readonly IManagerServices _managerServices = managerServices;
         private readonly IUpcomingJourneysServices _UpcomingJourneysServices = UpcomingJourneysServices;
 
+        [ProducesResponseType(typeof(ResponseModel<TokenModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost("sign-in")]
         public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn(LogInDto model)
@@ -53,6 +56,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-upcoming-journeys")]
         public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>>> GetAllJourneys()
         {
@@ -78,6 +83,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("add-bus")]
         public async Task<ActionResult<ResponseModel<bool>>> AddBus([FromBody] BusDto model)
         {
@@ -109,6 +116,8 @@ namespace API.Controllers
         }
 
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("add-journey")]
         public async Task<ActionResult<ResponseModel<bool>>> AddJourney([FromBody] UpcomingJourneyDto model)
         {
@@ -172,6 +181,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("cut-ticket")]
         public async Task<ActionResult<ResponseModel<bool>>> CutTicket(TicketDto model)
         {

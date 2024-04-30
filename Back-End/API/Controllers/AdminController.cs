@@ -24,6 +24,8 @@ namespace API.Controllers
         private readonly IJourneysHistoryServices _journeysHistoryServices = journeysHistoryServices;
         private readonly IBusServices _busService = busService;
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [NonAction]
         [HttpPost("sign-up")]
         public async Task<ActionResult<ResponseModel<string>>> SignUp(SignUpAsAdminDto model)
@@ -61,6 +63,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<TokenModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost("sign-in")]
         public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn(LogInDto model)
@@ -98,8 +102,10 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("create-manager")]
-        public async Task<ActionResult<ResponseModel<string>>> CreateManager(SignUpAsManagerDto model)
+        public async Task<ActionResult<ResponseModel<bool>>> CreateManager(SignUpAsManagerDto model)
         {
             try
             {
@@ -109,14 +115,15 @@ namespace API.Controllers
                 if (response)
                 {
                     Log.Information($"Manager Created");
-                    return Ok(new ResponseModel<string>
+                    return Ok(new ResponseModel<bool>
                     {
                         StatusCode = 200,
-                        Message = "Every thing is good"
+                        Message = "Every thing is good",
+                        Body = true
                     });
                 }
                 Log.Error($"Manager Creation Failed");
-                return BadRequest(new ResponseModel<string>
+                return BadRequest(new ResponseModel<bool>
                 {
                     StatusCode = 400,
                     Message = "Bad"
@@ -134,6 +141,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("enroll-bus-stop-to-bus-stop")]
         public async Task<ActionResult<ResponseModel<bool>>> EnrollBusStopToAnother(string StartBusStopId, string DestinationBusStopId)
         {
@@ -161,27 +170,8 @@ namespace API.Controllers
             }
         }
 
-        //[AllowAnonymous]
-        //[HttpGet("gg/{desId}/{startId}")]
-        //public IEnumerable<ReturnedHistoryJourneyDto> get(string desId, string startId)
-        //{
-        //    return [.. _context.Journeys
-        //        .Include(x => x.Destination)
-        //        .Include(x => x.StartBusStop)
-        //        .Include(x => x.Tickets)
-        //        .Where(x => x.DestinationId == desId && x.StartBusStopId == startId)
-        //        .Select(hj => new ReturnedHistoryJourneyDto
-        //            {
-        //                ArrivalTime = hj.ArrivalTime,
-        //                BusId = hj.BusId,
-        //                LeavingTime = hj.LeavingTime,
-        //                NumberOfAvailableTickets = hj.Tickets.Count(),
-        //                DestinationName = hj.Destination.Name,
-        //                StartBusStopName = hj.StartBusStop.Name,
-        //                TicketPrice = hj.TicketPrice
-        //            })];
-        //}
-
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedHistoryJourneyDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedHistoryJourneyDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-history-journeys")]
         public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedHistoryJourneyDto>>>> GetAllJourneysInDb()
         {
@@ -217,6 +207,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<Bus>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<Bus>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-buses")]
         public async Task<ActionResult<ResponseModel<IEnumerable<Bus>>>> GetAllBuses()
         {

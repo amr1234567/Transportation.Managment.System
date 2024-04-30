@@ -9,11 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using API.Filters;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace API.Controllers
 {
+    //[ValidationFilter]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController(IUserServices userServices, ITicketServices ticketServices) : ControllerBase
@@ -21,13 +24,17 @@ namespace API.Controllers
         private readonly IUserServices _userServices = userServices;
         private readonly ITicketServices _ticketServices = ticketServices;
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("sign-up")]
-        public async Task<ActionResult<ResponseModel<bool>>> SignUp([FromBody] SignUpDto model)
+        public async Task<ActionResult<ResponseModel<IEnumerable<ErrorModelState>>>> SignUp([FromBody] SignUpDto model)
         {
             try
             {
                 if (!ModelState.IsValid)
+                {
                     return BadRequest(ModelState);
+                }
                 var response = await _userServices.SignUp(model);
                 if (response.StatusCode != 200)
                     return BadRequest(response);
@@ -52,9 +59,11 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [NonAction]
         [HttpPost("confirm-email")]
-        public async Task<ActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
+        public async Task<ActionResult<string>> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
             try
             {
@@ -72,6 +81,8 @@ namespace API.Controllers
         }
 
 
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status400BadRequest)]
         [HttpPost("confirm-phone-number")]
         public async Task<ActionResult> ConfirmPhoneNumber([FromBody] ConfirmPhoneNumberDto model)
         {
@@ -91,6 +102,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<TokenModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("sign-in")]
         public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn([FromBody] LogInDto model)
         {
@@ -147,6 +160,9 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = Roles.User)]
         [HttpGet("get-all-tickets-by-user")]
         public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTicketsByUserId()
@@ -175,6 +191,9 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = Roles.User)]
         [HttpPost("book-ticket")]
         public async Task<ActionResult<ResponseModel<bool>>> BookTicket(TicketDto model)
@@ -210,6 +229,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("forget-password-verify")]
         public async Task<ActionResult<ResponseModel<bool>>> ForgetPasswordVerify([DataType(DataType.PhoneNumber), Required] string PhoneNumber)
         {
@@ -250,6 +271,8 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("reset-Password")]
         public async Task<ActionResult<ResponseModel<bool>>> ResetPassword(ResetPasswordDto model)
         {
@@ -279,6 +302,9 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = Roles.User)]
         [HttpPost("edit-personal-data")]
         public async Task<ActionResult<ResponseModel<bool>>> EditPersonalData(EditPersonalDataDto model)
         {

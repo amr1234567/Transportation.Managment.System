@@ -18,6 +18,8 @@ namespace API.Controllers
     {
         private readonly IBusServices _busService = busService;
 
+        [ProducesResponseType(typeof(ResponseModel<Bus>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-bus/{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> GetBus([FromRoute] Guid BusId)
         {
@@ -49,6 +51,8 @@ namespace API.Controllers
 
         }
 
+        [ProducesResponseType(typeof(ResponseModel<Bus>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
         [HttpPut("edit-bus/{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto model)
         {

@@ -11,12 +11,13 @@ namespace Core.Dto.UserInput
     {
         [Display(Name = "Email")]
         [Required(ErrorMessage = "{0} must contain a value")]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Display(Name = "User Name")]
         [Required(ErrorMessage = "{0} must contain a value")]
         [StringLength(30, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         public string Name { get; set; }
 
         [Display(Name = "Phone Number")]
@@ -30,7 +31,7 @@ namespace Core.Dto.UserInput
         [MinLength(8)]
         public string Password { get; set; }
 
-        [Display(Name = "ConfirmPassword")]
+        [Display(Name = "Confirm Password")]
         [Required(ErrorMessage = "{0} must contain a value")]
         [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; }
