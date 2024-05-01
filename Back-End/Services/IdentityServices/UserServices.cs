@@ -3,7 +3,6 @@ using Core.Dto.Email;
 using Core.Dto.Identity;
 using Core.Dto.UserInput;
 using Core.Dto.UserOutput;
-using Core.Helpers;
 using Core.Identity;
 using ECommerce.Core.Interfaces.IServices;
 using Interfaces.IHelpersServices;
@@ -11,13 +10,6 @@ using Interfaces.IIdentityServices;
 using Interfaces.IMailServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Services.HelperServices;
-using System.Net.Mail;
-using System.Runtime;
-using Twilio.Jwt.AccessToken;
-using Twilio.Rest.Verify.V2.Service;
-using Twilio.Types;
 
 namespace Services.IdentityServices
 {
@@ -80,8 +72,7 @@ namespace Services.IdentityServices
             {
                 Email = NewUser.Email,
                 Name = NewUser.Name,
-                UserName = new MailAddress(NewUser.Email).User,
-                PhoneNumber = NewUser.PhoneNumber
+                UserName = NewUser.Email
             };
 
             var response = await _userManager.CreateAsync(appUser, NewUser.Password);
@@ -105,18 +96,16 @@ namespace Services.IdentityServices
 
             #endregion
 
-            #region Custom Code
-            //var code = _smsSevices.GenerateCode();
-            //if (string.IsNullOrEmpty(code))
-            //    throw new Exception("Something went wrong in GenerateCode Function");
+            #region Phone Verification
+
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(User, NewUser.PhoneNumber);
-            var result = _smsSevices.Send($"Verification Code : {code}", appUser.PhoneNumber);
+            var result = _smsSevices.Send($"Verification Code : {code}", NewUser.PhoneNumber);
 
             if (result.Status == Twilio.Rest.Api.V2010.Account.MessageResource.StatusEnum.Accepted)
                 return new ResponseModel<bool>
                 {
                     StatusCode = 200,
-                    Message = "Registering operation succeeded, please confirm your email",
+                    Message = "Registering operation succeeded, please confirm your phone number",
                     Body = true
                 };
             else
@@ -125,20 +114,6 @@ namespace Services.IdentityServices
                     StatusCode = 500,
                     Message = "SomeThing Went Wrong, Please Try Again"
                 };
-            #endregion
-
-            #region Phone Verification First Try
-            //var verification = await VerificationResource.CreateAsync(
-            //    to: appUser.PhoneNumber,
-            //    channel: "sms",
-            //    pathServiceSid: _TwilioSettings.Value.VerificationServiceSID
-            //   );
-
-            //if (verification.Status == "pending")
-            //{
-            //    return true;
-            //}
-            //return false; 
             #endregion
 
             #region Email Verification
@@ -152,7 +127,6 @@ namespace Services.IdentityServices
             //    );
             //_mailServices.SendEmail(message); 
             #endregion
-            //return code;
         }
 
         public async Task<bool> ConfirmEmail(string Email, string Token)
@@ -171,7 +145,7 @@ namespace Services.IdentityServices
             return true;
         }
 
-        public async Task<bool> ConfirmPhoneNumber(string PhoneNumber, string ConfirmToken)
+        public async Task<bool> ConfirmPhoneNumber(string email,string PhoneNumber, string ConfirmToken)
         {
             if (string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(ConfirmToken))
                 throw new ArgumentNullException("Input Can't be null");
@@ -197,7 +171,8 @@ namespace Services.IdentityServices
             //return false; 
             #endregion
 
-            var user = await FindUserByPhoneNumberAsync(PhoneNumber);
+            //var user = await FindUserByPhoneNumberAsync(PhoneNumber);
+            var user = await _userManager.FindByEmailAsync(email);
 
             var result = await _userManager.VerifyChangePhoneNumberTokenAsync(user, ConfirmToken, PhoneNumber);
             if (result)

@@ -19,7 +19,7 @@ namespace API.Controllers
         private readonly IBusServices _busService = busService;
 
         [ProducesResponseType(typeof(ResponseModel<Bus>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-bus/{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> GetBus([FromRoute] Guid BusId)
         {
@@ -52,18 +52,18 @@ namespace API.Controllers
         }
 
         [ProducesResponseType(typeof(ResponseModel<Bus>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPut("edit-bus/{BusId}")]
         public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto model)
         {
             try
             {
                 var res = await _busService.EditBus(BusId, model);
-                Log.Information($"edit Bus Success: {res}");
+                Log.Information($"edit Bus Success");
                 if (res.StatusCode == 200)
                     return Ok(res);
                 Log.Error($"edit Bus failed");
-                return BadRequest();
+                return BadRequest(res);
             }
             catch (Exception ex)
             {

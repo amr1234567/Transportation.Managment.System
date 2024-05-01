@@ -9,8 +9,10 @@ namespace Core.Dto.Identity
 {
     public class ConfirmPhoneNumberDto
     {
-        [DataType(DataType.PhoneNumber)]
+        [Required,DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
+        [EmailAddress,Required]
+        public string Email { get; set; }
         public string VerifactionCode { get; set; }
     }
 }

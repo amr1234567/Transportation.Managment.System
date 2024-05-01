@@ -90,7 +90,7 @@ namespace API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                var res = await _userServices.ConfirmPhoneNumber(model.PhoneNumber, model.VerifactionCode);
+                var res = await _userServices.ConfirmPhoneNumber(model.Email,model.PhoneNumber, model.VerifactionCode);
                 Log.Information($"Confirming phone number succeeded");
 
                 return res ? Ok("Ur PhoneNumber Has Been Verify") : BadRequest("Something went Wrong");
