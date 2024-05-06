@@ -37,13 +37,13 @@ namespace Services.ApplicationServices
             var ticket = new Ticket()
             {
                 Id = Guid.NewGuid(),
-                CreatedTime = ticketDto.CreatedTime,
+                CreatedTime = DateTime.UtcNow,
                 SeatNum = seatNum,
-                UpcomingJourneyId = ticketDto.JourneyId,
+                UpcomingJourneyId = Guid.Parse(ticketDto.JourneyId),
                 ConsumerId = ConsumerId,
                 ReservedOnline = Online,
                 Price = journey.TicketPrice,
-                JourneyId = ticketDto.JourneyId,
+                JourneyId = Guid.Parse(ticketDto.JourneyId),
                 ArrivalTime = journey.ArrivalTime,
                 DestinationId = journey.DestinationId,
                 DestinationName = journey.Destination.Name,
@@ -52,7 +52,7 @@ namespace Services.ApplicationServices
                 StartBusStopName = journey.StartBusStop.Name
             };
 
-            await _seatServices.ReserveSeat(ticketDto.SeatId);
+            await _seatServices.ReserveSeat(Guid.Parse(ticketDto.SeatId));
             await _context.Tickets.AddAsync(ticket);
 
             await _context.SaveChangesAsync();

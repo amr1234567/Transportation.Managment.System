@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Core.Dto
 {
@@ -22,10 +23,12 @@ namespace Core.Dto
         [Required]
         public string StartBusStopId { get; set; }
 
+        [Required]
         public DateTime LeavingTime { get; set; }
+        [Required]
         public DateTime ArrivalTime { get; set; }
 
         [Required]
-        public Guid BusId { get; set; }
+        public string BusId { get; set; }
     }
 }

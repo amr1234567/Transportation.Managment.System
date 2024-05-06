@@ -8,8 +8,8 @@ using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Services.ApplicationServices;
 
 namespace API.Controllers
 {
@@ -27,6 +27,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [NonAction]
+        [AllowAnonymous]
         [HttpPost("sign-up")]
         public async Task<ActionResult<ResponseModel<string>>> SignUp(SignUpAsAdminDto model)
         {
@@ -214,12 +215,13 @@ namespace API.Controllers
         {
             try
             {
+                var buses = await _busService.GetAllBuses();
                 var model = new ResponseModel<IEnumerable<Bus>>
                 {
 
                     StatusCode = 200,
                     Message = "Done",
-                    Body = await _busService.GetAllBuses(),
+                    Body = buses
 
                 };
                 Log.Information("Get All Buses Success");
@@ -324,7 +326,7 @@ namespace API.Controllers
             return true;
         }
 
-        [NonAction]
+        //[NonAction]
         [AllowAnonymous]
         [HttpGet("zena2")]
         public bool ManoalDeleteing()
@@ -339,6 +341,27 @@ namespace API.Controllers
 
             _context.SaveChanges();
             return true;
+        }
+
+        [AllowAnonymous]
+        [NonAction]
+        [HttpGet("test")]
+        public IEnumerable<JourneyTestDto> getALl()
+        {
+            Log.Information($"'{DateTime.Now}'");
+            var journeys = _context.Database.SqlQuery<JourneyTestDto>($@"
+                SELECT  
+                [DestinationId]
+                ,[StartBusStopId]
+                ,[LeavingTime]
+                ,[ArrivalTime]
+                ,[BusId]
+                ,[TicketPrice]
+                ,[Date] From [App].[Journeys]
+                ").ToList();
+            //var journeys = _context.Journeys.Take(100).ToList();
+            Log.Information($"'{DateTime.Now}'");
+            return journeys;
         }
         #endregion
 

@@ -32,6 +32,8 @@ namespace Core.Models
         public Guid BusId { get; set; }
         public Bus? Bus { get; set; }
 
+        [Required]
+        [Range(10, 100)]
         public double TicketPrice { get; set; }
 
     }

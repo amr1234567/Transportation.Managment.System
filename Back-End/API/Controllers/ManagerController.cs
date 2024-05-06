@@ -38,12 +38,7 @@ namespace API.Controllers
                 var response = await _managerServices.SignIn(model);
 
                 Log.Information($"Sign In Succeeded");
-                return Ok(new ResponseModel<TokenModel>
-                {
-                    StatusCode = 200,
-                    Message = "Every thing is good",
-                    Body = response.TokenModel
-                });
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -123,14 +118,26 @@ namespace API.Controllers
         {
             try
             {
+                if (!Guid.TryParse(model.BusId, out Guid BusId))
+                    ModelState.AddModelError("busId", "Bus Id Must be a valid Guid");
+                if (!Guid.TryParse(model.DestinationId, out _))
+                    ModelState.AddModelError("destinationId", "Destination Id Must be a valid Guid");
+                if (!Guid.TryParse(model.StartBusStopId, out _))
+                    ModelState.AddModelError("StartBusStopId", "Star Bus Stop Id Must be a valid Guid");
+                //if (DateTime.TryParse(model.ArrivalTime.ToString(), out DateTime ArrivalTime))
+                //    ModelState.AddModelError("ArrivalTime", "Arrival Time Must be a valid Date");
+                //if (DateTime.TryParse(model.LeavingTime.ToString(), out DateTime LeavingTime))
+                //    ModelState.AddModelError("LeavingTime", "Leaving Time Must be a valid Date");
+
                 if (!ModelState.IsValid)
-                    return BadRequest(new ResponseModel<Bus>
+                    return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
                     {
                         StatusCode = 400,
-                        Message = "Error"
+                        Message = "Error",
+                        Body = ModelState.Keys.Select(key => new ErrorModelState(key, ModelState[key].Errors.Select(x => x.ErrorMessage).ToList()))
                     });
-                var bus = await _busServices.GetBusById(model.BusId);
-                if (bus.IsAvailable == false)
+                var bus = await _busServices.GetBusById(BusId);
+                if (bus is null || bus.IsAvailable == false)
                 {
                     Log.Error($"AddBus Failed (bus not available)");
                     return BadRequest(new ResponseModel<bool>
@@ -156,10 +163,11 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"AddJourney Failed ({ex.Message})");
-                return BadRequest(new ResponseModel<Bus>
+                return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>?>
                 {
                     StatusCode = 400,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    Body = null
                 });
             }
         }
@@ -188,6 +196,11 @@ namespace API.Controllers
         {
             try
             {
+                if (!Guid.TryParse(model.JourneyId.ToString(), out _))
+                    ModelState.AddModelError("JourneyId", "Journey Id Must be a valid Guid");
+                if (!Guid.TryParse(model.SeatId.ToString(), out _))
+                    ModelState.AddModelError("SeatId", "Seat Id Must be a valid Guid");
+
                 if (!ModelState.IsValid)
                     return BadRequest(new ResponseModel<bool>
                     {

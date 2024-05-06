@@ -98,10 +98,7 @@ namespace Services.ApplicationServices
 
         public async Task<IEnumerable<Bus>> GetAllBuses()//done
         {
-            var buses = _context.Buses.Include(b => b.seats).AsNoTracking().AsEnumerable();
-            if (buses == null)
-                throw new ArgumentNullException("No Bus Exist");
-            return buses;
+            return await _context.Buses.Include(b => b.seats).ToListAsync();
         }
 
         public async Task<Bus> GetBusById(Guid Id)//done
@@ -109,10 +106,7 @@ namespace Services.ApplicationServices
             if (Id == null)
                 throw new ArgumentNullException($"Id Can't Be Empty");
 
-            var bus = await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id));
-            if (bus == null)
-                throw new ArgumentNullException($"there is no bus exist with id:{Id}");
-            return bus;
+            return await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id)); ;
         }
 
     }

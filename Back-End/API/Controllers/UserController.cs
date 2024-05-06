@@ -11,6 +11,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using API.Filters;
 using System.Collections.Generic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Twilio.Types;
+using System.ComponentModel;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,13 +30,18 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("sign-up")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ErrorModelState>>>> SignUp([FromBody] SignUpDto model)
+        public async Task<ActionResult<ResponseModel<IEnumerable<ErrorModelState>?>>> SignUp([FromBody] SignUpDto model)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
+                    {
+                        StatusCode = 400,
+                        Message = "Invalid Input",
+                        Body = ModelState.Keys.Select(key => new ErrorModelState(key, ModelState[key].Errors.Select(x => x.ErrorMessage).ToList()))
+                    });
                 }
                 var response = await _userServices.SignUp(model);
                 if (response.StatusCode != 200)
@@ -51,10 +59,11 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Sign Up Failed ({ex.Message})");
-                return BadRequest(new ResponseModel<string>
+                return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>?>
                 {
                     StatusCode = 400,
-                    Message = "Failed " + ex.Message
+                    Message = "Failed " + ex.Message,
+                    Body = null
                 });
             }
         }
@@ -90,15 +99,27 @@ namespace API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                var res = await _userServices.ConfirmPhoneNumber(model.Email,model.PhoneNumber, model.VerifactionCode);
+                var res = await _userServices.ConfirmPhoneNumber(model.Email, model.PhoneNumber, model.VerificationCode);
                 Log.Information($"Confirming phone number succeeded");
 
-                return res ? Ok("Ur PhoneNumber Has Been Verify") : BadRequest("Something went Wrong");
+                return res ? Ok(new ResponseModel<string>
+                {
+                    Message = "Ur PhoneNumber Has Been Verify",
+                    StatusCode = 200
+                }) : BadRequest(new ResponseModel<string>
+                {
+                    Message = "Something went Wrong",
+                    StatusCode = 400
+                });
             }
             catch (Exception ex)
             {
-                Log.Error($"Confirming phone number has failed ({ex.Message})");
-                return BadRequest($"Something went Wrong ({ex.Message})");
+                Log.Error($"Something went Wrong ({ex.Message})");
+                return BadRequest(new ResponseModel<string>
+                {
+                    Message = $"Confirming phone number has failed ({ex.Message})",
+                    StatusCode = 400
+                });
             }
         }
 
@@ -120,32 +141,22 @@ namespace API.Controllers
                     {
                         StatusCode = response.StatusCode,
                         Message = response.Message,
-                        Body = response.TokenModel
+                        Body = response.Body
                     });
                 }
 
 
                 if (response.StatusCode == 400)
-                    return BadRequest(new ResponseModel<TokenModel>
-                    {
-                        StatusCode = response.StatusCode,
-                        Message = response.Message,
-                        Body = response.TokenModel
-                    });
+                    return BadRequest(response);
 
                 if (response.StatusCode == 404)
-                    return NotFound(new ResponseModel<TokenModel>
-                    {
-                        StatusCode = response.StatusCode,
-                        Message = response.Message,
-                        Body = response.TokenModel
-                    });
+                    return NotFound(response);
 
                 return Unauthorized(new ResponseModel<TokenModel>
                 {
                     StatusCode = 401,
                     Message = response.Message,
-                    Body = response.TokenModel
+                    Body = response.Body
                 });
             }
             catch (Exception ex)
@@ -200,12 +211,18 @@ namespace API.Controllers
         {
             try
             {
+                if (!Guid.TryParse(model.JourneyId, out _))
+                    ModelState.AddModelError("JourneyId", "Journey Id Must be a valid Guid");
+                if (!Guid.TryParse(model.SeatId, out _))
+                    ModelState.AddModelError("SeatId", "Seat Id Must be a valid Guid");
+
                 if (!ModelState.IsValid)
-                    return BadRequest(new ResponseModel<bool>
+                    return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
                     {
                         StatusCode = 400,
                         Message = "Input is invalid",
-                        Body = false
+                        Body = ModelState.Keys.Select(key => new ErrorModelState(key, ModelState[key].Errors.Select(x => x.ErrorMessage).ToList()))
+
                     });
                 var ticket = await _ticketServices.BookTicket(model, GetUserIdFromClaims());
                 Log.Information($"Book Ticket Done successfully");
@@ -232,13 +249,13 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("forget-password-verify")]
-        public async Task<ActionResult<ResponseModel<bool>>> ForgetPasswordVerify([DataType(DataType.PhoneNumber), Required] string PhoneNumber)
+        public async Task<ActionResult<ResponseModel<bool>>> ForgetPasswordVerify([EmailAddress, DefaultValue("example@example.com"), Required, RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")] string Email)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest("Bad model");
-                var response = await _userServices.ResetPassword(PhoneNumber);
+                var response = await _userServices.ResetPassword(Email);
                 if (response.StatusCode == 200)
                 {
                     Log.Information($"Forget Password Verification Done successfully");

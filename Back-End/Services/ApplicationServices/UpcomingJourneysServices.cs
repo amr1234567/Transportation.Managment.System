@@ -83,19 +83,25 @@ namespace Services.ApplicationServices
             if (model == null)
                 throw new ArgumentNullException("Journey Details can't be null");
 
+            if (DateTime.UtcNow > model.LeavingTime || DateTime.UtcNow > model.ArrivalTime)
+                throw new Exception("Time is in the past");
+
             var BusStop = await _context.BusStopMangers.Include(bsm => bsm.BusStops)
                 .FirstOrDefaultAsync(bsm => bsm.Id.Equals(model.StartBusStopId));
             if (BusStop == null)
                 throw new NullReferenceException("StartBus Stop Can't be null");
+
             var BusStopExist = BusStop.BusStops.Any(bsm => bsm.Id.CompareTo(model.DestinationId) == 0);
             if (!BusStopExist)
                 throw new NullReferenceException("Destination BusStop Can't be null");
-            var NumberOfAvailableTickets = _context.Buses.Include(b => b.seats).FirstOrDefault(b => b.Id.Equals(model.BusId)).seats.Count(s => s.IsAvailable);
 
-            var TimeTable = new UpcomingJourney
+            var NumberOfAvailableTickets = _context.Seats.Where(S => S.BusId.Equals(model.BusId) && S.IsAvailable).Count();
+            //var NumberOfAvailableTickets = _context.Buses.Include(b => b.seats).FirstOrDefault(b => b.Id.Equals(model.BusId)).seats.Count(s => s.IsAvailable);
+
+            var NewUpcomingJourney = new UpcomingJourney
             {
                 ArrivalTime = model.ArrivalTime,
-                BusId = model.BusId,
+                BusId = Guid.Parse(model.BusId),
                 DestinationId = model.DestinationId,
                 StartBusStopId = model.StartBusStopId,
                 TicketPrice = model.TicketPrice,
@@ -104,8 +110,10 @@ namespace Services.ApplicationServices
                 JourneyId = Guid.NewGuid(),
             };
 
-            await _context.UpcomingJourneys.AddAsync(TimeTable);
-            var bus = _context.Buses.Find(model.BusId);
+            await _context.UpcomingJourneys.AddAsync(NewUpcomingJourney);
+            var bus = _context.Buses.Find(Guid.Parse(model.BusId));
+            if (bus == null)
+                throw new NullReferenceException($"Bus with id {model.BusId} can't be found");
             bus.IsAvailable = false;
             await _context.SaveChangesAsync();
             return model;

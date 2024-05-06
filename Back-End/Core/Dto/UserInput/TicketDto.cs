@@ -5,10 +5,8 @@ namespace Core.Dto.UserInput
     public class TicketDto
     {
         [Required]
-        public DateTime CreatedTime { get; set; }
+        public string SeatId { get; set; }
         [Required]
-        public Guid SeatId { get; set; }
-        [Required]
-        public Guid JourneyId { get; set; }
+        public string JourneyId { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace Services.IdentityServices
         private readonly ITokenService _tokenService = tokenService;
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<LogInResponse> SignIn(LogInDto model)
+        public async Task<ResponseModel<TokenModel>> SignIn(LogInDto model)
         {
             if (model == null)
                 throw new ArgumentNullException("Model Can't Be null");
@@ -33,11 +33,11 @@ namespace Services.IdentityServices
                 throw new NullReferenceException("Email or Password Wrong");
 
             var userRoles = await _userManager.GetRolesAsync(user);
-            var token = await _tokenService.CreateToken(user, userRoles.ToList());
-            return new LogInResponse()
+            var token = await _tokenService.CreateToken(user, [.. userRoles]);
+            return new ResponseModel<TokenModel>()
             {
                 StatusCode = 200,
-                TokenModel = token,
+                Body = token,
                 Message = "Logged In"
             };
         }

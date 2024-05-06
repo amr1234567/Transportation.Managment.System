@@ -14,6 +14,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
 		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+		<PackageReference Include="Swagger-Net" Version="8.5.12.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Dto\ServiceOutput\" />

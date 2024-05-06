@@ -19,4 +19,16 @@ namespace Core.Dto.UserOutput
         public int NumberOfAvailableTickets { get; set; }
         public Guid BusId { get; set; }
     }
+
+    public class JourneyTestDto
+    {
+
+        public DateTime Date { get; set; }
+        public string DestinationId { get; set; }
+        public string StartBusStopId { get; set; }
+        public DateTime LeavingTime { get; set; }
+        public DateTime ArrivalTime { get; set; }
+        public double TicketPrice { get; set; }
+        public Guid BusId { get; set; }
+    }
 }

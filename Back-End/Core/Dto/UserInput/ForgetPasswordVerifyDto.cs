@@ -10,7 +10,8 @@ namespace Core.Dto.UserInput
     public class ForgetPasswordVerifyDto
     {
         [DataType(DataType.PhoneNumber), Required]
-        string PhoneNumber { get; set; }
+        [RegularExpression(@"^\+20(10|15|11|12)\d{8}")]
+        public string PhoneNumber { get; set; }
 
         [Required]
         public string Token { get; set; }
