@@ -229,6 +229,36 @@ namespace API.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
+        [HttpGet("get-all-related-by-manager")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllRelatedBusStops()
+        {
+            try
+            {
+                var records = await _managerServices.GetAllDestinationBusStops(GetManagerIdFromClaims());
+                Log.Information("Get All BusStops succeeded");
+                return Ok(new ResponseModel<IEnumerable<ReturnedBusStopDto>>()
+                {
+                    Body = records,
+                    Message = "Done",
+                    StatusCode = 200
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Get All related BusStops Failed :{ex.Message}");
+                return Ok(new ResponseModel<IEnumerable<BusStopDto>>()
+                {
+                    Body = new List<BusStopDto>(),
+                    Message = $"Get All related BusStops Failed :{ex.Message}",
+                    StatusCode = 400
+                });
+            }
+
+        }
+
+
         private string GetManagerIdFromClaims()
         {
             return User.FindFirstValue("Id");

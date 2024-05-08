@@ -1,14 +1,11 @@
 ﻿using Core.Constants;
 using Core.Dto.UserOutput;
-using Core.Models;
-using Interfaces.IApplicationServices;
 using Interfaces.IIdentityServices;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using Twilio.TwiML.Voice;
 
 namespace API.Controllers
 {
@@ -27,11 +24,13 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-related-by-start")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllRelatedBusStops()
+        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllRelatedBusStops([Required] string StartBusStop)
         {
             try
             {
-                var records = await _managerServices.GetAllDestinationBusStops(GetManagerIdFromClaims());
+                if (Guid.TryParse(StartBusStop, out _))
+                    ModelState.AddModelError("StartBusStop", "Id is invalid");
+                var records = await _managerServices.GetAllDestinationBusStops(StartBusStop);
                 Log.Information("Get All BusStops succeeded");
                 return Ok(new ResponseModel<IEnumerable<ReturnedBusStopDto>>()
                 {
@@ -84,7 +83,7 @@ namespace API.Controllers
 
         [ProducesResponseType(typeof(ResponseModel<ReturnedBusStopDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
-        [HttpGet("get-Bus-stop/{id}")]
+        [HttpGet("get-Bus-stop/{BusStopId}")]
         public async Task<ActionResult<ReturnedBusStopDto>> GetBusStopById(string BusStopId)
         {
             try
@@ -104,9 +103,5 @@ namespace API.Controllers
             }
         }
 
-        private string GetManagerIdFromClaims()
-        {
-            return User.FindFirstValue("Id");
-        }
     }
 }

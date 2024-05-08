@@ -4,12 +4,11 @@ namespace API.Helpers
 {
     public static class SwaggerConfigurations
     {
-
         public static IServiceCollection ConfigSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "AuthWebSite", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Transportation System", Version = "v1" });
             });
             services.AddSwaggerGen(swagger =>
             {
@@ -18,7 +17,7 @@ namespace API.Helpers
                 {
                     Version = "v1",
                     Title = "ASP.NET 5 Web API",
-                    Description = " ITI Projrcy"
+                    Description = "Transportation System"
                 });
 
                 // To Enable authorization using Swagger (JWT)    
