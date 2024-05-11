@@ -16,7 +16,7 @@ namespace Interfaces.IIdentityServices
         Task<bool> ConfirmEmail(string Email, string Token);
         Task<bool> ConfirmPhoneNumber(string email, string PhoneNumber, string ConfirmToken);
         Task<ResponseModel<string>> ResetPasswordConfirmation(ResetPasswordDto model);
-        Task<ResponseModel<bool>> ResetPassword(string Email);
+        Task<ResponseModel<string>> ResetPassword(string Email);
         Task<ResponseModel<bool>> VerifyChangePhoneNumber(string Email);
         Task<ResponseModel<bool>> ChangePhoneNumber(ChangePhoneNumberDto model);
         Task<ResponseModel<bool>> EditPersonalData(EditPersonalDataDto model, string userId);

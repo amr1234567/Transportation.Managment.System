@@ -92,7 +92,7 @@ namespace API.Controllers
 
         [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status400BadRequest)]
-        [HttpPost("confirm-phone-number")]
+        [HttpPost("confirm-account")]
         public async Task<ActionResult> ConfirmPhoneNumber([FromBody] ConfirmPhoneNumberDto model)
         {
             try
@@ -246,10 +246,10 @@ namespace API.Controllers
             }
         }
 
-        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
-        [HttpPost("forget-password-verify")]
-        public async Task<ActionResult<ResponseModel<bool>>> ForgetPasswordVerify([EmailAddress, DefaultValue("example@example.com"), Required, RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")] string Email)
+        [HttpPost("forget-password")]
+        public async Task<ActionResult<ResponseModel<string>>> ForgetPasswordVerify([EmailAddress, DefaultValue("example@example.com"), Required, RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")] string Email)
         {
             try
             {
@@ -268,7 +268,7 @@ namespace API.Controllers
                 }
                 Log.Information($"Forget Password Verification Failed, Please Try Again");
 
-                return BadRequest(new ResponseModel<bool>
+                return BadRequest(new ResponseModel<string>
                 {
                     Message = response.Message,
                     StatusCode = response.StatusCode,
@@ -279,11 +279,10 @@ namespace API.Controllers
             {
                 Log.Error($"ForgetPasswordVerify Failed  ({ex.Message})");
 
-                return BadRequest(new ResponseModel<bool>
+                return BadRequest(new ResponseModel<string>
                 {
                     StatusCode = 400,
-                    Message = ex.Message,
-                    Body = true
+                    Message = ex.Message
                 });
             }
         }

@@ -22,14 +22,14 @@ namespace Services.ApplicationServices
                 throw new ArgumentNullException("UnAuthorized");
 
 
-            var seatNum = _context.Seats.Find(ticketDto.SeatId).SeatNum;
+            var seatNum = _context.Seats.Find(Guid.Parse(ticketDto.SeatId)).SeatNum;
 
             if (seatNum == null)
                 throw new ArgumentNullException("Seat Doesn't Exist");
 
             var journey = await _context.UpcomingJourneys.Include(j => j.Destination)
                                             .Include(j => j.StartBusStop)
-                                            .FirstOrDefaultAsync(j => j.Id.Equals(ticketDto.JourneyId));
+                                            .FirstOrDefaultAsync(j => j.Id.Equals(Guid.Parse(ticketDto.JourneyId)));
             if (journey == null)
                 throw new NullReferenceException("journey can't be Found");
 

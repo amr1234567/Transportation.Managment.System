@@ -192,7 +192,7 @@ namespace Services.IdentityServices
 
 
 
-        public async Task<ResponseModel<bool>> ResetPassword(string Email)
+        public async Task<ResponseModel<string>> ResetPassword(string Email)
         {
             var user = await _userManager.FindByEmailAsync(Email);
             if (user == null)
@@ -205,16 +205,16 @@ namespace Services.IdentityServices
             var result = _smsSevices.Send($"Verification Code : {code}", user.PhoneNumber);
 
             if (result.Status == Twilio.Rest.Api.V2010.Account.MessageResource.StatusEnum.Accepted)
-                return new ResponseModel<bool>
+                return new ResponseModel<string>
                 {
                     StatusCode = 200,
-                    Body = true,
+                    Body = code,
                     Message = "Verify Message Sent"
                 };
             else
-                return new ResponseModel<bool>
+                return new ResponseModel<string>
                 {
-                    StatusCode = 500,
+                    StatusCode = 400,
                     Message = "SomeThing Went Wrong, Please Try Again"
                 };
 
@@ -326,5 +326,7 @@ namespace Services.IdentityServices
                 throw new NullReferenceException($"user with phone number '{PhoneNumber}' doesn't exist");
             return user;
         }
+
+
     }
 }

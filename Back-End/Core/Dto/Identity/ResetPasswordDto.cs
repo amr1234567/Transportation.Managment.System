@@ -26,5 +26,12 @@ namespace Core.Dto.Identity
         [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()-+=])(.{8,})$")]
         [DefaultValue("@Aa123456789")]
         public string Password { get; set; }
+
+        [Display(Name = "Confirm Password")]
+        [Required(ErrorMessage = "{0} must contain a value")]
+        [Compare(nameof(Password))]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()-+=])(.{8,})$")]
+        [DefaultValue("@Aa123456789")]
+        public string ConfirmPassword { get; set; }
     }
 }
