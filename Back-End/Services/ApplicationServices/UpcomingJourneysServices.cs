@@ -65,7 +65,7 @@ namespace Services.ApplicationServices
                 if (bus == null)
                     throw new ArgumentNullException("Bus Can't be null");
                 bus.IsAvailable = true;
-
+                _context.Buses.Update(bus);
                 var seats = _context.Seats.Where(x => x.BusId.Equals(record.BusId));
 
                 if (seats == null)
@@ -115,6 +115,7 @@ namespace Services.ApplicationServices
             if (bus == null)
                 throw new NullReferenceException($"Bus with id {model.BusId} can't be found");
             bus.IsAvailable = false;
+            _context.Buses.Update(bus);
             await _context.SaveChangesAsync();
             return model;
         }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Core.Dto
 {
@@ -20,8 +21,8 @@ namespace Core.Dto
         [Required]
         public string DestinationId { get; set; }
 
-        [Required]
-        public string StartBusStopId { get; set; }
+        [JsonIgnore]
+        public string StartBusStopId { get; set; } = "";
 
         [Required]
         public DateTime LeavingTime { get; set; }

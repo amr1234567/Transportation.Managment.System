@@ -144,7 +144,7 @@ namespace API.Controllers
 
         [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
-        [HttpPost("enroll-bus-stop-to-bus-stop")]
+        [HttpPost("enroll-bus-stop-to-bus-stop/{StartBusStopId}/{DestinationBusStopId}")]
         public async Task<ActionResult<ResponseModel<bool>>> EnrollBusStopToAnother(string StartBusStopId, string DestinationBusStopId)
         {
             try

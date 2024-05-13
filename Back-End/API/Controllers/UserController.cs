@@ -260,11 +260,7 @@ namespace API.Controllers
                 {
                     Log.Information($"Forget Password Verification Done successfully");
 
-                    return Ok(new ResponseModel<bool>
-                    {
-                        Message = "Verification Code has been sent",
-                        StatusCode = 200,
-                    });
+                    return Ok(response);
                 }
                 Log.Information($"Forget Password Verification Failed, Please Try Again");
 

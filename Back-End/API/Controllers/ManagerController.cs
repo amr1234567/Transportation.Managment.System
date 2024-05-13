@@ -122,12 +122,6 @@ namespace API.Controllers
                     ModelState.AddModelError("busId", "Bus Id Must be a valid Guid");
                 if (!Guid.TryParse(model.DestinationId, out _))
                     ModelState.AddModelError("destinationId", "Destination Id Must be a valid Guid");
-                if (!Guid.TryParse(model.StartBusStopId, out _))
-                    ModelState.AddModelError("StartBusStopId", "Star Bus Stop Id Must be a valid Guid");
-                //if (DateTime.TryParse(model.ArrivalTime.ToString(), out DateTime ArrivalTime))
-                //    ModelState.AddModelError("ArrivalTime", "Arrival Time Must be a valid Date");
-                //if (DateTime.TryParse(model.LeavingTime.ToString(), out DateTime LeavingTime))
-                //    ModelState.AddModelError("LeavingTime", "Leaving Time Must be a valid Date");
 
                 if (!ModelState.IsValid)
                     return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
@@ -136,6 +130,8 @@ namespace API.Controllers
                         Message = "Error",
                         Body = ModelState.Keys.Select(key => new ErrorModelState(key, ModelState[key].Errors.Select(x => x.ErrorMessage).ToList()))
                     });
+
+                model.StartBusStopId = GetManagerIdFromClaims();
                 var bus = await _busServices.GetBusById(BusId);
                 if (bus is null || bus.IsAvailable == false)
                 {
@@ -147,6 +143,7 @@ namespace API.Controllers
                         StatusCode = 400
                     });
                 }
+                model.StartBusStopId = GetManagerIdFromClaims();
                 await _UpcomingJourneysServices.AddUpcomingJourney(model);
 
                 TimeSpan duration = model.ArrivalTime - DateTime.UtcNow;

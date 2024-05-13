@@ -23,7 +23,7 @@ namespace API.Controllers
 
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
-        [HttpGet("get-all-related-by-start")]
+        [HttpGet("get-all-related-by-start/{StartBusStop}")]
         public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllRelatedBusStops([Required] string StartBusStop)
         {
             try
