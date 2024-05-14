@@ -57,7 +57,7 @@ namespace Services.ApplicationServices
                     BusId = record.BusId,
                     DestinationId = record.DestinationId,
                     LeavingTime = record.LeavingTime,
-                    ReservedTickets = record.Ticket,
+                    ReservedTickets = record.Tickets,
                     StartNusStopId = record.StartBusStopId
                 });
 
@@ -139,7 +139,8 @@ namespace Services.ApplicationServices
                     DestinationId = x.Destination.Id,
                     Id = x.Id,
                     JourneyId = x.JourneyId,
-                    StartBusStopId = x.StartBusStopId
+                    StartBusStopId = x.StartBusStopId,
+                    Seats = _seatServices.GetAllSeatsInBusByBusId(x.BusId).Result
                 }).AsNoTracking().AsEnumerable();
             if (journeys == null)
                 throw new ArgumentNullException($"Journey With StartBusStop: {id} doesn't exist");
@@ -163,21 +164,20 @@ namespace Services.ApplicationServices
                 JourneyId = j.JourneyId,
                 LeavingTime = j.LeavingTime,
                 NumberOfAvailableTickets = j.NumberOfAvailableTickets,
-                Seats = _context.Seats.Where(s => s.BusId.Equals(j.BusId)),
+                Seats = _seatServices.GetAllSeatsInBusByBusId(j.BusId).Result,
                 StartBusStopId = j.StartBusStopId,
                 StartBusStopName = j.StartBusStopName,
                 TicketPrice = j.TicketPrice,
+
             }).AsNoTracking().AsEnumerable();
             return Task.FromResult(returnedJourneys);
         }
 
         public async Task<ReturnedUpcomingJourneyDto> GetJourneyById(Guid id)
         {
-            if (id == null)
-                throw new ArgumentNullException("Journey Can't Be Null");
             var journey = await _context.UpcomingJourneys.FirstOrDefaultAsync(x => x.Id.Equals(id));
             if (journey == null)
-                throw new ArgumentNullException($"Journy With {id} doesn't exist");
+                throw new ArgumentNullException($"Journey With {id} doesn't exist");
             var seats = await _seatServices.GetAllSeatsInBusByBusId(journey.BusId);
             return new ReturnedUpcomingJourneyDto
             {
@@ -196,19 +196,16 @@ namespace Services.ApplicationServices
             };
         }
 
-
-        public async Task<ReturnedUpcomingJourneyDto> GetNearestJourneyByDestination(string destinationId, string startBusStopId) // wait
+        public Task<IEnumerable<ReturnedUpcomingJourneyDto>> GetNearestJourneysByDestination(string destinationId, string startBusStopId) // wait
         {
             var Journeys = _context.UpcomingJourneys.Where(j => j.StartBusStopId.Equals(startBusStopId)
                                         && j.DestinationId.Equals(destinationId));
 
             if (Journeys is null || !Journeys.Any())
-                throw new Exception("No Buses");
+                throw new Exception("No Upcoming Journeys");
 
-            var JourneysCounted = Journeys.OrderBy(b => b.LeavingTime);
-            var journey = JourneysCounted.First();
-            var seats = await _seatServices.GetAllSeatsInBusByBusId(journey.BusId);
-            return new ReturnedUpcomingJourneyDto
+            var JourneysCounted = Journeys.OrderBy(b => b.LeavingTime).AsEnumerable();
+            return Task.FromResult(JourneysCounted.Select(journey => new ReturnedUpcomingJourneyDto
             {
                 StartBusStopId = journey.StartBusStopId,
                 NumberOfAvailableTickets = journey.NumberOfAvailableTickets,
@@ -221,10 +218,9 @@ namespace Services.ApplicationServices
                 BusId = journey.BusId,
                 Id = journey.Id,
                 DestinationId = journey.DestinationId,
-                Seats = seats
-            };
+                Seats = _seatServices.GetAllSeatsInBusByBusId(journey.BusId).Result
+            }));
         }
-
 
         public async Task SetArrivalTime(DateTime time, Guid id)
         {
@@ -252,5 +248,6 @@ namespace Services.ApplicationServices
             journey.LeavingTime = time;
             await _context.SaveChangesAsync();
         }
+
     }
 }

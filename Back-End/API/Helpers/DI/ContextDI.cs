@@ -33,7 +33,7 @@ namespace API.Helpers.DI
 
             services.AddIdentityCore<ApplicationUser>(options =>
             {
-                options.SignIn.RequireConfirmedPhoneNumber = true;
+                //options.SignIn.RequireConfirmedPhoneNumber = true;
             })
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider)
                 .AddTokenProvider(TokenOptions.DefaultPhoneProvider, typeof(PhoneNumberTokenProvider<ApplicationUser>))

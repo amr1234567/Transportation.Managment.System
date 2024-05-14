@@ -18,31 +18,27 @@ namespace Services.IdentityServices
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMailServices _mailServices;
-        private readonly ISmsSevices _smsSevices;
+        private readonly ISmsSevices _smsServices;
         private readonly ITokenService _tokenService;
 
         public UserServices(
             UserManager<ApplicationUser> userManager,
             IMailServices mailServices,
-            ISmsSevices smsSevices,
+            ISmsSevices smsServices,
             ITokenService tokenService
             )
         {
             _userManager = userManager;
             _mailServices = mailServices;
-            _smsSevices = smsSevices;
+            _smsServices = smsServices;
             _tokenService = tokenService;
         }
 
         public async Task<ResponseModel<TokenModel>> SignIn(LogInDto User)
         {
-            if (User == null)
-                throw new ArgumentNullException("Model Can't Be null");
+            ArgumentNullException.ThrowIfNull(User);
 
-            var user = await _userManager.FindByEmailAsync(User.Email);
-            if (user == null)
-                throw new NullReferenceException("Email or Password Wrong");
-
+            var user = await _userManager.FindByEmailAsync(User.Email) ?? throw new NullReferenceException("Email or Password Wrong");
             var check = await _userManager.CheckPasswordAsync(user, User.Password);
             if (!check)
                 throw new NullReferenceException("Email or Password Wrong");
@@ -61,8 +57,7 @@ namespace Services.IdentityServices
 
         public async Task<ResponseModel<bool>> SignUp(SignUpDto NewUser)//, string UrlToAction)
         {
-            if (NewUser == null)
-                throw new ArgumentNullException("Model Can't Be null");
+            ArgumentNullException.ThrowIfNull(NewUser);
 
             var user = await _userManager.FindByEmailAsync(NewUser.Email);
 
@@ -73,17 +68,15 @@ namespace Services.IdentityServices
             {
                 Email = NewUser.Email,
                 Name = NewUser.Name,
-                UserName = NewUser.Email
+                UserName = NewUser.Email,
+                PhoneNumber = NewUser.PhoneNumber,
             };
 
             var response = await _userManager.CreateAsync(appUser, NewUser.Password);
             if (!response.Succeeded)
                 throw new Exception("Something went wrong");
 
-            var User = await _userManager.FindByEmailAsync(appUser.Email);
-            if (User == null)
-                throw new Exception("Something went wrong");
-
+            var User = await _userManager.FindByEmailAsync(appUser.Email) ?? throw new Exception("Something went wrong");
             var res = await _userManager.SetPhoneNumberAsync(User, NewUser.PhoneNumber);
 
             if (!res.Succeeded)
@@ -100,7 +93,7 @@ namespace Services.IdentityServices
             #region Phone Verification
 
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(User, NewUser.PhoneNumber);
-            var result = _smsSevices.Send($"Verification Code : {code}", NewUser.PhoneNumber);
+            var result = _smsServices.Send($"Verification Code : {code}", NewUser.PhoneNumber);
 
             if (result.Status == MessageResource.StatusEnum.Sending || result.Status == MessageResource.StatusEnum.Queued)
                 return new ResponseModel<bool>
@@ -201,10 +194,10 @@ namespace Services.IdentityServices
 
             //if (string.IsNullOrEmpty(code))
             //    throw new Exception("Something went wrong in GenerateCode Function");
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
-            var result = _smsSevices.Send($"Verification Code : {code}", user.PhoneNumber);
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, "+201152899886");
+            var result = _smsServices.Send($"Verification Code : {code}", "+201152899886");
 
-            if (result.Status == Twilio.Rest.Api.V2010.Account.MessageResource.StatusEnum.Accepted)
+            if (result.Status == MessageResource.StatusEnum.Sending || result.Status == MessageResource.StatusEnum.Queued)
                 return new ResponseModel<string>
                 {
                     StatusCode = 200,
@@ -226,7 +219,7 @@ namespace Services.IdentityServices
             if (user == null)
                 throw new NullReferenceException("Can't Find Account with this email");
 
-            var response = await _userManager.VerifyChangePhoneNumberTokenAsync(user, model.code, user.PhoneNumber);
+            var response = await _userManager.VerifyChangePhoneNumberTokenAsync(user, model.code, "+201152899886");
             if (!response)
                 throw new Exception("Verification Code is Wrong");
 
@@ -277,7 +270,7 @@ namespace Services.IdentityServices
             if (user == null)
                 throw new NullReferenceException("Account with this Email Can't be found");
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
-            var result = _smsSevices.Send($"Verification Code : {code}", user.PhoneNumber);
+            var result = _smsServices.Send($"Verification Code : {code}", user.PhoneNumber);
 
             if (result.Status == Twilio.Rest.Api.V2010.Account.MessageResource.StatusEnum.Accepted)
                 return new ResponseModel<bool>

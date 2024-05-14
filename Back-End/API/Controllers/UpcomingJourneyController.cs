@@ -23,7 +23,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>), StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpGet("get-all-upcoming-journeys")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>>> GetAllUpcomingJourneys()
+        public async Task<ActionResult> GetAllUpcomingJourneys()
         {
             try
             {
@@ -39,11 +39,11 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get All Journeys failed {ex.Message}");
-                return new ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>
+                return BadRequest(new ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>
                 {
                     Message = ex.Message,
                     StatusCode = 400
-                };
+                });
             }
 
         }
@@ -51,7 +51,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<ReturnedUpcomingJourneyDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-upcoming-journey/{UpcomingJourneyId}")]
-        public async Task<ActionResult<ResponseModel<ReturnedUpcomingJourneyDto>>> GetJourneyById(Guid UpcomingJourneyId)
+        public async Task<ActionResult> GetJourneyById(Guid UpcomingJourneyId)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get Journey By Id failed {ex.Message}");
-                return BadRequest(new ResponseModel<ReturnedUpcomingJourneyDto>
+                return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
                 {
                     StatusCode = 400,
                     Message = $"Get Journey Failed {ex.Message}"
@@ -76,16 +76,16 @@ namespace API.Controllers
 
         }
 
-        [ProducesResponseType(typeof(ResponseModel<ReturnedUpcomingJourneyDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-Nearest-upcoming-journey/{destinationId}/{startBusStopId}")]
-        public async Task<ActionResult<ResponseModel<ReturnedUpcomingJourneyDto>>> GetNearestJourneyByDestination(string destinationId, string startBusStopId)
+        public async Task<ActionResult> GetNearestJourneyByDestination(string destinationId, string startBusStopId)
         {
             try
             {
-                var journey = await _UpcomingJourneysServices.GetNearestJourneyByDestination(destinationId, startBusStopId);
+                var journey = await _UpcomingJourneysServices.GetNearestJourneysByDestination(destinationId, startBusStopId);
                 Log.Information($"Get Nearest Journey By Destination Succeeded");
-                return Ok(new ResponseModel<ReturnedUpcomingJourneyDto>
+                return Ok(new ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>
                 {
                     StatusCode = 200,
                     Body = journey,
@@ -95,7 +95,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Log.Error($"Get Nearest Journey By Destination failed {ex.Message}");
-                return BadRequest(new ResponseModel<ReturnedUpcomingJourneyDto>
+                return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
                 {
                     StatusCode = 400,
                     Message = $"Get Nearest Journey By Destination failed  {ex.Message}"
@@ -107,7 +107,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-by-destination/{destinationId}")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>>> GetAllJourneysByDestinationBusStopId(string destinationId)
+        public async Task<ActionResult> GetAllJourneysByDestinationBusStopId(string destinationId)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace API.Controllers
         [HttpGet("get-all-by-start/{startBusStopId}")]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedUpcomingJourneyDto>>>> GetAllJourneysByStartBusStopId(string startBusStopId)
+        public async Task<ActionResult> GetAllJourneysByStartBusStopId(string startBusStopId)
         {
             try
             {

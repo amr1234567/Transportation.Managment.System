@@ -21,7 +21,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<Bus>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-bus/{BusId}")]
-        public async Task<ActionResult<ResponseModel<Bus>>> GetBus([FromRoute] Guid BusId)
+        public async Task<ActionResult> GetBus([FromRoute] Guid BusId)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace API.Controllers
                     Body = bus
                 };
                 Log.Information($"get Bus By Id Success: {bus}");
-                return model;
+                return Ok(model);
             }
             catch (Exception ex)
             {
@@ -43,18 +43,14 @@ namespace API.Controllers
                     Message = $"Get Bus By Id Error occurred :{ex.Message}"
                 };
                 Log.Error($"get Bus By Id failed: {ex.Message}");
-                return model;
+                return BadRequest(model);
             }
-
-
-
-
         }
 
         [ProducesResponseType(typeof(ResponseModel<Bus>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPut("edit-bus/{BusId}")]
-        public async Task<ActionResult<ResponseModel<Bus>>> EditBus([FromRoute] Guid BusId, [FromBody] BusDto model)
+        public async Task<ActionResult> EditBus([FromRoute] Guid BusId, [FromBody] BusDto model)
         {
             try
             {

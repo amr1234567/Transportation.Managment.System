@@ -30,7 +30,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("sign-up")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ErrorModelState>?>>> SignUp([FromBody] SignUpDto model)
+        public async Task<ActionResult> SignUp([FromBody] SignUpDto model)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [NonAction]
         [HttpPost("confirm-email")]
-        public async Task<ActionResult<string>> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
+        public async Task<ActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<TokenModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("sign-in")]
-        public async Task<ActionResult<ResponseModel<TokenModel>>> SignIn([FromBody] LogInDto model)
+        public async Task<ActionResult> SignIn([FromBody] LogInDto model)
         {
             try
             {
@@ -176,7 +176,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = Roles.User)]
         [HttpGet("get-all-tickets-by-user")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTicketsByUserId()
+        public async Task<ActionResult> GetAllTicketsByUserId()
         {
             try
             {
@@ -207,7 +207,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = Roles.User)]
         [HttpPost("book-ticket")]
-        public async Task<ActionResult<ResponseModel<bool>>> BookTicket(TicketDto model)
+        public async Task<ActionResult> BookTicket(TicketDto model)
         {
             try
             {
@@ -249,13 +249,18 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("forget-password")]
-        public async Task<ActionResult<ResponseModel<string>>> ForgetPasswordVerify([EmailAddress, DefaultValue("example@example.com"), Required, RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")] string Email)
+        public async Task<ActionResult> ForgetPasswordVerify([FromBody] ForgetPasswordVerifyDto model)
         {
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest("Bad model");
-                var response = await _userServices.ResetPassword(Email);
+                    return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
+                    {
+                        StatusCode = 400,
+                        Message = "Invalid Input",
+                        Body = ModelState.Keys.Select(key => new ErrorModelState(key, ModelState[key].Errors.Select(x => x.ErrorMessage).ToList()))
+                    });
+                var response = await _userServices.ResetPassword(model.Email);
                 if (response.StatusCode == 200)
                 {
                     Log.Information($"Forget Password Verification Done successfully");
@@ -286,7 +291,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("reset-Password")]
-        public async Task<ActionResult<ResponseModel<bool>>> ResetPassword(ResetPasswordDto model)
+        public async Task<ActionResult> ResetPassword(ResetPasswordDto model)
         {
             try
             {
@@ -318,7 +323,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [Authorize(Roles = Roles.User)]
         [HttpPost("edit-personal-data")]
-        public async Task<ActionResult<ResponseModel<bool>>> EditPersonalData(EditPersonalDataDto model)
+        public async Task<ActionResult> EditPersonalData(EditPersonalDataDto model)
         {
             if (ModelState.IsValid)
             {

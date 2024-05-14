@@ -17,7 +17,7 @@ namespace Interfaces.IApplicationServices
         Task<ReturnedUpcomingJourneyDto> GetJourneyById(Guid id);
         Task<IEnumerable<ReturnedUpcomingJourneyDto>> GetAllJourneysByDestinationBusStopId(string id);
         Task<IEnumerable<ReturnedUpcomingJourneyDto>> GetAllJourneysByStartBusStopId(string id);
-        Task<ReturnedUpcomingJourneyDto> GetNearestJourneyByDestination(string destinationId, string startBusStopId);
+        Task<IEnumerable<ReturnedUpcomingJourneyDto>> GetNearestJourneysByDestination(string destinationId, string startBusStopId);
         Task SetArrivalTime(DateTime time, Guid id);
         Task SetLeavingTime(DateTime time, Guid id);
     }

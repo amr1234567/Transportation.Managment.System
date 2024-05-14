@@ -39,7 +39,7 @@ namespace Core.Models
         public Guid BusId { get; set; }
         public Bus? Bus { get; set; }
 
-        public List<Ticket> Ticket { get; set; }
+        public List<Ticket> Tickets { get; set; }
 
         public Guid JourneyId { get; set; }
 

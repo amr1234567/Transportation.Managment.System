@@ -22,7 +22,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-tickets")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTickets()
+        public async Task<ActionResult> GetAllTickets()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-tickets-by-journey/{id}")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTicketsByJourneyId([Required] Guid id)
+        public async Task<ActionResult> GetAllTicketsByJourneyId([Required] Guid id)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-tickets-by-reserved-time")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedTicketDto>>>> GetAllTicketsByReservedTime([FromRoute] DateTime time)
+        public async Task<ActionResult> GetAllTicketsByReservedTime([FromRoute] DateTime time)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = $"{Roles.BusStopManager},{Roles.User},{Roles.Admin}")]
         [HttpGet("get-ticket/{id}")]
-        public async Task<ActionResult<ResponseModel<ReturnedTicketDto>>> GetTicket(Guid id)
+        public async Task<ActionResult> GetTicket(Guid id)
         {
             try
             {

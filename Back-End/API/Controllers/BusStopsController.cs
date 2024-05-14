@@ -24,7 +24,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-related-by-start/{StartBusStop}")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllRelatedBusStops([Required] string StartBusStop)
+        public async Task<ActionResult> GetAllRelatedBusStops([Required] string StartBusStop)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedBusStopDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ReturnedBusStopDto>>>> GetAllStartBusStops()
+        public async Task<ActionResult> GetAllStartBusStops()
         {
             try
             {
@@ -84,7 +84,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<ReturnedBusStopDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-Bus-stop/{BusStopId}")]
-        public async Task<ActionResult<ReturnedBusStopDto>> GetBusStopById(string BusStopId)
+        public async Task<ActionResult> GetBusStopById(string BusStopId)
         {
             try
             {
