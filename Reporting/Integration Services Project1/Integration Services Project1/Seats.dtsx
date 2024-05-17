@@ -1,0 +1,682 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="4/13/2024 8:44:59 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-1HGMMHI"
+  DTS:CreatorName="DESKTOP-1HGMMHI\cm"
+  DTS:DTSID="{F664C772-3F42-4FC6-8A5A-92581F0F1DF7}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5397.1"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Seats"
+  DTS:PackageType="5"
+  DTS:VersionBuild="6"
+  DTS:VersionGUID="{E51A4D57-5B3E-4DEB-B905-D87E7087F04C}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[db3805.public.databaseasp.net.db3805.db3805]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{40456D8D-75A1-4E59-9378-EC55D64A2D37}"
+      DTS:ObjectName="db3805.public.databaseasp.net.db3805.db3805">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=db3805.public.databaseasp.net;User ID=db3805;Initial Catalog=db3805;Provider=SQLNCLI11.1;Persist Security Info=True;Application Name=SSIS-Package2-{40456D8D-75A1-4E59-9378-EC55D64A2D37}db3805.public.databaseasp.net.db3805.db3805;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVK/RSD1amE65Ixz/V11hdAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADHR5vIV9zh5PTq12iF/6rb1JJHUKzamcsAYJ+2sH+GVgAAAAAOgAAAAAIAACAAAADwEsP+o/PyVdsaiCnUceHoj9Iny6hjA+WLd1VDzESnmiAAAAAI8TPmKX47sUOTHY0CRJ3x0pjjqPIdKQfky7Y0jB+BOUAAAAAuXgmcNnwW9UAh60iKbdKkhXqunaLRlR93XlU1e69vNSW7xAN5eEoGRlDc0KBU2UeploNqxJs3ZFAaWY0u1l5n</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[db4047.public.databaseasp.net.db4047.db4047]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{17E930E8-1699-4B89-9EA9-800EC514F542}"
+      DTS:ObjectName="db4047.public.databaseasp.net.db4047.db4047">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=db4047.public.databaseasp.net;User ID=db4047;Initial Catalog=db4047;Provider=SQLNCLI11.1;Persist Security Info=True;Application Name=SSIS-Package2-{17E930E8-1699-4B89-9EA9-800EC514F542}db4047.public.databaseasp.net.db4047.db4047;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVK/RSD1amE65Ixz/V11hdAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACx18nQJzfqWflMNfpK5GALx8qKvDW5ePWPSlK2qQox5wAAAAAOgAAAAAIAACAAAAAtZ114yaBx8URDhAA/ovdTe6en2Bkpcn8uqBkdc0E6TiAAAADPYj7XFUDqprQLlpqNYMIG/MPXbcA0xyHuaoaPEWgddEAAAAB0K7zzOmZjKsvnV6IORyC9FRQwP9uifC/noD9AXhZC61WBIR1PgOkoUfqo/o/D6oy4Rq0HRETASJS8N5EmbI3b</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Data Flow Task"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{A90273C5-1FB0-4270-AD18-CD55EC65129F}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Data Flow Task">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Data Flow Task\Seats Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="Seats Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[Seats]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Data Flow Task\Seats Destination.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[db3805.public.databaseasp.net.db3805.db3805]"
+                  connectionManagerRefId="Package.ConnectionManagers[db3805.public.databaseasp.net.db3805.db3805]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].Columns[SeatId]"
+                      cachedDataType="guid"
+                      cachedName="SeatId"
+                      cachedSortKeyPosition="1"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[SeatId]"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[SeatId]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].Columns[SeatNum]"
+                      cachedDataType="i4"
+                      cachedName="SeatNum"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[SeatNum]"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[SeatNum]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].Columns[IsAvailable]"
+                      cachedDataType="bool"
+                      cachedName="IsAvailable"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[IsAvailable]"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[IsAvailable]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].Columns[BusId]"
+                      cachedDataType="guid"
+                      cachedName="BusId"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[BusId]"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[BusId]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[SeatId]"
+                      dataType="guid"
+                      name="SeatId" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[SeatNum]"
+                      dataType="i4"
+                      name="SeatNum" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[IsAvailable]"
+                      dataType="bool"
+                      name="IsAvailable" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input].ExternalColumns[BusId]"
+                      dataType="guid"
+                      name="BusId" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\Seats Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\Seats Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\Seats Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\Seats Source"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="Seats Source"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[App].[Seats]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Data Flow Task\Seats Source.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[db4047.public.databaseasp.net.db4047.db4047]"
+                  connectionManagerRefId="Package.ConnectionManagers[db4047.public.databaseasp.net.db4047.db4047]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatId]"
+                      dataType="guid"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[SeatId]"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatId]"
+                      name="SeatId"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatNum]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[SeatNum]"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatNum]"
+                      name="SeatNum"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[IsAvailable]"
+                      dataType="bool"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[IsAvailable]"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[IsAvailable]"
+                      name="IsAvailable"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[BusId]"
+                      dataType="guid"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[BusId]"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[BusId]"
+                      name="BusId"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[SeatId]"
+                      dataType="guid"
+                      name="SeatId" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[SeatNum]"
+                      dataType="i4"
+                      name="SeatNum" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[IsAvailable]"
+                      dataType="bool"
+                      name="IsAvailable" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].ExternalColumns[BusId]"
+                      dataType="guid"
+                      name="BusId" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[SeatId]"
+                      dataType="guid"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[SeatId]"
+                      name="SeatId" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[SeatNum]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[SeatNum]"
+                      name="SeatNum" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[IsAvailable]"
+                      dataType="bool"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[IsAvailable]"
+                      name="IsAvailable" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[BusId]"
+                      dataType="guid"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[BusId]"
+                      name="BusId" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\Sort 1"
+              componentClassID="Microsoft.Sort"
+              contactInfo="Sort;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Sorts input data in ascending or descending order when it cannot be sorted at its source. For example, sort sales data by 'customer id' before it is written to a flat file and delivered to another department. Note: We do not recommend this transformation for large data flows."
+              name="Sort 1"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the Sort transformation removes rows with duplicate sort values."
+                  name="EliminateDuplicates">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the maximum number of threads to use for sorting."
+                  expressionType="Notify"
+                  name="MaximumThreads">-1</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\Sort 1.Inputs[Sort Input]"
+                  name="Sort Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\Sort 1.Inputs[Sort Input].Columns[SeatId]"
+                      cachedDataType="guid"
+                      cachedName="SeatId"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatId]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">1</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\Data Flow Task\Sort 1.Inputs[Sort Input].Columns[SeatNum]"
+                      cachedDataType="i4"
+                      cachedName="SeatNum"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatNum]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\Data Flow Task\Sort 1.Inputs[Sort Input].Columns[IsAvailable]"
+                      cachedDataType="bool"
+                      cachedName="IsAvailable"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[IsAvailable]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                    <inputColumn
+                      refId="Package\Data Flow Task\Sort 1.Inputs[Sort Input].Columns[BusId]"
+                      cachedDataType="guid"
+                      cachedName="BusId"
+                      lineageId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[BusId]">
+                      <properties>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the comparison options for character data."
+                          name="NewComparisonFlags">0</property>
+                        <property
+                          dataType="System.Int32"
+                          description="Specifies the sort order of the column."
+                          name="NewSortKeyPosition">0</property>
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\Sort 1.Outputs[Sort Output]"
+                  isSorted="true"
+                  name="Sort Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[SeatId]"
+                      dataType="guid"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[SeatId]"
+                      name="SeatId"
+                      sortKeyPosition="1">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatId]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[SeatNum]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[SeatNum]"
+                      name="SeatNum">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[SeatNum]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[IsAvailable]"
+                      dataType="bool"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[IsAvailable]"
+                      name="IsAvailable">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[IsAvailable]}</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[BusId]"
+                      dataType="guid"
+                      lineageId="Package\Data Flow Task\Sort 1.Outputs[Sort Output].Columns[BusId]"
+                      name="BusId">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the lineage identifier of the input column that is associated with this output column."
+                          name="SortColumnId">#{Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output].Columns[BusId]}</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Data Flow Task.Paths[OLE DB Source Output]"
+              endId="Package\Data Flow Task\Sort 1.Inputs[Sort Input]"
+              name="OLE DB Source Output"
+              startId="Package\Data Flow Task\Seats Source.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Sort Output]"
+              endId="Package\Data Flow Task\Seats Destination.Inputs[OLE DB Destination Input]"
+              name="Sort Output"
+              startId="Package\Data Flow Task\Sort 1.Outputs[Sort Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{AA862FE0-9DB8-4180-8209-B4DAB1BD057E}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{40456D8D-75A1-4E59-9378-EC55D64A2D37}"
+          SQLTask:SqlStatementSource="delete from [dbo].[Seats]where [SeatId]is not null ;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{2D7132B8-9B7E-48F4-AFE5-9B761F4A4DF4}"
+      DTS:From="Package\Execute SQL Task"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Data Flow Task" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="155,42"
+          Id="Package\Data Flow Task"
+          TopLeft="220.5,225.5" />
+        <NodeLayout
+          Size="170,42"
+          Id="Package\Execute SQL Task"
+          TopLeft="215,88" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="299,130">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,95.5"
+              Start="0,0"
+              End="0,88">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,88" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Data Flow Task">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="145,42"
+          Id="Package\Data Flow Task\Seats Source"
+          TopLeft="79,60" />
+        <NodeLayout
+          Size="108,42"
+          Id="Package\Data Flow Task\Sort 1"
+          TopLeft="94,156" />
+        <NodeLayout
+          Size="165,42"
+          Id="Package\Data Flow Task\Seats Destination"
+          TopLeft="60,293" />
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Sort Output]"
+          TopLeft="145.25,198">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,95"
+              Start="0,0"
+              End="0,87.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,87.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[OLE DB Source Output]"
+          TopLeft="149.75,102">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,54"
+              Start="0,0"
+              End="0,46.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,46.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
