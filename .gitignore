@@ -365,3 +365,5 @@ FodyWeavers.xsd
 
 #project
 /Back-End/API/appsettings.json
+
+node_modules/
