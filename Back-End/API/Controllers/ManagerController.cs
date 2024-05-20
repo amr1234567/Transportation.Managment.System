@@ -186,7 +186,7 @@ namespace API.Controllers
             }
         }
 
-        [ProducesResponseType(typeof(ResponseModel<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseModel<ReturnedTicketDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ErrorModelState>>), StatusCodes.Status400BadRequest)]
         [HttpPost("cut-ticket")]
         public async Task<ActionResult> CutTicket(TicketDto model)
@@ -199,29 +199,23 @@ namespace API.Controllers
                     ModelState.AddModelError("SeatId", "Seat Id Must be a valid Guid");
 
                 if (!ModelState.IsValid)
-                    return BadRequest(new ResponseModel<bool>
+                    return BadRequest(new ResponseModel<IEnumerable<ErrorModelState>>
                     {
                         StatusCode = 400,
                         Message = "Input is invalid",
-                        Body = false
+                        Body = ModelState.Keys.Select(key => new ErrorModelState(key, ModelState[key].Errors.Select(x => x.ErrorMessage).ToList()))
                     });
                 var ticket = await _ticketServices.CutTicket(model, GetManagerIdFromClaims());
                 Log.Information($"CutTicket Succeeded");
-                return Ok(new ResponseModel<bool>
-                {
-                    Message = "Done Booking",
-                    StatusCode = 200,
-                    Body = true
-                });
+                return ticket.StatusCode == 200 ? Ok(ticket) : BadRequest(ticket);
             }
             catch (Exception ex)
             {
                 Log.Error($"CutTicket Failed");
-                return BadRequest(new ResponseModel<bool>
+                return BadRequest(new ResponseModel<ReturnedTicketDto>
                 {
                     Message = ex.Message,
-                    StatusCode = 400,
-                    Body = false
+                    StatusCode = 400
                 });
             }
         }

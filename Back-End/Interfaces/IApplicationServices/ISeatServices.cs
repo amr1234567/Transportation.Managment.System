@@ -1,4 +1,5 @@
 ﻿using Core.Dto;
+using Core.Dto.UserOutput;
 using Core.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Interfaces.IApplicationServices
 {
     public interface ISeatServices
     {
-        Task<IEnumerable<Seat>> GetAllSeatsInBusByBusId(Guid BusId);
+        Task<IEnumerable<SeatDto>> GetAllSeatsInBusByBusId(Guid BusId);
         Task ReserveSeat(Guid id);
     }
 }

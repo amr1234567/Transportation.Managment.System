@@ -189,9 +189,6 @@ namespace API.Controllers
                         ArrivalTime = hj.ArrivalTime,
                         BusId = hj.BusId,
                         LeavingTime = hj.LeavingTime,
-                        NumberOfAvailableTickets = hj.Tickets.Count(),
-                        DestinationName = hj.Destination.Name,
-                        StartBusStopName = hj.StartBusStop.Name,
                         TicketPrice = hj.TicketPrice
                     }),
                     Message = "All Journeys"
@@ -207,7 +204,7 @@ namespace API.Controllers
                 });
             }
         }
-
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<Bus>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<Bus>>), StatusCodes.Status400BadRequest)]
         [HttpGet("get-all-buses")]
@@ -241,5 +238,7 @@ namespace API.Controllers
 
         }
 
+
+        
     }
 }

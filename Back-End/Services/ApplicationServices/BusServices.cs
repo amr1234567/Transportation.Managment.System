@@ -108,6 +108,5 @@ namespace Services.ApplicationServices
 
             return await _context.Buses.FirstOrDefaultAsync(x => x.Id.Equals(Id)); ;
         }
-
     }
 }

@@ -174,7 +174,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResponseModel<IEnumerable<ReturnedTicketDto>>), StatusCodes.Status401Unauthorized)]
-        [Authorize(Roles = Roles.User)]
+        [Authorize(Roles = $"{Roles.User},{Roles.BusStopManager}")]
         [HttpGet("get-all-tickets-by-user")]
         public async Task<ActionResult> GetAllTicketsByUserId()
         {
@@ -222,17 +222,11 @@ namespace API.Controllers
                         StatusCode = 400,
                         Message = "Input is invalid",
                         Body = ModelState.Keys.Select(key => new ErrorModelState(key, ModelState[key].Errors.Select(x => x.ErrorMessage).ToList()))
-
                     });
                 var ticket = await _ticketServices.BookTicket(model, GetUserIdFromClaims());
                 Log.Information($"Book Ticket Done successfully");
 
-                return Ok(new ResponseModel<bool>
-                {
-                    Message = "Done Booking",
-                    StatusCode = 200,
-                    Body = true
-                });
+                return ticket.StatusCode == 200 ? Ok(ticket) : BadRequest(ticket);
             }
             catch (Exception ex)
             {

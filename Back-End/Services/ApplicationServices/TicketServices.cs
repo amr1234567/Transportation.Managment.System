@@ -14,18 +14,19 @@ namespace Services.ApplicationServices
         private readonly ApplicationDbContext _context = context;
         private readonly ISeatServices _seatServices = seatServices;
 
-        private async Task GenerateTicket(TicketDto ticketDto, string ConsumerId, bool Online)
+        private async Task<ReturnedTicketDto> GenerateTicket(TicketDto ticketDto, string ConsumerId, bool Online)
         {
-            if (ticketDto == null)
-                throw new ArgumentNullException("Ticket Data Can't Be Null");
-            if (ConsumerId == null)
-                throw new ArgumentNullException("UnAuthorized");
+            ArgumentNullException.ThrowIfNull(ticketDto);
+            ArgumentNullException.ThrowIfNull(ConsumerId);
 
 
-            var seatNum = _context.Seats.Find(Guid.Parse(ticketDto.SeatId)).SeatNum;
+            var seat = await _context.Seats.FindAsync(Guid.Parse(ticketDto.SeatId));
 
-            if (seatNum == null)
+            if (seat == null)
                 throw new ArgumentNullException("Seat Doesn't Exist");
+
+            if (!seat.IsAvailable)
+                throw new Exception("Seat Not Available");
 
             var journey = await _context.UpcomingJourneys.Include(j => j.Destination)
                                             .Include(j => j.StartBusStop)
@@ -38,7 +39,7 @@ namespace Services.ApplicationServices
             {
                 Id = Guid.NewGuid(),
                 CreatedTime = DateTime.UtcNow,
-                SeatNum = seatNum,
+                SeatNum = seat.SeatNum,
                 UpcomingJourneyId = Guid.Parse(ticketDto.JourneyId),
                 ConsumerId = ConsumerId,
                 ReservedOnline = Online,
@@ -56,36 +57,57 @@ namespace Services.ApplicationServices
             await _context.Tickets.AddAsync(ticket);
 
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<ResponseModel<bool>> CutTicket(TicketDto ticketDto, string ConsumerId)
-        {
-            if (ticketDto == null)
-                throw new ArgumentNullException("Ticket Data Can't Be Null");
-            if (ConsumerId == null)
-                throw new ArgumentNullException("UnAuthorized");
-
-            await GenerateTicket(ticketDto, ConsumerId, false);
-            return new ResponseModel<bool>
+            return new ReturnedTicketDto
             {
-                StatusCode = 200,
-                Message = "Ticket Cut Successfully"
+                ArrivalTime = ticket.ArrivalTime,
+                DestinationBusStopName = ticket.DestinationName,
+                JourneyId = ticket.JourneyId,
+                LeavingTime = ticket.LeavingTime,
+                Price = ticket.Price,
+                SeatNumber = ticket.SeatNum,
+                StartBusStopName = ticket.StartBusStopName,
+                TicketId = ticket.Id
             };
         }
 
-        public async Task<ResponseModel<bool>> BookTicket(TicketDto ticketDto, string UserId)
+        public async Task<ResponseModel<ReturnedTicketDto>> CutTicket(TicketDto ticketDto, string ConsumerId)
         {
+            ArgumentNullException.ThrowIfNull(ticketDto);
+            ArgumentNullException.ThrowIfNull(ConsumerId);
 
-            if (ticketDto == null)
-                throw new ArgumentNullException("Ticket Data Can't Be Null");
-            if (UserId == null)
-                throw new ArgumentNullException("UnAuthorized");
-
-            await GenerateTicket(ticketDto, UserId, true);
-            return new ResponseModel<bool>
+            var ticket = await GenerateTicket(ticketDto, ConsumerId, false);
+            if (ticket == null)
+                return new ResponseModel<ReturnedTicketDto>
+                {
+                    StatusCode = 500,
+                    Message = "Something went wrong"
+                };
+            return new ResponseModel<ReturnedTicketDto>
             {
                 StatusCode = 200,
-                Message = "Ticket Booked Successfully"
+                Message = "Ticket Cut Successfully",
+                Body = ticket
+            };
+        }
+
+        public async Task<ResponseModel<ReturnedTicketDto>> BookTicket(TicketDto ticketDto, string UserId)
+        {
+
+            ArgumentNullException.ThrowIfNull(ticketDto);
+            ArgumentNullException.ThrowIfNull(UserId);
+
+            var ticket = await GenerateTicket(ticketDto, UserId, true);
+            if (ticket == null)
+                return new ResponseModel<ReturnedTicketDto>
+                {
+                    StatusCode = 500,
+                    Message = "Something went wrong"
+                };
+            return new ResponseModel<ReturnedTicketDto>
+            {
+                StatusCode = 200,
+                Message = "Ticket Booked Successfully",
+                Body = ticket
             };
         }
 
@@ -99,7 +121,8 @@ namespace Services.ApplicationServices
                 JourneyId = t.JourneyId,
                 Price = t.Price,
                 SeatNumber = t.SeatNum,
-                StartBusStopName = t.StartBusStopName
+                StartBusStopName = t.StartBusStopName,
+                TicketId = t.Id
             }).AsNoTracking().AsEnumerable();
             if (tickets == null)
                 throw new ArgumentNullException("No Tickets Exist");
@@ -119,7 +142,8 @@ namespace Services.ApplicationServices
                     JourneyId = t.JourneyId,
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
-                    StartBusStopName = t.StartBusStopName
+                    StartBusStopName = t.StartBusStopName,
+                    TicketId = t.Id
                 }).AsNoTracking().AsEnumerable();
 
             if (tickets is null)
@@ -139,7 +163,8 @@ namespace Services.ApplicationServices
                     JourneyId = t.JourneyId,
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
-                    StartBusStopName = t.StartBusStopName
+                    StartBusStopName = t.StartBusStopName,
+                    TicketId = t.Id
                 }).AsNoTracking().AsEnumerable();
             return Task.FromResult(Tickets);
         }
@@ -155,7 +180,8 @@ namespace Services.ApplicationServices
                     JourneyId = t.JourneyId,
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
-                    StartBusStopName = t.StartBusStopName
+                    StartBusStopName = t.StartBusStopName,
+                    TicketId = t.Id
                 }).AsNoTracking().AsEnumerable();
             return Task.FromResult(Tickets);
         }
@@ -171,7 +197,8 @@ namespace Services.ApplicationServices
                     JourneyId = t.JourneyId,
                     Price = t.Price,
                     SeatNumber = t.SeatNum,
-                    StartBusStopName = t.StartBusStopName
+                    StartBusStopName = t.StartBusStopName,
+                    TicketId = t.Id
                 }).AsNoTracking().AsEnumerable();
             return Task.FromResult(Tickets);
         }
@@ -190,6 +217,7 @@ namespace Services.ApplicationServices
                 JourneyId = ticket.JourneyId,
                 Price = ticket.Price,
                 SeatNumber = ticket.SeatNum,
+                TicketId = ticket.Id
             };
         }
 

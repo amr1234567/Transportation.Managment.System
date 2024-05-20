@@ -25,7 +25,7 @@ namespace Services.ApplicationServices
                          ArrivalTime = x.ArrivalTime,
                          DestinationName = x.Destination.Name,
                          LeavingTime = x.LeavingTime,
-                         NumberOfAvailableTickets = _context.Buses.FirstOrDefault(b => b.Id.Equals(x.BusId)).seats.Count(s => s.IsAvailable),
+                         NumberOfAvailableTickets = _seatServices.GetAllSeatsInBusByBusId(x.BusId).Result.Count(s => s.IsAvailable),
                          StartBusStopName = x.StartBusStop.Name,
                          TicketPrice = x.TicketPrice,
                          BusId = x.BusId,
@@ -33,11 +33,8 @@ namespace Services.ApplicationServices
                          Id = x.Id,
                          JourneyId = x.JourneyId,
                          StartBusStopId = x.StartBusStopId
-                     }).AsNoTracking().AsEnumerable();
-
-            if (records == null)
-                throw new ArgumentNullException("No Upcoming Journeys");
-
+                     })
+                .AsNoTracking().AsEnumerable() ?? throw new ArgumentNullException("No Upcoming Journeys");
             return Task.FromResult(records);
         }
 
@@ -175,7 +172,9 @@ namespace Services.ApplicationServices
 
         public async Task<ReturnedUpcomingJourneyDto> GetJourneyById(Guid id)
         {
-            var journey = await _context.UpcomingJourneys.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var journey = await _context.UpcomingJourneys.Include(uj => uj.StartBusStop)
+                                                            .Include(uj => uj.Destination)
+                                                            .FirstOrDefaultAsync(x => x.Id.Equals(id));
             if (journey == null)
                 throw new ArgumentNullException($"Journey With {id} doesn't exist");
             var seats = await _seatServices.GetAllSeatsInBusByBusId(journey.BusId);
@@ -183,9 +182,9 @@ namespace Services.ApplicationServices
             {
                 StartBusStopId = journey.StartBusStopId,
                 NumberOfAvailableTickets = journey.NumberOfAvailableTickets,
-                DestinationName = journey.DestinationName,
+                DestinationName = journey.Destination.Name,
                 LeavingTime = journey.LeavingTime,
-                StartBusStopName = journey.StartBusStopName,
+                StartBusStopName = journey.StartBusStop.Name,
                 TicketPrice = journey.TicketPrice,
                 JourneyId = journey.JourneyId,
                 ArrivalTime = journey.ArrivalTime,

@@ -30,16 +30,12 @@ namespace Services.ApplicationServices
             _context.SaveChanges();
         }
 
-        public Task<IEnumerable<JourneyHistory>> GetAllJourneys()
+        public async Task<IEnumerable<JourneyHistory>> GetAllJourneys()
         {
-            var Journeys = _context.Journeys
-                                    .Include(j => j.Destination)
-                                    .Include(j => j.StartBusStop)
-                                    .Include(j => j.Tickets)
-                                    .AsNoTracking().AsEnumerable();
+            var Journeys = await _context.Journeys.Take(100).ToListAsync();
             if (Journeys == null)
                 throw new ArgumentNullException("No Journeys Right Now Check out Later");
-            return Task.FromResult(Journeys);
+            return Journeys;
         }
 
         public Task<JourneyHistory> GetJourneyById(Guid id)

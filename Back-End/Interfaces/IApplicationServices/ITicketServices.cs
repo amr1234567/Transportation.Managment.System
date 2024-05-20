@@ -16,8 +16,8 @@ namespace Interfaces.IApplicationServices
         Task<IEnumerable<ReturnedTicketDto>> GetAllTicketsByUserId(string id);
         Task<ReturnedTicketDto> GetTicketById(Guid id);
         Task<IEnumerable<ReturnedTicketDto>> GetTicketsByReservedTime(DateTime dateTime);
-        Task<ResponseModel<bool>> CutTicket(TicketDto ticketDto, string ConsumerId);
-        Task<ResponseModel<bool>> BookTicket(TicketDto ticketDto, string ConsumerId);
+        Task<ResponseModel<ReturnedTicketDto>> CutTicket(TicketDto ticketDto, string ConsumerId);
+        Task<ResponseModel<ReturnedTicketDto>> BookTicket(TicketDto ticketDto, string ConsumerId);
         Task<IEnumerable<ReturnedTicketDto>> GetAllCutTickets();
         Task<IEnumerable<ReturnedTicketDto>> GetAllBookedTickets();
     }

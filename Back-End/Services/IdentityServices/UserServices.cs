@@ -55,7 +55,7 @@ namespace Services.IdentityServices
 
 
 
-        public async Task<ResponseModel<bool>> SignUp(SignUpDto NewUser)//, string UrlToAction)
+        public async Task<ResponseModel<string>> SignUp(SignUpDto NewUser)//, string UrlToAction)
         {
             ArgumentNullException.ThrowIfNull(NewUser);
 
@@ -96,18 +96,17 @@ namespace Services.IdentityServices
             var result = _smsServices.Send($"Verification Code : {code}", NewUser.PhoneNumber);
 
             if (result.Status == MessageResource.StatusEnum.Sending || result.Status == MessageResource.StatusEnum.Queued)
-                return new ResponseModel<bool>
+                return new ResponseModel<string>
                 {
                     StatusCode = 200,
                     Message = "Registering operation succeeded, please confirm your phone number",
-                    Body = true
+                    Body = code
                 };
             else
-                return new ResponseModel<bool>
+                return new ResponseModel<string>
                 {
                     StatusCode = 500,
-                    Message = "SomeThing Went Wrong, Please Try Again",
-                    Body = false
+                    Message = "SomeThing Went Wrong, Please Try Again"
                 };
             #endregion
 
@@ -187,15 +186,15 @@ namespace Services.IdentityServices
 
         public async Task<ResponseModel<string>> ResetPassword(string Email)
         {
-            var user = await _userManager.FindByEmailAsync(Email);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u=>u.Email.Equals(Email));
             if (user == null)
                 throw new NullReferenceException("Can't Find Account with this email");
             //var code = _smsSevices.GenerateCode();
 
             //if (string.IsNullOrEmpty(code))
             //    throw new Exception("Something went wrong in GenerateCode Function");
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, "+201152899886");
-            var result = _smsServices.Send($"Verification Code : {code}", "+201152899886");
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+            var result = _smsServices.Send($"Verification Code : {code}", user.PhoneNumber);
 
             if (result.Status == MessageResource.StatusEnum.Sending || result.Status == MessageResource.StatusEnum.Queued)
                 return new ResponseModel<string>
@@ -215,11 +214,11 @@ namespace Services.IdentityServices
 
         public async Task<ResponseModel<string>> ResetPasswordConfirmation(ResetPasswordDto model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email.Equals(model.Email));
             if (user == null)
                 throw new NullReferenceException("Can't Find Account with this email");
 
-            var response = await _userManager.VerifyChangePhoneNumberTokenAsync(user, model.code, "+201152899886");
+            var response = await _userManager.VerifyChangePhoneNumberTokenAsync(user, model.code, user.PhoneNumber);
             if (!response)
                 throw new Exception("Verification Code is Wrong");
 

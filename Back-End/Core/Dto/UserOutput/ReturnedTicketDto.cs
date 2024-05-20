@@ -12,6 +12,7 @@ namespace Core.Dto.UserOutput
 {
     public class ReturnedTicketDto
     {
+        public Guid TicketId { get; set; }
         public int SeatNumber { get; set; }
 
         public Guid? JourneyId { get; set; }

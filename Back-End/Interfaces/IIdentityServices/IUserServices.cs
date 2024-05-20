@@ -11,7 +11,7 @@ namespace Interfaces.IIdentityServices
 {
     public interface IUserServices
     {
-        Task<ResponseModel<bool>> SignUp(SignUpDto NewUser);//, string Token);
+        Task<ResponseModel<string>> SignUp(SignUpDto NewUser);//, string Token);
         Task<ResponseModel<TokenModel>> SignIn(LogInDto User);
         Task<bool> ConfirmEmail(string Email, string Token);
         Task<bool> ConfirmPhoneNumber(string email, string PhoneNumber, string ConfirmToken);
