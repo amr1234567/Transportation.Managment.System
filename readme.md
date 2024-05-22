@@ -64,10 +64,12 @@ For detailed information about each endpoint, authentication methods, and more, 
 ## Contributors
 
 We'd like to acknowledge the following individuals for their contributions to this project:
+### Analysis
+- [Abd El-Rahman Darwish](https://github.com/abdoDarwish)
 
 ### Back End 
 - [Amr Shalaby](https://github.com/amr1234567)
 - [Mohamed El-Sayed](https://github.com/mhmdelsyd)
 
-### Reporting 
+### Reporting & Data Analysis
 - [Abd El-Rahman Darwish](https://github.com/abdoDarwish)
