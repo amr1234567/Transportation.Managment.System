@@ -56,6 +56,8 @@ This project was built using the following technologies:
 - Jwt
 - Hangfire
 - Serilog
+- SSIS
+- Power BI
 
 ## Documentation
 
