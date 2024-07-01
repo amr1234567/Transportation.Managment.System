@@ -89,7 +89,7 @@ Our business analysts have meticulously crafted the requirements for the dashboa
 #### Contributors
 - **Frontend Developers (Web)**: [Amr Shalaby](https://github.com/amr1234567)
 - **Backend Developers**: [Amr Shalaby](https://github.com/amr1234567) - [Mohamed El-Sayed](https://github.com/mhmdelsyd)
-- **Frontend Developers (Flutter)**: [Shahd El-katsha](https://github.com/ShahdElkatsha) - [Rowan Yahia](https://github.com/rawanyahia11)
+- **Frontend Developers (Flutter)**: [Shahd El-katsha](https://github.com/ShahdElkatsha) - [Rawan Yahia](https://github.com/rawanyahia11)
 
 ## Testing Phase
 
