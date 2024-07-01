@@ -55,7 +55,7 @@ Our business analysts have meticulously crafted the requirements for the dashboa
 - **Business Analyst**: [Abd El-Rahman Darwish](https://github.com/abdoDarwish)
 - **System Designer**: [Mohamed Abd El-Maged]() - [Mohamed Teba]()
 - **Database Designer**: [Abd El-Rahman Darwish](https://github.com/abdoDarwish)
-- **UI/UX Designer**: [Amr Shalaby](https://github.com/amr1234567) - [Mohamed El-Sayed](https://github.com/mhmdelsyd) - [Shahd El-katsha](https://github.com/ShahdElkatsha) - [Rowan Yahia](https://github.com/rawanyahia11)
+- **UI/UX Designer**: [Amr Shalaby](https://github.com/amr1234567) - [Mohamed El-Sayed](https://github.com/mhmdelsyd) - [Shahd El-katsha](https://github.com/ShahdElkatsha) - [Rawan Yahia](https://github.com/rawanyahia11)
 
 ## Implementation Phase
 
