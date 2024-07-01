@@ -38,9 +38,6 @@ The TMS consists of three systems, each with specific functionalities and user i
 
 ## Analysis & Design Phase
 
-### Dashboard and Warehouse Work
-Our business analysts have meticulously crafted the requirements for the dashboard and warehouse modules. The dashboard provides a comprehensive overview of the transportation system, including key metrics, system health, and performance indicators. The warehouse module manages the physical assets, inventory of buses, and related logistics.
-
 ### Business Analysts
 - [Mohamed Teba - ]Abd El-Rahman Darwish: Responsible for gathering and analyzing requirements for the admin dashboard.
 - [Abd El-Rahman Darwish]: Focused on the warehouse management system, ensuring efficient inventory tracking and asset management.
@@ -102,6 +99,19 @@ Our business analysts have meticulously crafted the requirements for the dashboa
 
 #### Contributors
 - **Test Engineers**: [Amr Shalaby](https://github.com/amr1234567)
+  
+## Data Analysis Phase 
+### Data Warehouse Desgin and Implementation
+- Data Warehouse was desgined based on the requirements.
+- Data Warehouse was Implemented with SQL.
+- SSIS Used For ETL.
+
+### Dashboard 
+- Power BI used for Creating dynamic dashboard that shows information based on the requirements.
+- DAX Language used for Analysis and creating Measures.
+
+  #### Contributors
+  - **Data Analyst and BI Developer**: [Abd El-Rahman Darwish](https://github.com/abdoDarwish)
 
 ## Project Repositories
 - **Admin System Frontend**: (https://github.com/amr1234567/Transportation.System_Admin_Frontend_Angular.git)
