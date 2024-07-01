@@ -17,7 +17,6 @@ This Transportation Management System (TMS) is designed to manage journeys and b
 - [Testing Phase](#testing-phase)
 - [Project Repositories](#project-repositories)
 - [Project Contributors](#project-contributors)
-- [License](#license)
 
 ## System Architecture
 The TMS consists of three systems, each with specific functionalities and user interfaces:
