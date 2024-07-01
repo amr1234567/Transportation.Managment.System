@@ -4,20 +4,22 @@
 This Transportation Management System (TMS) is designed to manage journeys and buses, facilitating efficient transportation management across three different systems: Admin, Manager, and User. Each system has its own front-end and API functions, ensuring a seamless and secure user experience.
 
 ## Table of Contents
-- [Overview](#overview)
-- [System Architecture](#system-architecture)
-- [Analysis & Design Phase](#analysis--design-phase)
-  - [Dashboard and Warehouse Work](#dashboard-and-warehouse-work)
-  - [Business Analysts](#business-analysts)
-  - [Design](#Design)
-- [Implementation Phase](#implementation-phase)
-  - [Frontend (Web App)](#frontend-web-app)
-  - [Backend (ASP.NET)](#backend-aspnet)
-  - [Frontend (User View - Flutter)](#frontend-user-view-flutter)
-- [Testing Phase](#testing-phase)
-- [Project Repositories](#project-repositories)
-- [Project Contributors](#project-contributors)
-
+- [Overview](#overview).
+- [System Architecture](#system-architecture).
+- [Analysis & Design Phase](#analysis--design-phase).
+  - [Business Analysts](#business-analysts).
+  - [Design](#Design).
+- [Implementation Phase](#implementation-phase).
+  - [Frontend (Web App)](#frontend-web-app).
+  - [Backend (ASP.NET)](#backend-aspnet).
+  - [Frontend (User View - Flutter)](#frontend-user-view-flutter).
+- [Testing Phase](#testing-phase).
+- [Project Repositories](#project-repositories).
+- [Project Contributors](#project-contributors).
+- [Data Analysis Phase](#Data-Analysis-Phase).
+   - [Data Warehouse Desgin and Implementation](#Data-Warehouse-Desgin-and-Implementation).
+   - [Dashboard](#Dashboard) 
+  
 ## System Architecture
 The TMS consists of three systems, each with specific functionalities and user interfaces:
 
